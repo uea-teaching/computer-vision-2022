@@ -1,0 +1,95 @@
+/* .bright {
+  color: #00ff2a;
+} */
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides img {
+  display: block;
+  margin: auto;
+}
+
+.reveal .slides video {
+  display: block;
+  margin: auto;
+}
+
+em {
+  font-style: italic;
+  color: #ff6ec7;
+}
+
+strong {
+  color: rgb(255, 169, 20);
+}
+
+code {
+  font: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  font-size: 0.8em;
+  padding: 0.2em;
+}
+
+.column .display .math {
+  font-size: 0.9em;
+}
+
+.reveal pre {
+  font-size: 0.65em;
+  overflow: hidden;
+}
+
+.column figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.column p {
+  margin: 0;
+}
+
+.column figure img {
+  width: 90%;
+}
+
+.column figcaption {
+  text-align: center;
+  font-size: 0.7em;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 0.7em;
+}
+
+blockquote {
+  font-size: 0.75em;
+  text-align: center;
+}
+
+cite {
+  font-size: 0.5em;
+}
+
+figcaption {
+  padding: 0.7em;
+}

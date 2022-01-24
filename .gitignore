@@ -1,0 +1,20 @@
+# ignore all
+*
+
+# except for the following
+!README.md
+!.gitignore
+!Makefile
+
+!labs/
+!labs/Makefile
+!labs/*.md
+
+!lectures/
+!lectures/Makefile
+!lectures/*.md
+!lectures/assets/
+!lectures/assets/*.css
+
+!lectures/assets/svg/
+!lectures/assets/svg/*.svg
