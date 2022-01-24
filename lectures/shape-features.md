@@ -180,3 +180,25 @@ A **parametric** representation of a shape.
 will solve _some_ of these problems.
 
 :::
+
+## Aside: Fourier Series
+
+A Fourier series is an expansion of a **periodic** function $f(x)$ in terms of an infinite **sum** of sines and cosines.
+
+## Aside: Fourier Series
+
+The Fourier series of a periodic function $f(x)$ of period $T$ is:
+
+$$
+f(x) = \frac{a_0}{2}
+    + \sum_{k=1}^{\infty}
+    \left[ a_k \cos \frac{2 \pi k x}{T}
+    + b_k \sin \frac{2 \pi k x}{T} \right]
+$$
+
+for some set of Fourier coefficients $a_k$ and $b_k$ defined by the integrals:
+
+$$
+a_k = \frac{2}{T} \int_{0}^{T} f(x) \cos \frac{2 \pi k x}{T} \mathrm{d}x,~
+b_k = \frac{2}{T} \int_{0}^{T} f(x) \sin \frac{2 \pi k x}{T} \mathrm{d}x.
+$$
