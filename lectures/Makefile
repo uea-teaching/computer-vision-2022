@@ -10,6 +10,9 @@ all : $(HTM) $(BMR)
 	-V highlightjs-theme=atom-one-dark \
 	-V theme=black \
 	-V transition=none \
+	-V width=1200 \
+	-V height=800 \
+	-V margin=0.1 \
 	-o $@
 
 %.bmr.pdf : %.md
