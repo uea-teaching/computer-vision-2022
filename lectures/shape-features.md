@@ -1,5 +1,5 @@
 ---
-title: Shape Representation
+title: Representing Shapes
 subtitle: Computer Vision CMP-6035B
 author: Dr. David Greenwood
 date: \today
@@ -11,7 +11,15 @@ date: \today
 - Elliptical Fourier Descriptors
 - Point Distribution Models
 
-# Representing Shapes
+# Shapes
+
+Shapes compactly describe objects in images.
+
+::: notes
+motivation for shape representation
+:::
+
+## Representing Shapes
 
 A shape in an image could be represented using the coordinates of edge pixels.
 
@@ -83,9 +91,15 @@ Assume:
 
 ---
 
-$$6 6 7 0 1 1 2 3 5 3 5$$
+![Resulting code: 6 6 7 0 1 1 2 3 5 3 5](assets/svg/chain-code-example-02.svg)
 
-![Resulting code](assets/svg/chain-code-example-02.svg)
+## Chain Codes
+
+$6 6 7 0 1 1 2 3 5 3 5$
+
+::: notes
+this is the code... we had to take care of the starting point
+:::
 
 ## Chain Codes
 
@@ -171,7 +185,7 @@ Chain codes describe a specific instance of a shape.
 - What about boundaries that are not closed?
 - What about locating shapes automatically in images?
 
-# Elliptical Fourier Descriptors (EFDs)
+# Elliptical Fourier Descriptors
 
 A **parametric** representation of a shape.
 
@@ -184,6 +198,12 @@ will solve _some_ of these problems.
 ## Aside: Fourier Series
 
 A Fourier series is an expansion of a **periodic** function $f(x)$ in terms of an infinite **sum** of sines and cosines.
+
+## Aside: Fourier Series
+
+We can approximate non-periodic functions on a specific _interval_.
+
+- by pretending the non-periodic part _is_ periodic **outside** the interval.
 
 ## Aside: Fourier Series
 
