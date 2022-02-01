@@ -366,4 +366,30 @@ $$
 \end{aligned}
 $$
 
+The "trick" is to notice that the integral over the whole period is a summation of the $K$ chain links, and the derivative is a constant: the change in direction over the change in length.
+
 ---
+
+$$
+\begin{aligned}
+\alpha_n &= \frac{2}{T} \int_{0}^{T} x'(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
+&= \frac{2}{T} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\int_{t_{p-1}}^{t_p} \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
+&= \frac{1}{n\pi} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \sin \frac{2 \pi n t_p}{T} - \sin \frac{2 \pi n t_{p-1}}{T} \right)
+\end{aligned}
+$$
+
+---
+
+similarly, we can calculate:
+
+$$
+\beta_n = \frac{1}{n\pi} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \cos\frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
+\end{aligned}
+$$
+
+---
+
+We can also obtain $ x'(t) $ directly from the $ x(t) $ definition:
