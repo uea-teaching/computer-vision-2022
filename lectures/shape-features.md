@@ -207,18 +207,163 @@ We can approximate non-periodic functions on a specific _interval_.
 
 ## Aside: Fourier Series
 
-The Fourier series of a periodic function $f(x)$ of period $T$ is:
+The Fourier series of a periodic function $f(t)$ of period $T$ is:
 
 $$
-f(x) = \frac{a_0}{2}
-    + \sum_{k=1}^{\infty}
-    \left[ a_k \cos \frac{2 \pi k x}{T}
-    + b_k \sin \frac{2 \pi k x}{T} \right]
+f(t) = \frac{a_0}{2}
+    + \sum_{n=1}^{\infty}
+    \left[ a_n \cos \frac{2 \pi n t}{T}
+    + b_n \sin \frac{2 \pi n t}{T} \right]
 $$
 
-for some set of Fourier coefficients $a_k$ and $b_k$ defined by the integrals:
+for some set of Fourier coefficients $a_n$ and $b_n$ defined by the integrals:
 
 $$
-a_k = \frac{2}{T} \int_{0}^{T} f(x) \cos \frac{2 \pi k x}{T} \mathrm{d}x,~
-b_k = \frac{2}{T} \int_{0}^{T} f(x) \sin \frac{2 \pi k x}{T} \mathrm{d}x.
+a_n = \frac{2}{T} \int_{0}^{T} f(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t,~
+b_n = \frac{2}{T} \int_{0}^{T} f(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t.
 $$
+
+::: notes
+I'll point out this is 1D - but we will get into a 2D version later.
+:::
+
+## Aside: Fourier Series
+
+![approximate square wave - Creative Commons](assets/gif/Fourier_series_and_transform.gif){width=80%}
+
+## Aside: Fourier Series
+
+![approximate saw tooth wave - public domain](assets/gif/Fourier_sawtooth.gif)
+
+## Aside: Fourier Series
+
+A function is **even** when:
+
+$$f(x) = f(-x) \text{ for all } x$$
+
+It has _reflective_ symmetry about the **y-axis**, e.g. $x^2$ or $cos(x)$.
+
+We can approximate even functions using only _cosine_ coefficients.
+
+## Aside: Fourier Series
+
+A function is **odd** when:
+
+$$ -f(x) = f(-x) \text{ for all } x$$
+
+It _rotational_ symmetry about the **origin**, e.g. $x^3$ or $sin(x)$.
+
+We can approximate even functions using only _sine_ coefficients.
+
+---
+
+It is useful to know about odd and even functions, but generally we will need to know both coefficients.
+
+## Elliptical Fourier Series
+
+How do we go from Chain encodings to EFDs?
+
+- First, _separate_ chain encodings into x and y projections.
+- Allows us to deal with each dimension independently.
+
+---
+
+The projection of the first $p$ links is the sum of differences between all previous links.
+
+$$x_p = \sum_{i-1}^{p} \Delta x_i, ~ y_p = \sum_{i-1}^{p} \Delta y_i $$
+
+---
+
+- For East, North East, or South East, $\Delta x = 1$.
+- For North and South, $\Delta x = 0$.
+- For West, North West, or South West, $\Delta x = -1$.
+
+---
+
+Analogously, similar for the y-projection.
+
+---
+
+We will consider the **"time"** derivative of the chain.
+
+Time here means the _length_ of the chain.
+
+- The contribution of horizontal and vertical links is one.
+- The contribution of a diagonal link is $\sqrt{2}$.
+
+$$t_p = \sum_{i-1}^{p} \Delta t_i $$
+
+## Elliptical Fourier Series
+
+Calculate the Fourier expansion for the x-projection.
+
+$$
+x(t) = \frac{a_0}{2}
+    + \sum_{n=1}^{\infty}
+    \left[ a_n \cos \frac{2 \pi n t}{T}
+    + b_n \sin \frac{2 \pi n t}{T} \right]
+$$
+
+**NB:** not to infinity, but to some useful number of coefficients.
+
+---
+
+where:
+
+$$\frac{a_0}{2} = \frac{1}{T} \int_{0}^{T} x(t) ~\mathrm{d}t$$
+
+and $T$ is the length of the chain.
+
+---
+
+again, from the definition:
+
+$$
+a_n = \frac{2}{T} \int_{0}^{T} x(t) \cos \frac{2 \pi n t}{T} ~\mathrm{d}t,~
+b_n = \frac{2}{T} \int_{0}^{T} x(t) \sin \frac{2 \pi n t}{T} ~\mathrm{d}t.
+$$
+
+How can we calculate these coefficients?
+
+---
+
+The time derivative of $x$ is periodic with period $T$ and can itself be represented by the Fourier series:
+
+$$
+x'(t) = \sum_{n=1}^{\infty}
+    \left[ \alpha_n \cos \frac{2 \pi n t}{T}
+    + \beta_n \sin \frac{2 \pi n t}{T} \right]
+$$
+
+where:
+
+$$
+\alpha_n = \frac{2}{T} \int_{0}^{T} x'(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t~,
+\beta_n = \frac{2}{T} \int_{0}^{T} x'(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t
+$$
+
+::: notes
+consider the time derivative...
+this is a different function, so different coefficients.
+:::
+
+---
+
+then:
+
+$$
+\alpha_n = \frac{2}{T} \int_{0}^{T} x'(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t
+$$
+
+The difference here is our chain code is a piecewise linear function, so the time derivative is constant.
+
+---
+
+$$
+\begin{aligned}
+\alpha_n &= \frac{2}{T} \int_{0}^{T} x'(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
+&= \frac{2}{T} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}  \int_{t_{p-1}}^{t_p} \cos \frac{2 \pi n t}{T} \mathrm{d}t
+\end{aligned}
+$$
+
+---
