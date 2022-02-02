@@ -9,7 +9,6 @@ date: \today
 
 - Chain codes
 - Elliptical Fourier Descriptors
-- Point Distribution Models
 
 # Shapes
 
@@ -337,8 +336,8 @@ The time derivative of $x$ is periodic with period $T$ and can itself be represe
 
 $$
 x'(t) = \sum_{n=1}^{\infty}
-    \left[ \alpha_n \cos \frac{2 \pi n t}{T}
-    + \beta_n \sin \frac{2 \pi n t}{T} \right]
+    \alpha_n \cos \frac{2 \pi n t}{T} +
+    \beta_n \sin \frac{2 \pi n t}{T}
 $$
 
 where:
@@ -376,6 +375,8 @@ The "trick" is to notice that the integral over the whole period is a summation 
 
 ---
 
+finally, we take the antiderivative of the cosine term:
+
 $$
 \begin{aligned}
 \alpha_n &= \frac{2}{T} \int_{0}^{T} x'(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
@@ -398,3 +399,96 @@ $$
 ---
 
 We can also obtain $x'(t)$ directly from the $x(t)$ definition:
+
+$$
+x(t) = \frac{a_0}{2} +
+    \sum_{n=1}^{\infty}
+    a_n \cos \frac{2 \pi n t}{T} +
+    b_n \sin \frac{2 \pi n t}{T}
+$$
+
+$$
+x'(t) = \sum_{n=1}^{\infty}
+    - \frac{2 \pi n t}{T} a_n \sin \frac{2 \pi n t}{T}
+    + \frac{2 \pi n t}{T} b_n \cos \frac{2 \pi n t}{T}
+$$
+
+---
+
+If we compare both derivations of $x'(t)$:
+
+$$
+x'(t) = \sum_{n=1}^{\infty}
+    \alpha_n \cos \frac{2 \pi n t}{T} +
+    \beta_n \sin \frac{2 \pi n t}{T}
+$$
+
+$$
+x'(t) = \sum_{n=1}^{\infty}
+    - \frac{2 \pi n t}{T} a_n \sin \frac{2 \pi n t}{T}
+    + \frac{2 \pi n t}{T} b_n \cos \frac{2 \pi n t}{T}
+$$
+
+we can equate coefficients from both equations:
+
+$$
+- \frac{2 \pi n t}{T} a_n = \beta_n , ~ \frac{2 \pi n t}{T} b_n = \alpha_n
+$$
+
+---
+
+and solve for $a_n$ and $b_n$, giving us the coefficients for the Fourier series:
+
+$$
+a_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \cos \frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
+$$
+
+$$
+b_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \sin \frac{2 \pi n t_p}{T} - \sin \frac{2 \pi n t_{p-1}}{T} \right)
+$$
+
+---
+
+we can also solve for the $y$ projection in the same way:
+
+$$
+c_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta y_p}{\Delta t_p}
+\left( \cos \frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
+$$
+
+$$
+d_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta y_p}{\Delta t_p}
+\left( \sin \frac{2 \pi n t_p}{T} - \sin \frac{2 \pi n t_{p-1}}{T} \right)
+$$
+
+---
+
+We now know everything we need to calculate the Fourier series coefficients for the $x$ and $y$ projections.
+
+The number of harmonics is $n$.
+The length of the chain is $T$.
+The number of chain links is $K$.
+The length of each link is $t_p$.
+
+## Elliptical Fourier Series
+
+The DC component determines the centre position of the ellipse.
+
+For those interested, the calculation can be found here:
+
+"Kuhl, Giardina;
+Elliptic Fourier Features of a Closed Contour,
+Computer Graphics and Image Processing, 1982"
+
+---
+
+![Elliptical Cat](assets/png/elliptical_cat.png)
+
+## EFDs Summary
+
+- Invariant to translation, scale and rotation.
+- Less sensitive to noise than chain code as we can limit the harmonics.
+
+---
