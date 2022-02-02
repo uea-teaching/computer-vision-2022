@@ -18,3 +18,9 @@
 
 !lectures/assets/svg/
 !lectures/assets/svg/*.svg
+
+!lectures/assets/png/
+!lectures/assets/png/*.png
+
+!lectures/assets/gif/
+!lectures/assets/gif/*.gif
