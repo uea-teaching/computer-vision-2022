@@ -486,9 +486,16 @@ Computer Graphics and Image Processing, 1982"
 
 ![Elliptical Cat](assets/png/elliptical_cat.png)
 
-## EFDs Summary
+# Summary
 
-- Invariant to translation, scale and rotation.
-- Less sensitive to noise than chain code as we can limit the harmonics.
+Chain codes
 
----
+- conceptually simple
+- affected by noise
+- only really translation invariant
+
+Elliptical Fourier Descriptors (EFDs)
+
+- invariant to translation, scale and rotation
+- less affected by noise
+- very compact with fewer harmonics
