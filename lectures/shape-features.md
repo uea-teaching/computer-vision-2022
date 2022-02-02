@@ -263,7 +263,7 @@ It is useful to know about odd and even functions, but generally we will need to
 
 How do we go from Chain encodings to EFDs?
 
-- First, _separate_ chain encodings into x and y projections.
+- First, _separate_ chain encodings into x and y **projections**.
 - Allows us to deal with each dimension independently.
 
 ---
@@ -274,13 +274,19 @@ $$x_p = \sum_{i-1}^{p} \Delta x_i, ~ y_p = \sum_{i-1}^{p} \Delta y_i $$
 
 ---
 
+For the x-projection:
+
 - For East, North East, or South East, $\Delta x = 1$.
 - For North and South, $\Delta x = 0$.
 - For West, North West, or South West, $\Delta x = -1$.
 
 ---
 
-Analogously, similar for the y-projection.
+Similarly, for the y-projection.
+
+- For North, North East, or North West, $\Delta y = 1$.
+- For East and West, $\Delta y = 0$.
+- For South, South East, or South West, $\Delta y = -1$.
 
 ---
 
@@ -387,9 +393,8 @@ similarly, we can calculate:
 $$
 \beta_n = \frac{1}{n\pi} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
 \left( \cos\frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
-\end{aligned}
 $$
 
 ---
 
-We can also obtain $ x'(t) $ directly from the $ x(t) $ definition:
+We can also obtain $x'(t)$ directly from the $x(t)$ definition:
