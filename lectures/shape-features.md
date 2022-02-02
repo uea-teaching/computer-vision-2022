@@ -467,10 +467,10 @@ $$
 
 We now know everything we need to calculate the Fourier series coefficients for the $x$ and $y$ projections.
 
-The number of harmonics is $n$.
-The length of the chain is $T$.
-The number of chain links is $K$.
-The length of each link is $t_p$.
+- The number of harmonics is $n$.
+- The length of the chain is $T$.
+- The number of chain links is $K$.
+- The length of each link is $t_p$.
 
 ## Elliptical Fourier Series
 
