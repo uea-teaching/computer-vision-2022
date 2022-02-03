@@ -247,10 +247,10 @@ Solve for: $a_x$, $a_y$, $t_x$ and $t_y$.
 
 ## Aligning Shapes
 
-This was a simplified version of Procrustes analysis.
+This was a _simplified_ version of Procrustes analysis.
 
 - We did not constrain $M$ to be a rotation matrix.
 
-Matlab has a procrustes function.
+Matlab has a `procrustes` function.
 
 - We will compare the two methods in the lab.
