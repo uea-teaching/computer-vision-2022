@@ -17,6 +17,10 @@ A _generative_ statistical model of the variation of the shape of an object.
 
 ## Point Distribution Models
 
+## Landmarks
+
+![shape landmarks](assets/svg/lips_pdm.svg)
+
 # Procrustes Analysis
 
 Normalise the shapes for _pose_ using generalised Procrustes analysis.
