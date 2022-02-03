@@ -156,8 +156,97 @@ $$
 
 We have four unknown parameters: $a_x$, $a_y$, $t_X$ and $t_y$.
 
-- Differentiate with respect to each of parameter.
+- Differentiate with respect to each parameter.
 - Equate to zero.
 - Solve the resulting system of equations.
 
 ---
+
+differentiate with respect to $t_x$:
+
+$$
+\frac{\delta E}{\delta t_x} = \sum_{i=1}^n w_i
+(2(x_{1i} -  a_x x_{2i} + a_y y_{2i} - t_{x})(-1))
+$$
+
+---
+
+equate to zero:
+
+$$
+\begin{aligned}
+0 &= \sum_{i=1}^n w_i (- x_{1i} +  a_x x_{2i} - a_y y_{2i} + t_{x})
+\end{aligned}
+$$
+
+---
+
+distribute the weighting:
+
+$$
+\begin{aligned}
+0 &= \sum_{i=1}^n w_i (- x_{1i} +  a_x x_{2i} - a_y y_{2i} + t_{x}) \\
+0 &= - \sum_{i=1}^n w_i x_{1i} + a_x \sum_{i=1}^n w_i x_{2i} - a_y \sum_{i=1}^n w_i y_{2i} + t_{x} \sum_{i=1}^n w_i\\
+\therefore \sum_{i=1}^n w_i x_{1i}  &= a_x \sum_{i=1}^n w_i x_{2i} - a_y \sum_{i=1}^n w_i y_{2i} + t_{x} \sum_{i=1}^n w_i
+\end{aligned}
+$$
+
+---
+
+let:
+
+::: columns
+::::: column
+$$\sum_{i=1}^n w_i x_{1i} = X_1$$
+$$\sum_{i=1}^n w_i x_{2i} = X_2$$
+$$\sum_{i=1}^n w_i  = W$$
+:::::
+
+::::: column
+$$\sum_{i=1}^n w_i y_{1i} = Y_1$$
+$$\sum_{i=1}^n w_i y_{2i} = Y_2$$
+:::::
+:::
+
+---
+
+the expression for $\frac{\delta E}{\delta t_x}$ simplifies to:
+
+$$X_1 = a_x X_2 - a_y Y_2 + t_x W$$
+
+---
+
+If we calculate the remaining derivatives, we can develop further substitutions:
+
+$$
+\begin{aligned}
+C_1 &= \sum_{i=1}^n w_i (x_{1i}x_{2i} + y_{1i} y_{2i}) \\
+C_2 &= \sum_{i=1}^n w_i (y_{1i}x_{2i} + x_{1i} y_{2i}) \\
+Z   &= \sum_{i=1}^n w_i (x_{2i}^{2} + y_{2i}^{2})
+\end{aligned}
+$$
+
+---
+
+Finally, we have a system of linear equations:
+
+$$
+\begin{aligned}
+X_1 &= a_x X_2 - a_y Y_2 + t_x W \\
+Y_1 &= a_x Y_2 + a_y X_2 + t_y W \\
+C_1 &= a_x Z   + t_x X_2 + t_y Y_2 \\
+C_2 &= a_y Z   - t_x Y_2 + t_y X_2
+\end{aligned}
+$$
+
+Solve for: $a_x$, $a_y$, $t_x$ and $t_y$.
+
+## Aligning Shapes
+
+This was a simplified version of Procrustes analysis.
+
+- We did not constrain $M$ to be a rotation matrix.
+
+Matlab has a procrustes function.
+
+- We will compare the two methods in the lab.
