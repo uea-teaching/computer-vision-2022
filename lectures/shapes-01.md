@@ -488,7 +488,7 @@ Computer Graphics and Image Processing, 1982"
 
 # Summary
 
-Chain codes
+Chain Codes
 
 - conceptually simple
 - affected by noise
