@@ -24,7 +24,7 @@ Normalise the shapes for _pose_ using generalised Procrustes analysis.
 ## Aligning Shapes
 
 1. Translate each example so it is centred on the mean.
-2. Using the first shape as a reference, rotate and scale each example to align with the reference.
+2. Using the first shape as a reference, transform each example to align with the reference.
 3. Compute the mean of the aligned shapes.
 4. Align the mean with the first shape.
 5. Rotate shapes to match the adjusted mean.
@@ -55,7 +55,6 @@ and translation by:
 
 $$
 \mathbf{t} =
-\begin{pmatrix} x_{2i} \\ y_{2i} \end{pmatrix} +
 \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
 $$
 
