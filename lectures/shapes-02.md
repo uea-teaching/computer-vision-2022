@@ -57,9 +57,10 @@ The consistency in the labelling ensures the elements of these vectors have the 
 ---
 
 Sufficient images must be labelled to capture the expected range of variation.
+s
 
-- The model cannot extrapolate to unknown shapes.
-- The model can interpolate to new instances within the bounds of the data.
+- The model _cannot_ extrapolate to unknown shapes.
+- The model _can_ interpolate to new instances within the bounds of the data.
 
 ---
 
@@ -67,13 +68,13 @@ The coordinates describe the shape in the image coordinate frame.
 
 - The same shape at different locations results in a different shape vector.
 
-# Point Distribution Models
+## Point Distribution Models
 
 Normalise the shapes for _pose_ using generalised **Procrustes** analysis.
 
 # Procrustes Analysis
 
-Procrustes - the son of Poseidon - from Greek mythology.
+Procrustes, the son of Poseidon, from Greek mythology.
 
 ## Procrustes Analysis
 
@@ -208,11 +209,15 @@ E = \sum_{i=1}^n w_i
 \right]
 $$
 
-We have four unknown parameters: $a_x$, $a_y$, $t_X$ and $t_y$.
+We have four unknown parameters: $a_x$, $a_y$, $t_x$ and $t_y$.
 
 - Differentiate with respect to each parameter.
 - Equate to zero.
 - Solve the resulting system of equations.
+
+::: notes
+let's take t_x as an example...
+:::
 
 ---
 
@@ -304,3 +309,22 @@ This was a _simplified_ version of Procrustes analysis.
 Matlab has a `procrustes` function.
 
 - We will compare the two methods in the lab.
+
+# Point Distribution Models
+
+Given the _aligned_ shapes, compute a model that describes the _variation_ in the shape.
+
+## Point Distribution Models
+
+A compact linear model of the variation in the shape can be found using Principal Component Analysis (PCA). The model is of the form:
+
+$$
+\mathbf{x} = \bar{\mathbf{x}}+ \mathbf{P} \mathbf{b}_s
+$$
+
+where:
+
+- $\mathbf{x}$ is a shape
+- $\bar{\mathbf{x}}$ is a _reference_ shape
+- the matrix $\mathbf{P}$ describes the **variation** in shape
+- $\mathbf{b}_s$ are the _parameters_ that represent a specific shape instance.
