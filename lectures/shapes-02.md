@@ -438,7 +438,7 @@ S = \frac{1}{N - 1}  \sum_{i=1}^{N}
 (\mathbf{x}_i - \mathbf{\overline{x}})^T
 $$
 
-Compute the **Eigenvectors** and **Eigenvalues** of the covariance matrix and sort into descending order of Eigenvalue.
+Compute the **Eigenvectors** and **Eigenvalues** of the covariance matrix and sort into descending order by Eigenvalue.
 
 ## PCA {data-auto-animate="true"}
 
@@ -446,9 +446,13 @@ Compute the **Eigenvectors** and **Eigenvalues** of the covariance matrix and so
 - Eigenvalues are the variance explained by each principal component.
 - We typically retain the number of eigenvectors that describe 95% of the total variation in the data.
 
+::: notes
+Eigen vectors, principal components, modes of variation, etc.
+:::
+
 ## PCA {data-auto-animate="true"}
 
-Matlab has implementations of both PCA and of Eigenvector and Eigenvalue decomposition.
+Matlab has implementations of both PCA and Eigenvector decomposition.
 
 ## Point Distribution Models
 
@@ -456,15 +460,16 @@ For modelling shapes, an n-point shape is represented as a 2n element vector:
 
 $$X = \{x_1, x_2, \dots, x_n, y_1, y_2, \dots, y_n \}^{T}$$
 
-- This can be a shape in a 2D image
-- Can be thought of as a single point in a $\mathbb{R}^{2n}$ space.
-
-## Point Distribution Models
-
 PCA can be applied to the $\mathbb{R}^{2n}$ data, rotating the $2n$ axes to
 best fit to the data cloud in $\mathbb{R}^{2n}$ space.
 
 We retain only the meaningful variation - often resulting in considerable compression.
+
+## Point Distribution Models
+
+Ensuring that the shape parameters are within the limits of the original data cloud means that any generated shape is valid.
+
+$$|b_i| \leq 3 \sqrt{\lambda_i}$$
 
 ## Point Distribution Models
 
