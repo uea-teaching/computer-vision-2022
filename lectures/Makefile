@@ -11,7 +11,7 @@ all : $(HTM) $(BMR)
 	-V theme=black \
 	-V transition=none \
 	-V width=1200 \
-	-V height=800 \
+	-V height=900 \
 	-V margin=0.1 \
 	-o $@
 
