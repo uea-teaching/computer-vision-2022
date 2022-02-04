@@ -17,7 +17,24 @@ A _generative_ statistical model of the variation of the shape of an object.
 
 ## Point Distribution Models
 
+If something specific about the shape is known, it should be incorporated into the image search.
+
+A point distribution model (PDM) _learns_ the allowed variation in a **class** of shapes from _examples_.
+
 ## Landmarks
+
+A shape is represented by a set of **landmarks** located along the shape boundary.
+
+- Must be easy to locate from one image to another.
+- Use T-junctions, points of high curvature, corners, etc
+
+## Landmarks
+
+To better represent the overall shape, also evenly space intermediate points along the boundary.
+
+- Note: this initial landmarking is a **manual** process.
+
+---
 
 ![shape landmarks](assets/svg/lips_pdm.svg)
 
