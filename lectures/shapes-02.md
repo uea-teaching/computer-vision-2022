@@ -38,11 +38,44 @@ To better represent the overall shape, also evenly space intermediate points alo
 
 ![shape landmarks](assets/svg/lips_pdm.svg)
 
+## Point Distribution Models
+
+All example shapes must have the **same number** of landmarks and be labelled with the landmarks in the **same order**.
+
+---
+
+Mathematically, a shape is the concatenation of the $x$ and $y$ coordinates of the landmarks.
+
+$$
+\mathbf{x} = \{ x_{11}, x_{12}, ..., y_{11}, y_{12}, ...y_{1n} \}^{T}
+$$
+
+---
+
+The consistency in the labelling ensures the elements of these vectors have the same meaning.
+
+---
+
+Sufficient images must be labelled to capture the expected range of variation.
+
+- The model cannot extrapolate to unknown shapes.
+- The model can interpolate to new instances within the bounds of the data.
+
+---
+
+The coordinates describe the shape in the image coordinate frame.
+
+- The same shape at different locations results in a different shape vector.
+
+# Point Distribution Models
+
+Normalise the shapes for _pose_ using generalised **Procrustes** analysis.
+
 # Procrustes Analysis
 
-Normalise the shapes for _pose_ using generalised Procrustes analysis.
+Procrustes - the son of Poseidon - from Greek mythology.
 
-## Aligning Shapes
+## Procrustes Analysis
 
 1. Translate each example so it is centred on the mean.
 2. Using the first shape as a reference, transform each example to align with the reference.
@@ -53,7 +86,7 @@ Normalise the shapes for _pose_ using generalised Procrustes analysis.
 
 **Convergence** is a _small_ change in the mean.
 
----
+## Aligning Shapes
 
 To align shapes:
 
@@ -67,10 +100,10 @@ $$
 Scale and rotation is defined as:
 
 $$
-M(x, \theta) =
+M(s, \theta) =
 \begin{pmatrix}
-\mathbf{x}_{i} s \cos \theta & - \mathbf{y}_{i} s \sin \theta  \\
-\mathbf{x}_{i} s \sin \theta & + \mathbf{y}_{i} s \cos \theta
+\mathbf{x}_{i} s \cos \theta - \mathbf{y}_{i} s \sin \theta  \\
+\mathbf{x}_{i} s \sin \theta + \mathbf{y}_{i} s \cos \theta
 \end{pmatrix}
 $$
 
