@@ -310,7 +310,7 @@ Matlab has a `procrustes` function.
 
 - We will compare the two methods in the lab.
 
-# Point Distribution Models
+## Point Distribution Models
 
 Given the _aligned_ shapes, compute a model that describes the _variation_ in the shape.
 
@@ -319,12 +319,158 @@ Given the _aligned_ shapes, compute a model that describes the _variation_ in th
 A compact linear model of the variation in the shape can be found using Principal Component Analysis (PCA). The model is of the form:
 
 $$
-\mathbf{x} = \bar{\mathbf{x}}+ \mathbf{P} \mathbf{b}_s
+\mathbf{x} = \overline{\mathbf{x}}+ \mathbf{P} \mathbf{b}_s
 $$
 
 where:
 
 - $\mathbf{x}$ is a shape
-- $\bar{\mathbf{x}}$ is a _reference_ shape
+- $\overline{\mathbf{x}}$ is a _reference_ shape, often the mean shape
 - the matrix $\mathbf{P}$ describes the **variation** in shape
 - $\mathbf{b}_s$ are the _parameters_ that represent a specific shape instance.
+
+# PCA
+
+Principal Component Analysis
+
+## PCA
+
+::: incremental
+
+- Reveals the internal structure of the data in a way that best _explains the variance_ in the data.
+- Used for dimensionality reduction.
+- Reduces data down into its basic components, stripping away any unnecessary parts.
+
+:::
+
+::: notes
+PCA was invented in 1901 by Karl Pearson, as an analogue of the principal axis theorem in mechanics;
+:::
+
+## PCA
+
+- Assume we have 2-dimensional measurements.
+  e.g. the height and foot size for a number of people
+- We expect the measurements to be correlated to some degree.
+  e.g. taller people tend to have larger feet
+- Visualise the data by plotting one measure against the other.
+
+---
+
+![](assets/png/pca/pca_01.png){width=85%}
+
+## PCA
+
+The objective of PCA is to capture as much of the variation in as few dimensions as possible.
+
+Find line of "best fit" through the data, then line of "next best fit" which is _orthogonal_ to the first...
+
+Repeat for however many dimensions your data has
+
+---
+
+![](assets/png/pca/pca_02.png){width=85%}
+
+---
+
+![](assets/png/pca/pca_03.png){width=85%}
+
+## PCA
+
+Since the dimensions must be orthogonal, all we have done is rotate the axes to better align with the data.
+
+In doing this:
+
+- P1 captures most of the meaningful variation
+- P2 seems to capture the noise in the measurements
+
+The original data can be approximated as some distance along P1 from the centre of the data cloud.
+
+---
+
+![](assets/png/pca/pca_04.png){width=85%}
+
+---
+
+![](assets/png/pca/pca_05.png){width=85%}
+
+---
+
+![](assets/png/pca/pca_06.png){width=85%}
+
+---
+
+![](assets/png/pca/pca_07.png){width=85%}
+
+## PCA
+
+To project a data point onto a new axis:
+
+$$\mathbf{b}_{s}  = \mathbf{P}^{T}  (x - \overline x )$$
+
+## PCA
+
+To reconstruct the data point from the features:
+
+$$x \approx \overline x + \mathbf{P} \mathbf{b}_{s}$$
+
+This is only an approximation since the data are truncated to lie on just the principal component(s).
+
+## PCA
+
+Note, in this example we have moved from a 2D problem to 1D so the representation is more compact.
+
+Staying within the limits of the data means new examples can be generated — this is a **generative** model.
+
+## PCA {data-auto-animate="true"}
+
+Algorithm:
+
+Compute the _mean_ of the data and subtract.
+
+$$\mathbf{\overline{x}} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{x}_i$$
+
+Compute the _covariance_ matrix.
+
+$$
+S = \frac{1}{N - 1}  \sum_{i=1}^{N}
+(\mathbf{x}_i - \mathbf{\overline{x}})
+(\mathbf{x}_i - \mathbf{\overline{x}})^T
+$$
+
+Compute the **Eigenvectors** and **Eigenvalues** of the covariance matrix and sort into descending order of Eigenvalue.
+
+## PCA {data-auto-animate="true"}
+
+- Eigenvectors are the principal components.
+- Eigenvalues are the variance explained by each principal component.
+- We typically retain the number of eigenvectors that describe 95% of the total variation in the data.
+
+## PCA {data-auto-animate="true"}
+
+Matlab has implementations of both PCA and of Eigenvector and Eigenvalue decomposition.
+
+## Point Distribution Models
+
+For modelling shapes, an n-point shape is represented as a 2n element vector:
+
+$$X = \{x_1, x_2, \dots, x_n, y_1, y_2, \dots, y_n \}^{T}$$
+
+- This can be a shape in a 2D image
+- Can be thought of as a single point in a $\mathbb{R}^{2n}$ space.
+
+## Point Distribution Models
+
+PCA can be applied to the $\mathbb{R}^{2n}$ data, rotating the $2n$ axes to
+best fit to the data cloud in $\mathbb{R}^{2n}$ space.
+
+We retain only the meaningful variation - often resulting in considerable compression.
+
+## Point Distribution Models
+
+![](assets/png/pca/pca_mouth.png)
+
+::: notes
+Here, the original data is 20 x 2D points.
+We can express the mouth shapes with only 3 values.
+:::
