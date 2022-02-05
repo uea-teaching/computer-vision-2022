@@ -2,7 +2,7 @@
 
 ## Online
 
-I will make the slides available online and I will try to keep this material low-bandwidth.
+I will make the slides available online [here](https://uea-teaching.github.io/computer-vision-2022/) and I will try to keep this material low-bandwidth.
 
 ## Building
 
