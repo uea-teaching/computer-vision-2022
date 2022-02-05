@@ -268,26 +268,26 @@ b_n = \frac{2}{T} \int_{0}^{T} f(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t.
 <p>I’ll point out this is 1D - but we will get into a 2D version later.</p>
 </aside>
 </section>
-<section id="aside-fourier-series-3" class="slide level2">
-<h2>Aside: Fourier Series</h2>
+<section class="slide level2">
+
 <figure>
 <img data-src="assets/gif/Fourier_series_and_transform.gif" style="width:80.0%" alt="approximate square wave - Creative Commons" /><figcaption aria-hidden="true">approximate square wave - Creative Commons</figcaption>
 </figure>
 </section>
-<section id="aside-fourier-series-4" class="slide level2">
-<h2>Aside: Fourier Series</h2>
+<section class="slide level2">
+
 <figure>
-<img data-src="assets/gif/Fourier_sawtooth.gif" alt="approximate saw tooth wave - public domain" /><figcaption aria-hidden="true">approximate saw tooth wave - public domain</figcaption>
+<img data-src="assets/gif/Fourier_sawtooth.gif" style="width:90.0%" alt="approximate saw tooth wave - public domain" /><figcaption aria-hidden="true">approximate saw tooth wave - public domain</figcaption>
 </figure>
 </section>
-<section id="aside-fourier-series-5" class="slide level2">
+<section id="aside-fourier-series-3" class="slide level2">
 <h2>Aside: Fourier Series</h2>
 <p>A function is <strong>even</strong> when:</p>
 <p><span class="math display">\[f(x) = f(-x) \text{ for all } x\]</span></p>
 <p>It has <em>reflective</em> symmetry about the <strong>y-axis</strong>, e.g. <span class="math inline">\(x^2\)</span> or <span class="math inline">\(cos(x)\)</span>.</p>
 <p>We can approximate even functions using only <em>cosine</em> coefficients.</p>
 </section>
-<section id="aside-fourier-series-6" class="slide level2">
+<section id="aside-fourier-series-4" class="slide level2">
 <h2>Aside: Fourier Series</h2>
 <p>A function is <strong>odd</strong> when:</p>
 <p><span class="math display">\[ -f(x) = f(-x) \text{ for all } x\]</span></p>
@@ -302,7 +302,7 @@ b_n = \frac{2}{T} \int_{0}^{T} f(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t.
 <h2>Elliptical Fourier Series</h2>
 <p>How do we go from Chain encodings to EFDs?</p>
 <ul>
-<li>First, <em>separate</em> chain encodings into x and y <strong>projections</strong>.</li>
+<li>First <em>separate</em> chain encodings into x and y <strong>projections</strong>.</li>
 <li>Allows us to deal with each dimension independently.</li>
 </ul>
 </section>
@@ -322,7 +322,7 @@ b_n = \frac{2}{T} \int_{0}^{T} f(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t.
 </section>
 <section class="slide level2">
 
-<p>Similarly, for the y-projection.</p>
+<p>Similarly, for the y-projection:</p>
 <ul>
 <li>For North, North East, or North West, <span class="math inline">\(\Delta y = 1\)</span>.</li>
 <li>For East and West, <span class="math inline">\(\Delta y = 0\)</span>.</li>
@@ -456,7 +456,7 @@ x&#39;(t) = \sum_{n=1}^{\infty}
 </section>
 <section class="slide level2">
 
-<p>and solve for <span class="math inline">\(a_n\)</span> and <span class="math inline">\(b_n\)</span>, giving us the coefficients for the Fourier series:</p>
+<p>and solve for <span class="math inline">\(a_n\)</span> and <span class="math inline">\(b_n\)</span> yielding the x projection coefficients:</p>
 <p><span class="math display">\[
 a_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
 \left( \cos \frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
@@ -497,7 +497,7 @@ d_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta y_p}{\Delta t_p}
 <section class="slide level2">
 
 <figure>
-<img data-src="assets/png/elliptical_cat.png" alt="Elliptical Cat" /><figcaption aria-hidden="true">Elliptical Cat</figcaption>
+<img data-src="assets/png/elliptical_cat.png" style="width:80.0%" alt="Elliptical Cat" /><figcaption aria-hidden="true">Elliptical Cat</figcaption>
 </figure>
 </section></section>
 <section id="summary" class="title-slide slide level1">
@@ -612,7 +612,7 @@ d_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta y_p}{\Delta t_p}
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
         width: 1200,
-        height: 800,
+        height: 900,
         // Factor of the display size that should remain empty around the content
         margin: 0.1,
         // The display mode that will be used to show slides

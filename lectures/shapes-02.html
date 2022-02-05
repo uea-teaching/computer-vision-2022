@@ -51,16 +51,16 @@
 <p>If something specific about the shape is known, it should be incorporated into the image search.</p>
 <p>A point distribution model (PDM) <em>learns</em> the allowed variation in a <strong>class</strong> of shapes from <em>examples</em>.</p>
 </section>
-<section id="landmarks" class="slide level2">
-<h2>Landmarks</h2>
+<section id="landmarks" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Landmarks</h2>
 <p>A shape is represented by a set of <strong>landmarks</strong> located along the shape boundary.</p>
 <ul>
 <li>Must be easy to locate from one image to another.</li>
 <li>Use T-junctions, points of high curvature, corners, etc</li>
 </ul>
 </section>
-<section id="landmarks-1" class="slide level2">
-<h2>Landmarks</h2>
+<section id="landmarks-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Landmarks</h2>
 <p>To better represent the overall shape, also evenly space intermediate points along the boundary.</p>
 </section>
 <section class="slide level2">
@@ -69,8 +69,8 @@
 <img data-src="assets/svg/lips_pdm.svg" alt="shape landmarks" /><figcaption aria-hidden="true">shape landmarks</figcaption>
 </figure>
 </section>
-<section id="point-distribution-models-2" class="slide level2">
-<h2>Point Distribution Models</h2>
+<section id="section" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
 <figure>
 <img data-src="assets/jpg/comb-lm.jpg" alt="landmark images" /><figcaption aria-hidden="true">landmark images</figcaption>
 </figure>
@@ -79,8 +79,8 @@
 <li>Note: this initial landmarking is a <strong>manual</strong> process.</li>
 </ul>
 </section>
-<section class="slide level2">
-
+<section id="section-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
 <figure>
 <img data-src="assets/jpg/comb-lm.jpg" alt="landmark images" /><figcaption aria-hidden="true">landmark images</figcaption>
 </figure>
@@ -98,8 +98,8 @@
 \]</span></p>
 <p>The consistency in the labelling ensures the elements of these vectors have the same meaning.</p>
 </section>
-<section class="slide level2">
-
+<section id="section-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
 <div class="columns">
 <div class="column">
 <p><img data-src="assets/png/multi-lm.png" /></p>
@@ -111,8 +111,8 @@
 </div>
 </div>
 </section>
-<section id="point-distribution-models-3" class="slide level2">
-<h2>Point Distribution Models</h2>
+<section id="section-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
 <div class="columns">
 <div class="column">
 <p><img data-src="assets/png/multi-lm.png" /></p>
@@ -126,8 +126,8 @@
 <h1>Procrustes Analysis</h1>
 <p>Procrustes, the son of Poseidon, from Greek mythology.</p>
 </section>
-<section id="procrustes-analysis-1" class="slide level2">
-<h2>Procrustes Analysis</h2>
+<section id="procrustes-analysis-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Procrustes Analysis</h2>
 <div class="columns">
 <div class="column">
 <figure>
@@ -140,8 +140,8 @@
 </div>
 </div>
 </section>
-<section id="procrustes-analysis-2" class="slide level2">
-<h2>Procrustes Analysis</h2>
+<section id="procrustes-analysis-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Procrustes Analysis</h2>
 <ol type="1">
 <li>Translate each example so it is centred on the mean.</li>
 <li>Using the first shape as a reference, transform each example to align with the reference.</li>
@@ -152,8 +152,8 @@
 </ol>
 <p><strong>Convergence</strong> is a <em>small</em> change in the mean.</p>
 </section>
-<section class="slide level2">
-
+<section id="section-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
 <p>To align shapes:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -172,18 +172,18 @@ M(s, \theta) =
 \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
 \]</span></p>
 </section>
-<section id="aligning-shapes" class="slide level2">
-<h2>Aligning Shapes</h2>
+<section id="aligning-shapes" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Aligning Shapes</h2>
 <p>The parameters for scaling, rotation and translation are unknown.</p>
 <ul>
 <li>They need to be calculated from the data.</li>
 </ul>
 </section>
-<section id="aligning-shapes-1" class="slide level2">
-<h2>Aligning Shapes</h2>
-<p>Define a metric that measures how well two shapes are aligned.</p>
+<section id="aligning-shapes-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Aligning Shapes</h2>
+<p>Define a <strong>metric</strong> that measures how well two shapes are aligned.</p>
 <ul>
-<li>Use sum of squared differences between the shapes.</li>
+<li>Use <em>sum of squared differences</em> between the shapes.</li>
 </ul>
 <p><span class="math display">\[
 E = (x_1 - M(s, \theta) \mathbf{x}_2 - t) ~W (x_1 - M(s, \theta) \mathbf{x}_2 - t)^T
@@ -350,11 +350,11 @@ C_2 &amp;= a_y Z   - t_x Y_2 + t_y X_2
 <li>We will compare the two methods in the lab.</li>
 </ul>
 </section>
-<section id="point-distribution-models-4" class="slide level2">
+<section id="point-distribution-models-2" class="slide level2">
 <h2>Point Distribution Models</h2>
 <p>Given the <em>aligned</em> shapes, compute a model that describes the <em>variation</em> in the shape.</p>
 </section>
-<section id="point-distribution-models-5" class="slide level2">
+<section id="point-distribution-models-3" class="slide level2">
 <h2>Point Distribution Models</h2>
 <p>A compact linear model of the variation in the shape can be found using Principal Component Analysis (PCA). The model is of the form:</p>
 <p><span class="math display">\[
@@ -482,19 +482,19 @@ S = \frac{1}{N - 1}  \sum_{i=1}^{N}
 <h2 data-auto-animate="true">PCA</h2>
 <p>Matlab has implementations of both PCA and Eigenvector decomposition.</p>
 </section>
-<section id="point-distribution-models-6" class="slide level2">
+<section id="point-distribution-models-4" class="slide level2">
 <h2>Point Distribution Models</h2>
 <p>For modelling shapes, an n-point shape is represented as a 2n element vector:</p>
 <p><span class="math display">\[X = \{x_1, x_2, \dots, x_n, y_1, y_2, \dots, y_n \}^{T}\]</span></p>
 <p>PCA can be applied to the <span class="math inline">\(\mathbb{R}^{2n}\)</span> data, rotating the <span class="math inline">\(2n\)</span> axes to best fit to the data cloud in <span class="math inline">\(\mathbb{R}^{2n}\)</span> space.</p>
 <p>We retain only the meaningful variation - often resulting in considerable compression.</p>
 </section>
-<section id="point-distribution-models-7" class="slide level2">
+<section id="point-distribution-models-5" class="slide level2">
 <h2>Point Distribution Models</h2>
 <p>Ensuring that the shape parameters are within the limits of the original data cloud means that any generated shape is valid.</p>
 <p><span class="math display">\[|b_i| \leq 3 \sqrt{\lambda_i}\]</span></p>
 </section>
-<section id="point-distribution-models-8" class="slide level2">
+<section id="point-distribution-models-6" class="slide level2">
 <h2>Point Distribution Models</h2>
 <p><img data-src="assets/gif/pca_mouth_anim.gif" /></p>
 <aside class="notes">
