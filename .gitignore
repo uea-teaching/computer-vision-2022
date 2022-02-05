@@ -14,6 +14,8 @@
 !labs/Makefile
 !labs/*.md
 !labs/*.bib
+!labs/assets/
+!labs/assets/*.jpg
 
 !lectures/
 !lectures/Makefile
