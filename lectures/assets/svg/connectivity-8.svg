@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1200px"
+        height="700px">
+        <defs />
+        <g>
+                <rect x="450" y="200" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="499.5" y="260.5">3</text></g>
+                <rect x="550" y="200" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="599.5" y="260.5">2</text></g>
+                <rect x="650" y="200" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="699.5" y="260.5">1</text></g>
+                <rect x="450" y="300" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="499.5" y="360.5">4</text></g>
+                <rect x="550" y="300" width="100" height="100" fill="none" stroke="#457b9d" pointer-events="all" />
+                <rect x="650" y="300" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="699.5" y="360.5">0</text></g>
+                <rect x="450" y="400" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="499.5" y="460.5">5</text></g>
+                <rect x="550" y="400" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="599.5" y="460.5">6</text></g>
+                <rect x="650" y="400" width="100" height="100" fill="#a8dadc" stroke="#457b9d" pointer-events="all" />
+                <g fill="#1D3557" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="24px"><text
+                                x="699.5" y="460.5">7</text></g>
+        </g>
+</svg>

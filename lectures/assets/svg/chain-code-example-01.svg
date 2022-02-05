@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0"
+  width="1200" height="700" viewBox="0, 0, 1200, 700">
+  <g id="Layer_1">
+    <g>
+      <g>
+        <path d="M250.5,50.5 L350.5,50.5 L350.5,150.5 L250.5,150.5 z" fill="#FFFFFF" />
+        <path d="M250.5,50.5 L350.5,50.5 L350.5,150.5 L250.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M350.5,50.5 L450.5,50.5 L450.5,150.5 L350.5,150.5 z" fill="#FFFFFF" />
+        <path d="M350.5,50.5 L450.5,50.5 L450.5,150.5 L350.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M450.5,50.5 L550.5,50.5 L550.5,150.5 L450.5,150.5 z" fill="#000000" />
+        <path d="M450.5,50.5 L550.5,50.5 L550.5,150.5 L450.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M550.5,50.5 L650.5,50.5 L650.5,150.5 L550.5,150.5 z" fill="#FFFFFF" />
+        <path d="M550.5,50.5 L650.5,50.5 L650.5,150.5 L550.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M650.5,50.5 L750.5,50.5 L750.5,150.5 L650.5,150.5 z" fill="#000000" />
+        <path d="M650.5,50.5 L750.5,50.5 L750.5,150.5 L650.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M750.5,50.5 L850.5,50.5 L850.5,150.5 L750.5,150.5 z" fill="#FFFFFF" />
+        <path d="M750.5,50.5 L850.5,50.5 L850.5,150.5 L750.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M850.5,50.5 L950.5,50.5 L950.5,150.5 L850.5,150.5 z" fill="#FFFFFF" />
+        <path d="M850.5,50.5 L950.5,50.5 L950.5,150.5 L850.5,150.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M250.5,150.5 L350.5,150.5 L350.5,250.5 L250.5,250.5 z" fill="#FFFFFF" />
+        <path d="M250.5,150.5 L350.5,150.5 L350.5,250.5 L250.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M350.5,150.5 L450.5,150.5 L450.5,250.5 L350.5,250.5 z" fill="#000000" />
+        <path d="M350.5,150.5 L450.5,150.5 L450.5,250.5 L350.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M450.5,150.5 L550.5,150.5 L550.5,250.5 L450.5,250.5 z" fill="#FFFFFF" />
+        <path d="M450.5,150.5 L550.5,150.5 L550.5,250.5 L450.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M550.5,150.5 L650.5,150.5 L650.5,250.5 L550.5,250.5 z" fill="#000000" />
+        <path d="M550.5,150.5 L650.5,150.5 L650.5,250.5 L550.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M650.5,150.5 L750.5,150.5 L750.5,250.5 L650.5,250.5 z" fill="#FFFFFF" />
+        <path d="M650.5,150.5 L750.5,150.5 L750.5,250.5 L650.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M750.5,150.5 L850.5,150.5 L850.5,250.5 L750.5,250.5 z" fill="#000000" />
+        <path d="M750.5,150.5 L850.5,150.5 L850.5,250.5 L750.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M850.5,150.5 L950.5,150.5 L950.5,250.5 L850.5,250.5 z" fill="#FFFFFF" />
+        <path d="M850.5,150.5 L950.5,150.5 L950.5,250.5 L850.5,250.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M250.5,250.5 L350.5,250.5 L350.5,350.5 L250.5,350.5 z" fill="#FFFFFF" />
+        <path d="M250.5,250.5 L350.5,250.5 L350.5,350.5 L250.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M350.5,250.5 L450.5,250.5 L450.5,350.5 L350.5,350.5 z" fill="#000000" />
+        <path d="M350.5,250.5 L450.5,250.5 L450.5,350.5 L350.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M450.5,250.5 L550.5,250.5 L550.5,350.5 L450.5,350.5 z" fill="#FFFFFF" />
+        <path d="M450.5,250.5 L550.5,250.5 L550.5,350.5 L450.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M550.5,250.5 L650.5,250.5 L650.5,350.5 L550.5,350.5 z" fill="#FFFFFF" />
+        <path d="M550.5,250.5 L650.5,250.5 L650.5,350.5 L550.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M650.5,250.5 L750.5,250.5 L750.5,350.5 L650.5,350.5 z" fill="#FFFFFF" />
+        <path d="M650.5,250.5 L750.5,250.5 L750.5,350.5 L650.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M750.5,250.5 L850.5,250.5 L850.5,350.5 L750.5,350.5 z" fill="#000000" />
+        <path d="M750.5,250.5 L850.5,250.5 L850.5,350.5 L750.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M850.5,250.5 L950.5,250.5 L950.5,350.5 L850.5,350.5 z" fill="#FFFFFF" />
+        <path d="M850.5,250.5 L950.5,250.5 L950.5,350.5 L850.5,350.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M250.5,350.5 L350.5,350.5 L350.5,450.5 L250.5,450.5 z" fill="#FFFFFF" />
+        <path d="M250.5,350.5 L350.5,350.5 L350.5,450.5 L250.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M350.5,350.5 L450.5,350.5 L450.5,450.5 L350.5,450.5 z" fill="#000000" />
+        <path d="M350.5,350.5 L450.5,350.5 L450.5,450.5 L350.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M450.5,350.5 L550.5,350.5 L550.5,450.5 L450.5,450.5 z" fill="#FFFFFF" />
+        <path d="M450.5,350.5 L550.5,350.5 L550.5,450.5 L450.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M550.5,350.5 L650.5,350.5 L650.5,450.5 L550.5,450.5 z" fill="#FFFFFF" />
+        <path d="M550.5,350.5 L650.5,350.5 L650.5,450.5 L550.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M650.5,350.5 L750.5,350.5 L750.5,450.5 L650.5,450.5 z" fill="#000000" />
+        <path d="M650.5,350.5 L750.5,350.5 L750.5,450.5 L650.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M750.5,350.5 L850.5,350.5 L850.5,450.5 L750.5,450.5 z" fill="#FFFFFF" />
+        <path d="M750.5,350.5 L850.5,350.5 L850.5,450.5 L750.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M850.5,350.5 L950.5,350.5 L950.5,450.5 L850.5,450.5 z" fill="#FFFFFF" />
+        <path d="M850.5,350.5 L950.5,350.5 L950.5,450.5 L850.5,450.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M250.5,450.5 L350.5,450.5 L350.5,550.5 L250.5,550.5 z" fill="#FFFFFF" />
+        <path d="M250.5,450.5 L350.5,450.5 L350.5,550.5 L250.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M350.5,450.5 L450.5,450.5 L450.5,550.5 L350.5,550.5 z" fill="#FFFFFF" />
+        <path d="M350.5,450.5 L450.5,450.5 L450.5,550.5 L350.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M450.5,450.5 L550.5,450.5 L550.5,550.5 L450.5,550.5 z" fill="#000000" />
+        <path d="M450.5,450.5 L550.5,450.5 L550.5,550.5 L450.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M550.5,450.5 L650.5,450.5 L650.5,550.5 L550.5,550.5 z" fill="#000000" />
+        <path d="M550.5,450.5 L650.5,450.5 L650.5,550.5 L550.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M650.5,450.5 L750.5,450.5 L750.5,550.5 L650.5,550.5 z" fill="#FFFFFF" />
+        <path d="M650.5,450.5 L750.5,450.5 L750.5,550.5 L650.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M750.5,450.5 L850.5,450.5 L850.5,550.5 L750.5,550.5 z" fill="#FFFFFF" />
+        <path d="M750.5,450.5 L850.5,450.5 L850.5,550.5 L750.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M850.5,450.5 L950.5,450.5 L950.5,550.5 L850.5,550.5 z" fill="#FFFFFF" />
+        <path d="M850.5,450.5 L950.5,450.5 L950.5,550.5 L850.5,550.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M250.5,550.5 L350.5,550.5 L350.5,650.5 L250.5,650.5 z" fill="#FFFFFF" />
+        <path d="M250.5,550.5 L350.5,550.5 L350.5,650.5 L250.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M350.5,550.5 L450.5,550.5 L450.5,650.5 L350.5,650.5 z" fill="#FFFFFF" />
+        <path d="M350.5,550.5 L450.5,550.5 L450.5,650.5 L350.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M450.5,550.5 L550.5,550.5 L550.5,650.5 L450.5,650.5 z" fill="#FFFFFF" />
+        <path d="M450.5,550.5 L550.5,550.5 L550.5,650.5 L450.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M550.5,550.5 L650.5,550.5 L650.5,650.5 L550.5,650.5 z" fill="#FFFFFF" />
+        <path d="M550.5,550.5 L650.5,550.5 L650.5,650.5 L550.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M650.5,550.5 L750.5,550.5 L750.5,650.5 L650.5,650.5 z" fill="#FFFFFF" />
+        <path d="M650.5,550.5 L750.5,550.5 L750.5,650.5 L650.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M750.5,550.5 L850.5,550.5 L850.5,650.5 L750.5,650.5 z" fill="#FFFFFF" />
+        <path d="M750.5,550.5 L850.5,550.5 L850.5,650.5 L750.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+      <g>
+        <path d="M850.5,550.5 L950.5,550.5 L950.5,650.5 L850.5,650.5 z" fill="#FFFFFF" />
+        <path d="M850.5,550.5 L950.5,550.5 L950.5,650.5 L850.5,650.5 z" fill-opacity="0" stroke="#000000"
+          stroke-width="1" />
+      </g>
+    </g>
+  </g>
+</svg>

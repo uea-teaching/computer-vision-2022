@@ -1,0 +1,30 @@
+# ignore all
+*
+
+# except for the following
+!README.md
+!index.md
+!.gitignore
+
+!labs/
+!labs/*.pdf
+
+!lectures/
+!lectures/*.html
+!lectures/*.pdf
+!lectures/assets/
+!lectures/assets/*.css
+
+!lectures/assets/svg/
+!lectures/assets/svg/*.svg
+
+!lectures/assets/jpg/
+!lectures/assets/jpg/*.jpg
+
+!lectures/assets/png/
+!lectures/assets/png/*.png
+!lectures/assets/png/pca
+!lectures/assets/png/pca/*.png
+
+!lectures/assets/gif/
+!lectures/assets/gif/*.gif
