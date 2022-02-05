@@ -1,6 +1,6 @@
-# Audiovisual Processing CMP-6026A - 2021
+# Computer Vision CMP-6035B - 2022
 
-Learning material for Audiovisual Processing CMP-6026A
+Learning material for Computer Vision CMP-6035B
 
 The only requirement to view the slides is a web browser - with javascript enabled.
 
