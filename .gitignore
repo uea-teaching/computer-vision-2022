@@ -13,10 +13,12 @@
 !labs/
 !labs/Makefile
 !labs/*.md
+!labs/*.bib
 
 !lectures/
 !lectures/Makefile
 !lectures/*.md
+!labs/*.bib
 !lectures/assets/
 !lectures/assets/*.css
 
