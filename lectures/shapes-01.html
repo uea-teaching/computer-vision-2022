@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Representing Shapes</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Representing Shapes</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+</section>
+
+<section id="content" class="title-slide slide level1">
+<h1>Content</h1>
+<ul>
+<li>Chain codes</li>
+<li>Elliptical Fourier Descriptors</li>
+</ul>
+</section>
+
+<section>
+<section id="shapes" class="title-slide slide level1">
+<h1>Shapes</h1>
+<p>Shapes compactly describe objects in images.</p>
+<aside class="notes">
+<p>motivation for shape representation</p>
+</aside>
+</section>
+<section id="representing-shapes" class="slide level2">
+<h2>Representing Shapes</h2>
+<p>A shape in an image could be represented using the coordinates of edge pixels.</p>
+</section>
+<section id="representing-shapes-1" class="slide level2">
+<h2>Representing Shapes</h2>
+<p>Pixel coordinates encode the <em>shape</em> <strong>and</strong> the <em>location</em></p>
+<ul>
+<li>describes the shape in the image coordinate frame</li>
+<li>same shape in two locations appears to be different</li>
+</ul>
+</section>
+<section id="representing-shapes-2" class="slide level2">
+<h2>Representing Shapes</h2>
+<p>We are not interested in where the shape is - just the representation of the shape itself.</p>
+</section></section>
+<section>
+<section id="chain-codes" class="title-slide slide level1">
+<h1>Chain Codes</h1>
+<p>Rather than represent edge pixels in terms of image coordinates, represent each pixel as a <strong>direction</strong>.</p>
+</section>
+<section id="chain-codes-1" class="slide level2">
+<h2>Chain Codes</h2>
+<p>In which direction must we move to stay on the edge?</p>
+<ul>
+<li>Shape is a <em>sequence of directions</em>.</li>
+<li>This is a <strong>chain code</strong>.</li>
+</ul>
+</section>
+<section id="connectivity" class="slide level2">
+<h2>Connectivity</h2>
+<ul>
+<li>Connectivity is the notion of pixels being connected.</li>
+<li>A path must pass through connected pixels.</li>
+<li>In which directions can we travel to stay on the path?</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/connectivity-4-8.svg" alt="4 and 8 connectivity" /><figcaption aria-hidden="true">4 and 8 connectivity</figcaption>
+</figure>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/connectivity-8.svg" alt="We will use 8 connectivity" /><figcaption aria-hidden="true">We will use 8 connectivity</figcaption>
+</figure>
+</section>
+<section id="chain-code-example" class="slide level2">
+<h2>Chain Code Example</h2>
+<figure>
+<img data-src="assets/svg/chain-code-example-01.svg" alt="Encode this image" /><figcaption aria-hidden="true">Encode this image</figcaption>
+</figure>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/svg/chain-code-example-01.svg" alt="Encoding assumptions" /><figcaption aria-hidden="true">Encoding assumptions</figcaption>
+</figure>
+</div><div class="column">
+<p>Assume:</p>
+<ul>
+<li>8 connectivity</li>
+<li>scan anti-clockwise</li>
+<li>start at left-most column, then top-most row</li>
+<li>edge pixels are black</li>
+</ul>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/chain-code-example-02.svg" alt="The edge boundary" /><figcaption aria-hidden="true">The edge boundary</figcaption>
+</figure>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/chain-code-example-02.svg" alt="Resulting code: 6 6 7 0 1 1 2 3 5 3 5" /><figcaption aria-hidden="true">Resulting code: 6 6 7 0 1 1 2 3 5 3 5</figcaption>
+</figure>
+</section>
+<section id="chain-codes-2" class="slide level2">
+<h2>Chain Codes</h2>
+<p><span class="math inline">\(6 6 7 0 1 1 2 3 5 3 5\)</span></p>
+<aside class="notes">
+<p>this is the code… we had to take care of the starting point</p>
+</aside>
+</section>
+<section id="chain-codes-3" class="slide level2">
+<h2>Chain Codes</h2>
+<p>For invariance to starting location:</p>
+<ul>
+<li>compute the chain code and rotate so the code represents the smallest m-digit <strong>shape-number</strong>.</li>
+<li><span class="math inline">\(6 6 7 0 1 1 2 3 5 3 5 \rightarrow 0 1 1 2 3 5 3 5 6 6 7\)</span></li>
+</ul>
+<aside class="notes">
+<p>Chain code is sensitive to the starting point!</p>
+</aside>
+</section>
+<section id="chain-codes-4" class="slide level2">
+<h2>Chain Codes</h2>
+<p>Chain codes <em>are</em> <strong>translation</strong> invariant.</p>
+<ul>
+<li>Adding a constant value to the x, y coordinates does not change the shape.</li>
+</ul>
+<p>Chain codes are <strong>not</strong> scale or rotation invariant.</p>
+</section>
+<section id="chain-code-derivatives" class="slide level2">
+<h2>Chain Code Derivatives</h2>
+<p>Chain codes specify a direction in absolute terms.</p>
+<ul>
+<li>Eg. 0 represents East, regardless of current direction.</li>
+</ul>
+</section>
+<section id="chain-code-derivatives-1" class="slide level2">
+<h2>Chain Code Derivatives</h2>
+<p>This idea can be extended to use a relative encoding.</p>
+<ul>
+<li><p>Represent the next direction as the number of turns required to stay on the shape boundary.</p></li>
+<li><p>In this case, 0 corresponds to straightforward.</p></li>
+<li><p>This is a chain code <em>derivative</em> or differential chain code.</p></li>
+</ul>
+</section>
+<section id="chain-code-derivatives-2" class="slide level2">
+<h2>Chain Code Derivatives</h2>
+<p>To compute the chain code derivative:</p>
+<ul>
+<li>Compute the difference between chain code elements.</li>
+<li>Take the result <em>modulo</em> <span class="math inline">\(n\)</span> (the connectivity).</li>
+</ul>
+</section>
+<section id="chain-code-derivatives-3" class="slide level2">
+<h2>Chain Code Derivatives</h2>
+<p>Need to be careful with the starting element.</p>
+<ul>
+<li>Common assumption is begin straightforward.</li>
+<li>Chain code wraps around, so starting code is relative to the last.</li>
+</ul>
+</section>
+<section id="chain-code-derivatives-4" class="slide level2">
+<h2>Chain Code Derivatives</h2>
+<ul>
+<li>Chain Code: <span class="math inline">\(6 6 7 0 1 1 2 3 5 3 5\)</span></li>
+<li>Derivative: <span class="math inline">\(1 0 1 1 1 0 1 1 2 6 2\)</span></li>
+</ul>
+<p>NB: pay attention to modulus of negative numbers.</p>
+<aside class="notes">
+<p>from our previous example.</p>
+</aside>
+</section>
+<section id="chain-code-derivatives-5" class="slide level2">
+<h2>Chain Code Derivatives</h2>
+<p>Chain code derivative provides <em>rotational</em> invariance for rotations of <strong>90 degrees</strong>.</p>
+</section>
+<section id="chain-code-advantages" class="slide level2">
+<h2>Chain Code Advantages</h2>
+<ul>
+<li>compact representation - only boundary is stored</li>
+<li>invariant to translation</li>
+<li>easy to compute shape related features, e.g. area, perimeter, centroid</li>
+</ul>
+</section>
+<section id="chain-code-disadvantages" class="slide level2">
+<h2>Chain Code Disadvantages</h2>
+<ul>
+<li>No true rotational invariance and no scale invariance.</li>
+<li>Extremely sensitive to noise, sub-sampling loses definition.</li>
+<li>Cannot have sub-pixel accurate descriptions, only 4 or 8-connectivity.</li>
+</ul>
+</section>
+<section id="chain-code-disadvantages-1" class="slide level2">
+<h2>Chain Code Disadvantages</h2>
+<p>Chain codes describe a specific instance of a shape.</p>
+<ul>
+<li>What about a class of non-rigid shapes?</li>
+<li>What about boundaries that are not closed?</li>
+<li>What about locating shapes automatically in images?</li>
+</ul>
+</section></section>
+<section>
+<section id="elliptical-fourier-descriptors" class="title-slide slide level1">
+<h1>Elliptical Fourier Descriptors</h1>
+<p>A <strong>parametric</strong> representation of a shape.</p>
+<aside class="notes">
+<p>will solve <em>some</em> of these problems.</p>
+</aside>
+</section>
+<section id="aside-fourier-series" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<p>A Fourier series is an expansion of a <strong>periodic</strong> function <span class="math inline">\(f(x)\)</span> in terms of an infinite <strong>sum</strong> of sines and cosines.</p>
+</section>
+<section id="aside-fourier-series-1" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<p>We can approximate non-periodic functions on a specific <em>interval</em>.</p>
+<ul>
+<li>by pretending the non-periodic part <em>is</em> periodic <strong>outside</strong> the interval.</li>
+</ul>
+</section>
+<section id="aside-fourier-series-2" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<p>The Fourier series of a periodic function <span class="math inline">\(f(t)\)</span> of period <span class="math inline">\(T\)</span> is:</p>
+<p><span class="math display">\[
+f(t) = \frac{a_0}{2}
+    + \sum_{n=1}^{\infty}
+    \left[ a_n \cos \frac{2 \pi n t}{T}
+    + b_n \sin \frac{2 \pi n t}{T} \right]
+\]</span></p>
+<p>for some set of Fourier coefficients <span class="math inline">\(a_n\)</span> and <span class="math inline">\(b_n\)</span> defined by the integrals:</p>
+<p><span class="math display">\[
+a_n = \frac{2}{T} \int_{0}^{T} f(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t,~
+b_n = \frac{2}{T} \int_{0}^{T} f(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t.
+\]</span></p>
+<aside class="notes">
+<p>I’ll point out this is 1D - but we will get into a 2D version later.</p>
+</aside>
+</section>
+<section id="aside-fourier-series-3" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<figure>
+<img data-src="assets/gif/Fourier_series_and_transform.gif" style="width:80.0%" alt="approximate square wave - Creative Commons" /><figcaption aria-hidden="true">approximate square wave - Creative Commons</figcaption>
+</figure>
+</section>
+<section id="aside-fourier-series-4" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<figure>
+<img data-src="assets/gif/Fourier_sawtooth.gif" alt="approximate saw tooth wave - public domain" /><figcaption aria-hidden="true">approximate saw tooth wave - public domain</figcaption>
+</figure>
+</section>
+<section id="aside-fourier-series-5" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<p>A function is <strong>even</strong> when:</p>
+<p><span class="math display">\[f(x) = f(-x) \text{ for all } x\]</span></p>
+<p>It has <em>reflective</em> symmetry about the <strong>y-axis</strong>, e.g. <span class="math inline">\(x^2\)</span> or <span class="math inline">\(cos(x)\)</span>.</p>
+<p>We can approximate even functions using only <em>cosine</em> coefficients.</p>
+</section>
+<section id="aside-fourier-series-6" class="slide level2">
+<h2>Aside: Fourier Series</h2>
+<p>A function is <strong>odd</strong> when:</p>
+<p><span class="math display">\[ -f(x) = f(-x) \text{ for all } x\]</span></p>
+<p>It <em>rotational</em> symmetry about the <strong>origin</strong>, e.g. <span class="math inline">\(x^3\)</span> or <span class="math inline">\(sin(x)\)</span>.</p>
+<p>We can approximate even functions using only <em>sine</em> coefficients.</p>
+</section>
+<section class="slide level2">
+
+<p>It is useful to know about odd and even functions, but generally we will need to know both coefficients.</p>
+</section>
+<section id="elliptical-fourier-series" class="slide level2">
+<h2>Elliptical Fourier Series</h2>
+<p>How do we go from Chain encodings to EFDs?</p>
+<ul>
+<li>First, <em>separate</em> chain encodings into x and y <strong>projections</strong>.</li>
+<li>Allows us to deal with each dimension independently.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>The projection of the first <span class="math inline">\(p\)</span> links is the sum of differences between all previous links.</p>
+<p><span class="math display">\[x_p = \sum_{i-1}^{p} \Delta x_i, ~ y_p = \sum_{i-1}^{p} \Delta y_i \]</span></p>
+</section>
+<section class="slide level2">
+
+<p>For the x-projection:</p>
+<ul>
+<li>For East, North East, or South East, <span class="math inline">\(\Delta x = 1\)</span>.</li>
+<li>For North and South, <span class="math inline">\(\Delta x = 0\)</span>.</li>
+<li>For West, North West, or South West, <span class="math inline">\(\Delta x = -1\)</span>.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Similarly, for the y-projection.</p>
+<ul>
+<li>For North, North East, or North West, <span class="math inline">\(\Delta y = 1\)</span>.</li>
+<li>For East and West, <span class="math inline">\(\Delta y = 0\)</span>.</li>
+<li>For South, South East, or South West, <span class="math inline">\(\Delta y = -1\)</span>.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>We will consider the <strong>“time”</strong> derivative of the chain.</p>
+<p>Time here means the <em>length</em> of the chain.</p>
+<ul>
+<li>The contribution of horizontal and vertical links is one.</li>
+<li>The contribution of a diagonal link is <span class="math inline">\(\sqrt{2}\)</span>.</li>
+</ul>
+<p><span class="math display">\[t_p = \sum_{i-1}^{p} \Delta t_i \]</span></p>
+</section>
+<section id="elliptical-fourier-series-1" class="slide level2">
+<h2>Elliptical Fourier Series</h2>
+<p>Calculate the Fourier expansion for the x-projection.</p>
+<p><span class="math display">\[
+x(t) = \frac{a_0}{2}
+    + \sum_{n=1}^{\infty}
+    \left[ a_n \cos \frac{2 \pi n t}{T}
+    + b_n \sin \frac{2 \pi n t}{T} \right]
+\]</span></p>
+<p><strong>NB:</strong> not to infinity, but to some useful number of coefficients.</p>
+</section>
+<section class="slide level2">
+
+<p>where:</p>
+<p><span class="math display">\[\frac{a_0}{2} = \frac{1}{T} \int_{0}^{T} x(t) ~\mathrm{d}t\]</span></p>
+<p>and <span class="math inline">\(T\)</span> is the length of the chain.</p>
+</section>
+<section class="slide level2">
+
+<p>again, from the definition:</p>
+<p><span class="math display">\[
+a_n = \frac{2}{T} \int_{0}^{T} x(t) \cos \frac{2 \pi n t}{T} ~\mathrm{d}t,~
+b_n = \frac{2}{T} \int_{0}^{T} x(t) \sin \frac{2 \pi n t}{T} ~\mathrm{d}t.
+\]</span></p>
+<p>How can we calculate these coefficients?</p>
+</section>
+<section class="slide level2">
+
+<p>The time derivative of <span class="math inline">\(x\)</span> is periodic with period <span class="math inline">\(T\)</span> and can itself be represented by the Fourier series:</p>
+<p><span class="math display">\[
+x&#39;(t) = \sum_{n=1}^{\infty}
+    \alpha_n \cos \frac{2 \pi n t}{T} +
+    \beta_n \sin \frac{2 \pi n t}{T}
+\]</span></p>
+<p>where:</p>
+<p><span class="math display">\[
+\alpha_n = \frac{2}{T} \int_{0}^{T} x&#39;(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t~,
+\beta_n = \frac{2}{T} \int_{0}^{T} x&#39;(t) \sin \frac{2 \pi n t}{T} \mathrm{d}t
+\]</span></p>
+<aside class="notes">
+<p>consider the time derivative… this is a different function, so different coefficients.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>then:</p>
+<p><span class="math display">\[
+\alpha_n = \frac{2}{T} \int_{0}^{T} x&#39;(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t
+\]</span></p>
+<p>The difference here is our chain code is a piecewise linear function, so the time derivative is constant.</p>
+</section>
+<section class="slide level2">
+
+<p><span class="math display">\[
+\begin{aligned}
+\alpha_n &amp;= \frac{2}{T} \int_{0}^{T} x&#39;(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
+&amp;= \frac{2}{T} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}  \int_{t_{p-1}}^{t_p} \cos \frac{2 \pi n t}{T} \mathrm{d}t
+\end{aligned}
+\]</span></p>
+<p>The “trick” is to notice that the integral over the whole period is a summation of the <span class="math inline">\(K\)</span> chain links, and the derivative is a constant: the change in direction over the change in length.</p>
+</section>
+<section class="slide level2">
+
+<p>finally, we take the antiderivative of the cosine term:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\alpha_n &amp;= \frac{2}{T} \int_{0}^{T} x&#39;(t) \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
+&amp;= \frac{2}{T} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\int_{t_{p-1}}^{t_p} \cos \frac{2 \pi n t}{T} \mathrm{d}t \\
+&amp;= \frac{1}{n\pi} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \sin \frac{2 \pi n t_p}{T} - \sin \frac{2 \pi n t_{p-1}}{T} \right)
+\end{aligned}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>similarly, we can calculate:</p>
+<p><span class="math display">\[
+\beta_n = \frac{1}{n\pi} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \cos\frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>We can also obtain <span class="math inline">\(x&#39;(t)\)</span> directly from the <span class="math inline">\(x(t)\)</span> definition:</p>
+<p><span class="math display">\[
+x(t) = \frac{a_0}{2} +
+    \sum_{n=1}^{\infty}
+    a_n \cos \frac{2 \pi n t}{T} +
+    b_n \sin \frac{2 \pi n t}{T}
+\]</span></p>
+<p><span class="math display">\[
+x&#39;(t) = \sum_{n=1}^{\infty}
+    - \frac{2 \pi n t}{T} a_n \sin \frac{2 \pi n t}{T}
+    + \frac{2 \pi n t}{T} b_n \cos \frac{2 \pi n t}{T}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>If we compare both derivations of <span class="math inline">\(x&#39;(t)\)</span>:</p>
+<p><span class="math display">\[
+x&#39;(t) = \sum_{n=1}^{\infty}
+    \alpha_n \cos \frac{2 \pi n t}{T} +
+    \beta_n \sin \frac{2 \pi n t}{T}
+\]</span></p>
+<p><span class="math display">\[
+x&#39;(t) = \sum_{n=1}^{\infty}
+    - \frac{2 \pi n t}{T} a_n \sin \frac{2 \pi n t}{T}
+    + \frac{2 \pi n t}{T} b_n \cos \frac{2 \pi n t}{T}
+\]</span></p>
+<p>we can equate coefficients from both equations:</p>
+<p><span class="math display">\[
+- \frac{2 \pi n t}{T} a_n = \beta_n , ~ \frac{2 \pi n t}{T} b_n = \alpha_n
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>and solve for <span class="math inline">\(a_n\)</span> and <span class="math inline">\(b_n\)</span>, giving us the coefficients for the Fourier series:</p>
+<p><span class="math display">\[
+a_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \cos \frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
+\]</span></p>
+<p><span class="math display">\[
+b_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
+\left( \sin \frac{2 \pi n t_p}{T} - \sin \frac{2 \pi n t_{p-1}}{T} \right)
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>we can also solve for the <span class="math inline">\(y\)</span> projection in the same way:</p>
+<p><span class="math display">\[
+c_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta y_p}{\Delta t_p}
+\left( \cos \frac{2 \pi n t_p}{T} - \cos \frac{2 \pi n t_{p-1}}{T} \right)
+\]</span></p>
+<p><span class="math display">\[
+d_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta y_p}{\Delta t_p}
+\left( \sin \frac{2 \pi n t_p}{T} - \sin \frac{2 \pi n t_{p-1}}{T} \right)
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>We now know everything we need to calculate the Fourier series coefficients for the <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> projections.</p>
+<ul>
+<li>The number of harmonics is <span class="math inline">\(n\)</span>.</li>
+<li>The length of the chain is <span class="math inline">\(T\)</span>.</li>
+<li>The number of chain links is <span class="math inline">\(K\)</span>.</li>
+<li>The length of each link is <span class="math inline">\(t_p\)</span>.</li>
+</ul>
+</section>
+<section id="elliptical-fourier-series-2" class="slide level2">
+<h2>Elliptical Fourier Series</h2>
+<p>The DC component determines the centre position of the ellipse.</p>
+<p>For those interested, the calculation can be found here:</p>
+<p>“Kuhl, Giardina; Elliptic Fourier Features of a Closed Contour, Computer Graphics and Image Processing, 1982”</p>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/elliptical_cat.png" alt="Elliptical Cat" /><figcaption aria-hidden="true">Elliptical Cat</figcaption>
+</figure>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<p>Chain Codes</p>
+<ul>
+<li>conceptually simple</li>
+<li>affected by noise</li>
+<li>only really translation invariant</li>
+</ul>
+<p>Elliptical Fourier Descriptors (EFDs)</p>
+<ul>
+<li>invariant to translation, scale and rotation</li>
+<li>less affected by noise</li>
+<li>very compact with fewer harmonics</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 800,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>

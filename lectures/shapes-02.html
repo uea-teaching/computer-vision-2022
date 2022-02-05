@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Point Distribution Models</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Point Distribution Models</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+</section>
+
+<section id="content" class="title-slide slide level1">
+<h1>Content</h1>
+<ul>
+<li>Point Distribution Models</li>
+<li>Procrustes Analysis</li>
+<li>Principal Component Analysis</li>
+</ul>
+</section>
+
+<section>
+<section id="point-distribution-models" class="title-slide slide level1">
+<h1>Point Distribution Models</h1>
+<p>A <em>generative</em> statistical model of the variation of the shape of an object.</p>
+</section>
+<section id="point-distribution-models-1" class="slide level2">
+<h2>Point Distribution Models</h2>
+<p>If something specific about the shape is known, it should be incorporated into the image search.</p>
+<p>A point distribution model (PDM) <em>learns</em> the allowed variation in a <strong>class</strong> of shapes from <em>examples</em>.</p>
+</section>
+<section id="landmarks" class="slide level2">
+<h2>Landmarks</h2>
+<p>A shape is represented by a set of <strong>landmarks</strong> located along the shape boundary.</p>
+<ul>
+<li>Must be easy to locate from one image to another.</li>
+<li>Use T-junctions, points of high curvature, corners, etc</li>
+</ul>
+</section>
+<section id="landmarks-1" class="slide level2">
+<h2>Landmarks</h2>
+<p>To better represent the overall shape, also evenly space intermediate points along the boundary.</p>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/lips_pdm.svg" alt="shape landmarks" /><figcaption aria-hidden="true">shape landmarks</figcaption>
+</figure>
+</section>
+<section id="point-distribution-models-2" class="slide level2">
+<h2>Point Distribution Models</h2>
+<figure>
+<img data-src="assets/jpg/comb-lm.jpg" alt="landmark images" /><figcaption aria-hidden="true">landmark images</figcaption>
+</figure>
+<p>All example shapes must have the <strong>same number</strong> of landmarks and be labelled with the landmarks in the <strong>same order</strong>.</p>
+<ul>
+<li>Note: this initial landmarking is a <strong>manual</strong> process.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/jpg/comb-lm.jpg" alt="landmark images" /><figcaption aria-hidden="true">landmark images</figcaption>
+</figure>
+<p>Sufficient images must be labelled to capture the expected range of variation.</p>
+<ul>
+<li>The model <em>cannot</em> extrapolate to unknown shapes.</li>
+<li>The model <em>can</em> interpolate to new instances within the bounds of the data.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Mathematically, a shape is the concatenation of the <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> coordinates of the landmarks.</p>
+<p><span class="math display">\[
+\mathbf{x} = \{ x_{11}, x_{12}, ..., y_{11}, y_{12}, ...y_{1n} \}^{T}
+\]</span></p>
+<p>The consistency in the labelling ensures the elements of these vectors have the same meaning.</p>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+<p><img data-src="assets/png/multi-lm.png" /></p>
+</div><div class="column">
+<p>The coordinates describe the shape in the image coordinate frame.</p>
+<ul>
+<li>The same shape at different locations results in a different shape vector.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="point-distribution-models-3" class="slide level2">
+<h2>Point Distribution Models</h2>
+<div class="columns">
+<div class="column">
+<p><img data-src="assets/png/multi-lm.png" /></p>
+</div><div class="column">
+<p>We need to normalise shapes for translation, scale and rotation. This can be done using generalised <strong>Procrustes analysis</strong>.</p>
+</div>
+</div>
+</section></section>
+<section>
+<section id="procrustes-analysis" class="title-slide slide level1">
+<h1>Procrustes Analysis</h1>
+<p>Procrustes, the son of Poseidon, from Greek mythology.</p>
+</section>
+<section id="procrustes-analysis-1" class="slide level2">
+<h2>Procrustes Analysis</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/multi-lm.png" alt="captured landmarks" /><figcaption aria-hidden="true">captured landmarks</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/multi-lm-aligned.png" alt="aligned landmarks" /><figcaption aria-hidden="true">aligned landmarks</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="procrustes-analysis-2" class="slide level2">
+<h2>Procrustes Analysis</h2>
+<ol type="1">
+<li>Translate each example so it is centred on the mean.</li>
+<li>Using the first shape as a reference, transform each example to align with the reference.</li>
+<li>Compute the mean of the aligned shapes.</li>
+<li>Align the mean with the first shape.</li>
+<li>Transform shapes to match the adjusted mean.</li>
+<li>If not converged, go to step 3.</li>
+</ol>
+<p><strong>Convergence</strong> is a <em>small</em> change in the mean.</p>
+</section>
+<section class="slide level2">
+
+<p>To align shapes:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbf{x}_{1} &amp;= \{ x_{11}, x_{12}, ..., y_{11}, y_{12}, ...y_{1n} \}^{T} \\
+\mathbf{x}_{2} &amp;= \{ x_{21}, x_{22}, ..., y_{21}, y_{22}, ...y_{2n} \}^{T}
+\end{aligned}
+\]</span></p>
+<p>Scale and rotation is defined by <span class="math inline">\(M\)</span>, and translation by <span class="math inline">\(\mathbf{t}\)</span>:</p>
+<p><span class="math display">\[
+M(s, \theta) =
+\begin{pmatrix}
+\mathbf{x}_{2i} s \cos \theta - \mathbf{y}_{2i} s \sin \theta  \\
+\mathbf{x}_{2i} s \sin \theta + \mathbf{y}_{2i} s \cos \theta
+\end{pmatrix}~
+~\mathbf{t} =
+\begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
+\]</span></p>
+</section>
+<section id="aligning-shapes" class="slide level2">
+<h2>Aligning Shapes</h2>
+<p>The parameters for scaling, rotation and translation are unknown.</p>
+<ul>
+<li>They need to be calculated from the data.</li>
+</ul>
+</section>
+<section id="aligning-shapes-1" class="slide level2">
+<h2>Aligning Shapes</h2>
+<p>Define a metric that measures how well two shapes are aligned.</p>
+<ul>
+<li>Use sum of squared differences between the shapes.</li>
+</ul>
+<p><span class="math display">\[
+E = (x_1 - M(s, \theta) \mathbf{x}_2 - t) ~W (x_1 - M(s, \theta) \mathbf{x}_2 - t)^T
+\]</span></p>
+<p>where <span class="math inline">\(W\)</span> is a diagonal weighting matrix.</p>
+</section>
+<section class="slide level2">
+
+<p>We can alternatively write the equation as:</p>
+<p><span class="math display">\[
+\begin{split}
+E = \sum_{i=1}^n &amp; w_i
+\left[
+    \begin{pmatrix} x_{1i} \\ y_{1i} \end{pmatrix} -
+    \begin{pmatrix}
+        x_{2i} s \cos \theta -  y_{2i} s \sin \theta \\
+        x_{2i} s \sin \theta +  y_{2i} s \cos \theta
+    \end{pmatrix} -
+    \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
+\right] \\
+&amp; \left[
+    \begin{pmatrix} x_{1i} \\ y_{1i} \end{pmatrix} -
+    \begin{pmatrix}
+        x_{2i} s \cos \theta -  y_{2i} s \sin \theta \\
+        x_{2i} s \sin \theta +  y_{2i} s \cos \theta
+    \end{pmatrix} -
+    \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
+\right]
+\end{split}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>Let <span class="math inline">\(a_x = s \cos \theta~\)</span> and <span class="math inline">\(~a_y = s \sin \theta\)</span> and substitute:</p>
+<p><span class="math display">\[
+\begin{split}
+E =  \sum_{i=1}^n &amp; w_i
+\left[
+    \begin{pmatrix} x_{1i} \\ y_{1i} \end{pmatrix} -
+    \begin{pmatrix}
+        x_{2i} a_x -  y_{2i} a_y \\
+        x_{2i} a_y +  y_{2i} a_x
+    \end{pmatrix} -
+    \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
+\right] \\
+&amp;\left[
+    \begin{pmatrix} x_{1i} \\ y_{1i} \end{pmatrix} -
+    \begin{pmatrix}
+        x_{2i} a_x -  y_{2i} a_y \\
+        x_{2i} a_y +  y_{2i} a_x
+    \end{pmatrix} -
+    \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
+\right]
+\end{split}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>then multiply:</p>
+<p><span class="math display">\[
+E = \sum_{i=1}^n w_i
+\left[
+    ( x_{1i} -  a_x x_{2i} + a_y y_{2i} - t_{x} )^2 +
+    ( y_{1i} -  a_y x_{2i} - a_x y_{2i} - t_{y} )^2
+\right]
+\]</span></p>
+<p>This is the <em>cost function</em> we must <strong>minimise</strong>.</p>
+</section>
+<section class="slide level2">
+
+<p><span class="math display">\[
+E = \sum_{i=1}^n w_i
+\left[
+    ( x_{1i} -  a_x x_{2i} + a_y y_{2i} - t_{x} )^2 +
+    ( y_{1i} -  a_y x_{2i} - a_x y_{2i} - t_{y} )^2
+\right]
+\]</span></p>
+<p>We have four unknown parameters: <span class="math inline">\(a_x\)</span>, <span class="math inline">\(a_y\)</span>, <span class="math inline">\(t_x\)</span> and <span class="math inline">\(t_y\)</span>.</p>
+<ul>
+<li>Differentiate with respect to each parameter.</li>
+<li>Equate to zero.</li>
+<li>Solve the resulting system of equations.</li>
+</ul>
+<aside class="notes">
+<p>let’s take t_x as an example…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>differentiate with respect to <span class="math inline">\(t_x\)</span>:</p>
+<p><span class="math display">\[
+\frac{\delta E}{\delta t_x} = \sum_{i=1}^n w_i
+(2(x_{1i} -  a_x x_{2i} + a_y y_{2i} - t_{x})(-1))
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>equate to zero:</p>
+<p><span class="math display">\[
+\begin{aligned}
+0 &amp;= \sum_{i=1}^n w_i (- x_{1i} +  a_x x_{2i} - a_y y_{2i} + t_{x})
+\end{aligned}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>distribute the weighting:</p>
+<p><span class="math display">\[
+\begin{aligned}
+0 &amp;= \sum_{i=1}^n w_i (- x_{1i} +  a_x x_{2i} - a_y y_{2i} + t_{x}) \\
+0 &amp;= - \sum_{i=1}^n w_i x_{1i} + a_x \sum_{i=1}^n w_i x_{2i} - a_y \sum_{i=1}^n w_i y_{2i} + t_{x} \sum_{i=1}^n w_i\\
+\therefore \sum_{i=1}^n w_i x_{1i}  &amp;= a_x \sum_{i=1}^n w_i x_{2i} - a_y \sum_{i=1}^n w_i y_{2i} + t_{x} \sum_{i=1}^n w_i
+\end{aligned}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>let:</p>
+<div class="columns">
+<div class="column">
+<p><span class="math display">\[\sum_{i=1}^n w_i x_{1i} = X_1\]</span> <span class="math display">\[\sum_{i=1}^n w_i x_{2i} = X_2\]</span> <span class="math display">\[\sum_{i=1}^n w_i  = W\]</span></p>
+</div><div class="column">
+<p><span class="math display">\[\sum_{i=1}^n w_i y_{1i} = Y_1\]</span> <span class="math display">\[\sum_{i=1}^n w_i y_{2i} = Y_2\]</span></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>the expression from <span class="math inline">\(\frac{\delta E}{\delta t_x}\)</span> simplifies to:</p>
+<p><span class="math display">\[X_1 = a_x X_2 - a_y Y_2 + t_x W\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>If we calculate the remaining derivatives, we can develop further substitutions:</p>
+<p><span class="math display">\[
+\begin{aligned}
+C_1 &amp;= \sum_{i=1}^n w_i (x_{1i}x_{2i} + y_{1i} y_{2i}) \\
+C_2 &amp;= \sum_{i=1}^n w_i (y_{1i}x_{2i} + x_{1i} y_{2i}) \\
+Z   &amp;= \sum_{i=1}^n w_i (x_{2i}^{2} + y_{2i}^{2})
+\end{aligned}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>Finally, we have a system of linear equations:</p>
+<p><span class="math display">\[
+\begin{aligned}
+X_1 &amp;= a_x X_2 - a_y Y_2 + t_x W \\
+Y_1 &amp;= a_x Y_2 + a_y X_2 + t_y W \\
+C_1 &amp;= a_x Z   + t_x X_2 + t_y Y_2 \\
+C_2 &amp;= a_y Z   - t_x Y_2 + t_y X_2
+\end{aligned}
+\]</span></p>
+<p>Solve for: <span class="math inline">\(a_x\)</span>, <span class="math inline">\(a_y\)</span>, <span class="math inline">\(t_x\)</span> and <span class="math inline">\(t_y\)</span>.</p>
+</section>
+<section id="aligning-shapes-2" class="slide level2">
+<h2>Aligning Shapes</h2>
+<p>This was a <em>simplified</em> version of Procrustes analysis.</p>
+<ul>
+<li>We did not constrain <span class="math inline">\(M\)</span> to be a rotation matrix.</li>
+</ul>
+<p>Matlab has a <code>procrustes</code> function.</p>
+<ul>
+<li>We will compare the two methods in the lab.</li>
+</ul>
+</section>
+<section id="point-distribution-models-4" class="slide level2">
+<h2>Point Distribution Models</h2>
+<p>Given the <em>aligned</em> shapes, compute a model that describes the <em>variation</em> in the shape.</p>
+</section>
+<section id="point-distribution-models-5" class="slide level2">
+<h2>Point Distribution Models</h2>
+<p>A compact linear model of the variation in the shape can be found using Principal Component Analysis (PCA). The model is of the form:</p>
+<p><span class="math display">\[
+\mathbf{x} = \overline{\mathbf{x}}+ \mathbf{P} \mathbf{b}_s
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\mathbf{x}\)</span> is a shape</li>
+<li><span class="math inline">\(\overline{\mathbf{x}}\)</span> is a <em>reference</em> shape, often the mean shape</li>
+<li>the matrix <span class="math inline">\(\mathbf{P}\)</span> describes the <strong>variation</strong> in shape</li>
+<li><span class="math inline">\(\mathbf{b}_s\)</span> are the <em>parameters</em> that represent a specific shape instance.</li>
+</ul>
+</section></section>
+<section>
+<section id="pca" class="title-slide slide level1">
+<h1>PCA</h1>
+<p>Principal Component Analysis</p>
+</section>
+<section id="pca-1" class="slide level2">
+<h2>PCA</h2>
+<div>
+<ul>
+<li class="fragment">Reveals the internal structure of the data in a way that best <em>explains the variance</em> in the data.</li>
+<li class="fragment">Used for dimensionality reduction.</li>
+<li class="fragment">Reduces data down into its basic components, stripping away any unnecessary parts.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>PCA was invented in 1901 by Karl Pearson, as an analogue of the principal axis theorem in mechanics;</p>
+</aside>
+</section>
+<section id="pca-2" class="slide level2">
+<h2>PCA</h2>
+<ul>
+<li>Assume we have 2-dimensional measurements. e.g. the height and foot size for a number of people</li>
+<li>We expect the measurements to be correlated to some degree. e.g. taller people tend to have larger feet</li>
+<li>Visualise the data by plotting one measure against the other.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_01.png" style="width:85.0%" /></p>
+</section>
+<section id="pca-3" class="slide level2">
+<h2>PCA</h2>
+<p>The objective of PCA is to capture as much of the variation in as few dimensions as possible.</p>
+<p>Find line of “best fit” through the data, then line of “next best fit” which is <em>orthogonal</em> to the first…</p>
+<p>Repeat for however many dimensions your data has</p>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_02.png" style="width:85.0%" /></p>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_03.png" style="width:85.0%" /></p>
+</section>
+<section id="pca-4" class="slide level2">
+<h2>PCA</h2>
+<p>Since the dimensions must be orthogonal, all we have done is rotate the axes to better align with the data.</p>
+<p>In doing this:</p>
+<ul>
+<li>P1 captures most of the meaningful variation</li>
+<li>P2 seems to capture the noise in the measurements</li>
+</ul>
+<p>The original data can be approximated as some distance along P1 from the centre of the data cloud.</p>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_04.png" style="width:85.0%" /></p>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_05.png" style="width:85.0%" /></p>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_06.png" style="width:85.0%" /></p>
+</section>
+<section class="slide level2">
+
+<p><img data-src="assets/png/pca/pca_07.png" style="width:85.0%" /></p>
+</section>
+<section id="pca-5" class="slide level2">
+<h2>PCA</h2>
+<p>To project a data point onto a new axis:</p>
+<p><span class="math display">\[\mathbf{b}_{s}  = \mathbf{P}^{T}  (x - \overline x )\]</span></p>
+</section>
+<section id="pca-6" class="slide level2">
+<h2>PCA</h2>
+<p>To reconstruct the data point from the features:</p>
+<p><span class="math display">\[x \approx \overline x + \mathbf{P} \mathbf{b}_{s}\]</span></p>
+<p>This is only an approximation since the data are truncated to lie on just the principal component(s).</p>
+</section>
+<section id="pca-7" class="slide level2">
+<h2>PCA</h2>
+<p>Note, in this example we have moved from a 2D problem to 1D so the representation is more compact.</p>
+<p>Staying within the limits of the data means new examples can be generated — this is a <strong>generative</strong> model.</p>
+</section>
+<section id="pca-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">PCA</h2>
+<p>Algorithm:</p>
+<p>Compute the <em>mean</em> of the data and subtract.</p>
+<p><span class="math display">\[\mathbf{\overline{x}} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{x}_i\]</span></p>
+<p>Compute the <em>covariance</em> matrix.</p>
+<p><span class="math display">\[
+S = \frac{1}{N - 1}  \sum_{i=1}^{N}
+(\mathbf{x}_i - \mathbf{\overline{x}})
+(\mathbf{x}_i - \mathbf{\overline{x}})^T
+\]</span></p>
+<p>Compute the <strong>Eigenvectors</strong> and <strong>Eigenvalues</strong> of the covariance matrix and sort into descending order by Eigenvalue.</p>
+</section>
+<section id="pca-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">PCA</h2>
+<ul>
+<li>Eigenvectors are the principal components.</li>
+<li>Eigenvalues are the variance explained by each principal component.</li>
+<li>We typically retain the number of eigenvectors that describe 95% of the total variation in the data.</li>
+</ul>
+<aside class="notes">
+<p>Eigen vectors, principal components, modes of variation, etc.</p>
+</aside>
+</section>
+<section id="pca-10" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">PCA</h2>
+<p>Matlab has implementations of both PCA and Eigenvector decomposition.</p>
+</section>
+<section id="point-distribution-models-6" class="slide level2">
+<h2>Point Distribution Models</h2>
+<p>For modelling shapes, an n-point shape is represented as a 2n element vector:</p>
+<p><span class="math display">\[X = \{x_1, x_2, \dots, x_n, y_1, y_2, \dots, y_n \}^{T}\]</span></p>
+<p>PCA can be applied to the <span class="math inline">\(\mathbb{R}^{2n}\)</span> data, rotating the <span class="math inline">\(2n\)</span> axes to best fit to the data cloud in <span class="math inline">\(\mathbb{R}^{2n}\)</span> space.</p>
+<p>We retain only the meaningful variation - often resulting in considerable compression.</p>
+</section>
+<section id="point-distribution-models-7" class="slide level2">
+<h2>Point Distribution Models</h2>
+<p>Ensuring that the shape parameters are within the limits of the original data cloud means that any generated shape is valid.</p>
+<p><span class="math display">\[|b_i| \leq 3 \sqrt{\lambda_i}\]</span></p>
+</section>
+<section id="point-distribution-models-8" class="slide level2">
+<h2>Point Distribution Models</h2>
+<p><img data-src="assets/gif/pca_mouth_anim.gif" /></p>
+<aside class="notes">
+<p>Here, the original data is 20 x 2D points. We can express the mouth shapes with only 3 values.</p>
+</aside>
+</section></section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
