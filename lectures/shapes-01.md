@@ -226,13 +226,13 @@ $$
 I'll point out this is 1D - but we will get into a 2D version later.
 :::
 
-## Aside: Fourier Series
+---
 
 ![approximate square wave - Creative Commons](assets/gif/Fourier_series_and_transform.gif){width=80%}
 
-## Aside: Fourier Series
+---
 
-![approximate saw tooth wave - public domain](assets/gif/Fourier_sawtooth.gif)
+![approximate saw tooth wave - public domain](assets/gif/Fourier_sawtooth.gif){width=90%}
 
 ## Aside: Fourier Series
 
@@ -262,7 +262,7 @@ It is useful to know about odd and even functions, but generally we will need to
 
 How do we go from Chain encodings to EFDs?
 
-- First, _separate_ chain encodings into x and y **projections**.
+- First _separate_ chain encodings into x and y **projections**.
 - Allows us to deal with each dimension independently.
 
 ---
@@ -281,7 +281,7 @@ For the x-projection:
 
 ---
 
-Similarly, for the y-projection.
+Similarly, for the y-projection:
 
 - For North, North East, or North West, $\Delta y = 1$.
 - For East and West, $\Delta y = 0$.
@@ -437,7 +437,7 @@ $$
 
 ---
 
-and solve for $a_n$ and $b_n$, giving us the coefficients for the Fourier series:
+and solve for $a_n$ and $b_n$ yielding the x projection coefficients:
 
 $$
 a_n = \frac{T}{2n^2\pi^2} \sum_{p=1}^{K} \frac{\Delta x_p}{\Delta t_p}
@@ -484,7 +484,7 @@ Computer Graphics and Image Processing, 1982"
 
 ---
 
-![Elliptical Cat](assets/png/elliptical_cat.png)
+![Elliptical Cat](assets/png/elliptical_cat.png){width=80%}
 
 # Summary
 

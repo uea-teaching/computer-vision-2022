@@ -21,14 +21,14 @@ If something specific about the shape is known, it should be incorporated into t
 
 A point distribution model (PDM) _learns_ the allowed variation in a **class** of shapes from _examples_.
 
-## Landmarks
+## Landmarks {data-auto-animate="true"}
 
 A shape is represented by a set of **landmarks** located along the shape boundary.
 
 - Must be easy to locate from one image to another.
 - Use T-junctions, points of high curvature, corners, etc
 
-## Landmarks
+## Landmarks {data-auto-animate="true"}
 
 To better represent the overall shape, also evenly space intermediate points along the boundary.
 
@@ -36,7 +36,7 @@ To better represent the overall shape, also evenly space intermediate points alo
 
 ![shape landmarks](assets/svg/lips_pdm.svg)
 
-## Point Distribution Models
+## {data-auto-animate="true"}
 
 ![landmark images](assets/jpg/comb-lm.jpg)
 
@@ -44,7 +44,7 @@ All example shapes must have the **same number** of landmarks and be labelled wi
 
 - Note: this initial landmarking is a **manual** process.
 
----
+## {data-auto-animate="true"}
 
 ![landmark images](assets/jpg/comb-lm.jpg)
 
@@ -63,7 +63,7 @@ $$
 
 The consistency in the labelling ensures the elements of these vectors have the same meaning.
 
----
+## {data-auto-animate="true"}
 
 ::: columns
 ::::: column
@@ -78,7 +78,7 @@ The coordinates describe the shape in the image coordinate frame.
 :::::
 :::
 
-## Point Distribution Models
+## {data-auto-animate="true"}
 
 ::: columns
 ::::: column
@@ -96,7 +96,7 @@ This can be done using generalised **Procrustes analysis**.
 
 Procrustes, the son of Poseidon, from Greek mythology.
 
-## Procrustes Analysis
+## Procrustes Analysis {data-auto-animate="true"}
 
 ::: columns
 ::::: column
@@ -107,7 +107,7 @@ Procrustes, the son of Poseidon, from Greek mythology.
 :::::
 :::
 
-## Procrustes Analysis
+## Procrustes Analysis {data-auto-animate="true"}
 
 1. Translate each example so it is centred on the mean.
 2. Using the first shape as a reference, transform each example to align with the reference.
@@ -118,7 +118,7 @@ Procrustes, the son of Poseidon, from Greek mythology.
 
 **Convergence** is a _small_ change in the mean.
 
----
+## {data-auto-animate="true"}
 
 To align shapes:
 
@@ -141,17 +141,17 @@ M(s, \theta) =
 \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
 $$
 
-## Aligning Shapes
+## Aligning Shapes {data-auto-animate="true"}
 
 The parameters for scaling, rotation and translation are unknown.
 
 - They need to be calculated from the data.
 
-## Aligning Shapes
+## Aligning Shapes {data-auto-animate="true"}
 
-Define a metric that measures how well two shapes are aligned.
+Define a **metric** that measures how well two shapes are aligned.
 
-- Use sum of squared differences between the shapes.
+- Use _sum of squared differences_ between the shapes.
 
 $$
 E = (x_1 - M(s, \theta) \mathbf{x}_2 - t) ~W (x_1 - M(s, \theta) \mathbf{x}_2 - t)^T
