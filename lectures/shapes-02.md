@@ -497,11 +497,19 @@ Ensuring that the shape parameters are within the limits of the original data cl
 
 $$|b_i| \leq 3 \sqrt{\lambda_i}$$
 
-## Point Distribution Models
+---
 
-![](assets/gif/pca_mouth_anim.gif)
+![](assets/gif/pca_mouth_anim.gif){width=100%}
 
 ::: notes
 Here, the original data is 20 x 2D points.
 We can express the mouth shapes with only 3 values.
 :::
+
+# Summary
+
+- Described a **generative** parametric shape model (PDM) that learns the variation in a class of shape.
+
+- Aligned shapes using Procrustes analysis.
+
+- Used PCA to reduce the dimensionality of the data.
