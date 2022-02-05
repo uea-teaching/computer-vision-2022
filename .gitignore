@@ -6,6 +6,10 @@
 !.gitignore
 !Makefile
 
+!scripts/
+!scripts/*.py
+!scripts/*.json
+
 !labs/
 !labs/Makefile
 !labs/*.md
