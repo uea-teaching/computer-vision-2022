@@ -32,15 +32,26 @@ A shape is represented by a set of **landmarks** located along the shape boundar
 
 To better represent the overall shape, also evenly space intermediate points along the boundary.
 
-- Note: this initial landmarking is a **manual** process.
-
 ---
 
 ![shape landmarks](assets/svg/lips_pdm.svg)
 
 ## Point Distribution Models
 
+![landmark images](assets/jpg/comb-lm.jpg)
+
 All example shapes must have the **same number** of landmarks and be labelled with the landmarks in the **same order**.
+
+- Note: this initial landmarking is a **manual** process.
+
+---
+
+![landmark images](assets/jpg/comb-lm.jpg)
+
+Sufficient images must be labelled to capture the expected range of variation.
+
+- The model _cannot_ extrapolate to unknown shapes.
+- The model _can_ interpolate to new instances within the bounds of the data.
 
 ---
 
@@ -50,31 +61,51 @@ $$
 \mathbf{x} = \{ x_{11}, x_{12}, ..., y_{11}, y_{12}, ...y_{1n} \}^{T}
 $$
 
----
-
 The consistency in the labelling ensures the elements of these vectors have the same meaning.
 
 ---
 
-Sufficient images must be labelled to capture the expected range of variation.
-s
-
-- The model _cannot_ extrapolate to unknown shapes.
-- The model _can_ interpolate to new instances within the bounds of the data.
-
----
+::: columns
+::::: column
+![](assets/png/multi-lm.png)
+:::::
+::::: column
 
 The coordinates describe the shape in the image coordinate frame.
 
 - The same shape at different locations results in a different shape vector.
 
+:::::
+:::
+
 ## Point Distribution Models
 
-Normalise the shapes for _pose_ using generalised **Procrustes** analysis.
+::: columns
+::::: column
+![](assets/png/multi-lm.png)
+:::::
+::::: column
+
+We need to normalise shapes for translation, scale and rotation.
+This can be done using generalised **Procrustes analysis**.
+
+:::::
+:::
 
 # Procrustes Analysis
 
 Procrustes, the son of Poseidon, from Greek mythology.
+
+## Procrustes Analysis
+
+::: columns
+::::: column
+![captured landmarks](assets/png/multi-lm.png)
+:::::
+::::: column
+![aligned landmarks](assets/png/multi-lm-aligned.png)
+:::::
+:::
 
 ## Procrustes Analysis
 
@@ -87,7 +118,7 @@ Procrustes, the son of Poseidon, from Greek mythology.
 
 **Convergence** is a _small_ change in the mean.
 
-## Aligning Shapes
+---
 
 To align shapes:
 
@@ -98,20 +129,15 @@ $$
 \end{aligned}
 $$
 
-Scale and rotation is defined as:
+Scale and rotation is defined by $M$, and translation by $\mathbf{t}$:
 
 $$
 M(s, \theta) =
 \begin{pmatrix}
-\mathbf{x}_{i} s \cos \theta - \mathbf{y}_{i} s \sin \theta  \\
-\mathbf{x}_{i} s \sin \theta + \mathbf{y}_{i} s \cos \theta
-\end{pmatrix}
-$$
-
-and translation by:
-
-$$
-\mathbf{t} =
+\mathbf{x}_{2i} s \cos \theta - \mathbf{y}_{2i} s \sin \theta  \\
+\mathbf{x}_{2i} s \sin \theta + \mathbf{y}_{2i} s \cos \theta
+\end{pmatrix}~
+~\mathbf{t} =
 \begin{pmatrix} t_{x} \\ t_{y} \end{pmatrix}
 $$
 
@@ -269,7 +295,7 @@ $$\sum_{i=1}^n w_i y_{2i} = Y_2$$
 
 ---
 
-the expression for $\frac{\delta E}{\delta t_x}$ simplifies to:
+the expression from $\frac{\delta E}{\delta t_x}$ simplifies to:
 
 $$X_1 = a_x X_2 - a_y Y_2 + t_x W$$
 
@@ -473,7 +499,7 @@ $$|b_i| \leq 3 \sqrt{\lambda_i}$$
 
 ## Point Distribution Models
 
-![](assets/png/pca/pca_mouth.png)
+![](assets/gif/pca_mouth_anim.gif)
 
 ::: notes
 Here, the original data is 20 x 2D points.
