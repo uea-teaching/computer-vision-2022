@@ -6,6 +6,9 @@
 !index.md
 !.gitignore
 
+!_layouts/
+!_layouts/*.html
+
 !labs/
 !labs/*.pdf
 
