@@ -19,8 +19,9 @@ There is also a Makefile in the root of this repo if you already have Docker ins
 
 ## Lectures
 
-- Shape Features
+- Chain Codes and Elliptical Fourier Descriptors
+- Point Distribution Models
 
 ## Labs
 
-- Lab 1
+- Lab 1 - Shape Features
