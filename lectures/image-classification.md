@@ -161,3 +161,36 @@ Scene classification e.g. kitchen, bathroom, beach.
 - Scenes contain many objects, but their exact location is less important.
 
 :::
+
+# Image Classification Strategies
+
+Extracting _low level_ features from an image.
+
+::: notes
+usually we would extract some low level features...
+:::
+
+## Low Level Features
+
+The low level features, which are used the most often include
+SIFT and HOG features combined with some colour descriptors.
+
+---
+
+SIFT - Scale Invariant Feature Transform
+
+::: incremental
+
+- Localised feature based on image gradients.
+- One of the first of its kind.
+- Some proprietary aspects to its use.
+- covered in a later lecture.
+
+:::
+
+---
+
+HOG - histograms of oriented gradients.
+
+- Also a gradient based feature.
+- next up!
