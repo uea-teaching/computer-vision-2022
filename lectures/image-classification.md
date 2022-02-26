@@ -123,3 +123,41 @@ These images from coursework...
 it does not matter where in the image is a window or microwave...
 translation invariance is important...
 :::
+
+## Classification Applications
+
+Classify an X-ray image as containing cancer or not.
+
+::: incremental
+
+- A _binary_ classification problem.
+- Normally requires significant human expertise!
+
+:::
+
+::: notes
+We could fill the entire lecture with examples of classification applications, such is the rapid expansion of the field.
+:::
+
+---
+
+Material clasification, eg. wood, metal, plastic, etc.
+
+::: incremental
+
+- Texture is likely useful, but...
+- Illumination may significantly change the texture.
+- Extract features invariant to illumination.
+
+:::
+
+---
+
+Scene classification e.g. kitchen, bathroom, beach.
+
+::: incremental
+
+- Importance of context.
+- Scenes contain many objects, but their exact location is less important.
+
+:::
