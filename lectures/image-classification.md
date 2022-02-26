@@ -72,18 +72,54 @@ we don't want the feature to change if it has different illumination...
 black cat in coal cellar, white cat in white room, etc.
 :::
 
----
+## What are good features? {data-auto-animate="true"}
 
 ::: columns
 
-::::: column
-![texture for features](assets/jpg/texture.jpg)
+::::: {.column width=40%}
+![texture for features](assets/jpg/texture.jpg){width="75%"}
 :::::
 
 ::::: column
+
 Texture is a good feature, and often provides good diagnostics.
 
 - e.g. summary statistics on gradient orientations
-  :::::
 
+:::::
+
+:::
+
+::: notes
+you might guess - texture is a good feature...
+we learned earlier how to calculate gradient and gradient direction...
+gradient captures the smallest features of an image...
+:::
+
+---
+
+::: columns
+::::: {.column width=35%}
+
+![kitchen 1](assets/jpg/sun_aaesgnhzvszupuvo.jpg){width="85%"}
+
+![kitchen 2](assets/jpg/sun_aaevfnfhjudhbvxh.jpg){width="85%"}
+
+:::::
+
+::::: column
+
+Exact feature locations are not important.
+
+- Small variations in the layout will not change the class label.
+
+:::::
+
+:::
+
+::: notes
+These images from coursework...
+15 classes - one of which is kitchen...
+it does not matter where in the image is a window or microwave...
+translation invariance is important...
 :::
