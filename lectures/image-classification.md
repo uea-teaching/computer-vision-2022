@@ -291,7 +291,7 @@ We choose a certain configuration of cells and call it a _block_
 this step imparts some illumination invariance - the epsilon is a small constant to avoid division by zero.
 :::
 
-## {data-transition="convex"}
+## {data-transition="slide"}
 
 ![HOG example](assets/png/hog_example.png){width="85%"}
 
@@ -304,7 +304,7 @@ We will look at this paper again later today when discussing applications.
 A very influential paper - 40k citatations.
 :::
 
-# Visual Words {data-transition="convex"}
+# Visual Words {data-transition="convex-in slide-out"}
 
 Once the features are extracted, we would often use _dictionaries_ of **visual words**.
 
@@ -312,7 +312,7 @@ Once the features are extracted, we would often use _dictionaries_ of **visual w
 we could use the features directly - but it is better to do something extra...
 :::
 
-## Visual Words {data-transition="convex" data-auto-animate="true"}
+## Visual Words {data-transition="slide" data-auto-animate="true"}
 
 Features representing scenes should be able to **summarise** these scenes.
 
@@ -420,7 +420,7 @@ Compare histograms using _histogram intersection_.
 
 $$HI = \sum_{i=1}^{n} \min(h_i, g_i)$$
 
-Sivic and Zisserman, "Efficient Visual Search...", Proc. IEEE 2008.
+- Sivic and Zisserman, "Efficient Visual Search...", Proc. IEEE 2008.
 
 ::: notes
 Refer to Swain and Ballard, "Color Indexing" 1991.
@@ -429,3 +429,141 @@ This approach is from Sivic and Zisserman.
 :::
 
 # Spatial Pyramid Kernels {data-transition="convex"}
+
+Extending Visual Words...
+
+## Spatial Pyramid Kernels {data-auto-animate="true"}
+
+The concept of visual words can be taken further so that it incorporates a rough _layout_ of the scene.
+
+::: notes
+This may seem like a backward step - we do want translation invariance!
+But, large scale translation may not be appropriate within the class...
+imagine the kitchen image with the plates on the floor, and the cups opn the ceiling.
+:::
+
+## Spatial Pyramid Kernels {data-auto-animate="true"}
+
+- split an image into 4 quarters
+- calculate $HI$ for each quarter **and** the whole image
+- resulting in 5 _different_ figures.
+
+## Spatial Pyramid Kernels {data-auto-animate="true"}
+
+The quarters can be subdivided further into smaller blocks
+
+- too small blocks are less useful.
+
+::: notes
+We could go deeper and deeper...
+We lose completely the translation invariance we desire.
+Also, small blocks may not have interest points...
+:::
+
+## Spatial Pyramid Kernels {data-auto-animate="true"}
+
+The final _similarity_ figure is a sum of block-wise $HI$s _weighted_ by the **inverse** of the block width.
+
+- Lazebnik et al. "Beyond bags of features...", CVPR 2006
+
+::: notes
+weighted because we want to favour the larger blocks, retaining translation invariance.
+:::
+
+# Dimensionality Reduction {data-transition="convex"}
+
+The features we create tend to be high dimensional.
+
+## PCA {data-auto-animate="true"}
+
+Principal Component Analysis (PCA)
+
+- There can be a lot of redundancy in this data.
+- We could use PCA to **compress** this data.
+
+::: notes
+We have already mentioned PCA in point distribution models.
+:::
+
+## Fisher LDA {data-auto-animate="true"}
+
+The extension of PCA is Fisher LDA
+
+- Linear Discriminant Analysis (LDA)
+- also referred to as Dimension Reduction with Canonical Variates
+
+::: notes
+in the course text, Forsyth and Ponce, this is referred to as Dimension Reduction with Canonical Variates.
+:::
+
+## Fisher LDA {data-auto-animate="true"}
+
+Is a projection onto a subspace that **maximises** the _ratio_ of the between-class variance to the within-class variance.
+
+::: notes
+PCA is a projection - but is only concerned with variance - not the ratio.
+LDA subspace will have a different orientation to PCA.
+:::
+
+---
+
+::: columns
+
+::::: {.column width=70%}
+
+![data](assets/svg/LDA1.svg)
+
+:::::
+
+::::: column
+
+We have some data points belonging to two classes.
+
+:::::
+
+:::
+
+---
+
+::: columns
+
+::::: {.column width=70%}
+
+![PCA](assets/svg/LDA2.svg)
+
+:::::
+
+::::: column
+
+Difficult to distinguish the classes along the principal component.
+
+:::::
+
+:::
+
+::: notes
+And this is an easy problem...
+The data is linearly separable - but after PCA they are not!
+:::
+
+---
+
+::: columns
+
+::::: {.column width=70%}
+
+![LDA](assets/svg/LDA3.svg)
+
+:::::
+
+::::: column
+
+Easier to distinguish the classes along the discriminant mode.
+
+:::::
+
+:::
+
+::: notes
+The discriminant mode maximises class variation.
+:::
