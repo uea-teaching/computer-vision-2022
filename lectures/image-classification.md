@@ -298,6 +298,76 @@ this step imparts some illumination invariance - the epsilon is a small constant
 Dalal and Triggs. "Histograms of Oriented Gradients for Human Detection", CVPR, 2005
 
 ::: notes
-Histogram features from all cells are combined forming a feature vector which can be used for classification.
-We will look at this paper again later today.
+Histogram features from all cells are combined forming
+a feature vector which can be used for classification.
+We will look at this paper again later today when discussing applications.
+A very influential paper - 40k citatations.
+:::
+
+# Visual Words {data-transition="convex"}
+
+Once the features are extracted, we would often use _dictionaries_ of **visual words**.
+
+::: notes
+we could use the features directly - but it is better to do something extra...
+:::
+
+# Visual Words {data-auto-animate="true"}
+
+Features representing scenes should be able to **summarise** these scenes.
+
+# Visual Words {data-auto-animate="true"}
+
+Imagine we would like to classify images containing _sets_ of objects.
+
+::: notes
+rather like your coursework - a kitchen has a lot of objects common to other kitchens.
+:::
+
+# Visual Words {data-auto-animate="true"}
+
+The precise location of objects may not be relevant.
+
+::: incremental
+
+- The objects may move or deform within the image.
+- The viewpoint may change or the image may be deformed or scaled.
+
+:::
+
+::: notes
+rather like your coursework - a kitchen has a lot of objects common to other kitchens.
+Some objects may not be present in some scenes.
+:::
+
+# Visual Words {data-auto-animate="true"}
+
+This suggests some kind of high level histogram representation of the scene.
+
+::: incremental
+
+- How many cups or plates visible in a kitchen scene?
+- Will these objects be present in an outdoor scene?
+- How many trees might you expect in a kitchen?
+
+:::
+
+::: notes
+Think of high level features as being the bins of a histogram.
+Of course HOG do not directly represent these objects...but edges , corners etc..
+:::
+
+# Visual Words {data-auto-animate="true"}
+
+Detect _interest_ points in the image.
+
+::: incremental
+
+- e.g. corners, T-junctions etc.
+- build _neighbourhoods_ around them.
+
+:::
+
+::: notes
+How do we achieve this high level histogram?
 :::
