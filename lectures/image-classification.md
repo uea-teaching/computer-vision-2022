@@ -227,7 +227,7 @@ A local 1D histogram of _gradient_ directions.
 so far you have been working with histograms of colour values.
 :::
 
-## Angle
+## Angle {data-transition="slide"}
 
 - A gradient is calculated using a centred $[-1,0,1]$ filter.
 - The filter is applied vertically and horizontally.
@@ -235,9 +235,9 @@ so far you have been working with histograms of colour values.
 
 $$\alpha = \tan^{-1} \frac{\delta g}{\delta y}~ / ~ \frac{\delta g}{\delta x}$$
 
-## Magnitude
+## Magnitude {data-transition="slide"}
 
-For colour images, we can calculate gradient for the three channels and select the one with the largest magnitude.
+For colour images, we can calculate gradient for the three channels and select the one with the largest _magnitude_.
 
 $$|G| = \sqrt{\left(\frac{\delta g}{\delta x}\right)^2 + \left(\frac{\delta g}{\delta y}\right)^2} $$
 
@@ -245,9 +245,9 @@ $$|G| = \sqrt{\left(\frac{\delta g}{\delta x}\right)^2 + \left(\frac{\delta g}{\
 and, of course, we can get the gradient magnitude for each pixel with Pythagoras.
 :::
 
-## Binning
+## Binning {data-transition="slide"}
 
-For each pixel within a cell, its gradient orientation is used to increment the relevant histogram bin.
+For each pixel within a cell, its gradient _orientation_ is used to increment the relevant histogram bin.
 
 ::: incremental
 
@@ -260,9 +260,9 @@ different to colour histogram, where we just increment on value of colour.
 this is to promote edges in the image
 :::
 
-## Interpolation
+## Interpolation {data-transition="slide"}
 
-To enforce invariance to some small gradient orientation differences, we interpolate histogram contributions between the neighbouring bin centres.
+To enforce invariance to some small gradient orientation differences, we _interpolate_ histogram contributions between the neighbouring bin centres.
 
 ::: incremental
 
@@ -274,7 +274,7 @@ To enforce invariance to some small gradient orientation differences, we interpo
 to avoid bin mis-match where a small variation in a gradient can shift the assignment of a pixel to a bin.
 :::
 
-## Contrast Normalisation
+## Contrast Normalisation {data-transition="slide"}
 
 We choose a certain configuration of cells and call it a _block_
 
@@ -283,7 +283,7 @@ We choose a certain configuration of cells and call it a _block_
 - typically 2-3 cell wide
 - perform _normalisation_ within each block
 - various schemes proposed in original paper
-- most common is slightly modified L2 norm $v \rightarrow v / \sqrt{||v||^2_2 + \epsilon^2}$
+- e.g. modified L2 norm $v \rightarrow v / \sqrt{||v||^2_2 + \epsilon^2}$
 
 :::
 
@@ -291,7 +291,7 @@ We choose a certain configuration of cells and call it a _block_
 this step imparts some illumination invariance - the epsilon is a small constant to avoid division by zero.
 :::
 
-## HOG
+## HOG {data-transition="slide"}
 
 ![HOG example](assets/png/hog_example.png)
 
