@@ -63,8 +63,12 @@ also, we want features extracted from different cats to be a s similar as possib
 
 Other desirable properties of features are:
 
-- be invariant to rotation, translation and scaling of an image.
-- be invariant to illumination.
+::: incremental
+
+- _invariant_ to rotation, translation and scaling of an image
+- _invariant_ to illumination
+
+:::
 
 ::: notes
 we don't want the feature to change if it is in a different part of the image.
@@ -118,7 +122,7 @@ Exact feature locations are not important.
 :::
 
 ::: notes
-These images from coursework...
+These images from the coursework...
 15 classes - one of which is kitchen...
 it does not matter where in the image is a window or microwave...
 translation invariance is important...
@@ -141,7 +145,7 @@ We could fill the entire lecture with examples of classification applications, s
 
 ---
 
-Material clasification, eg. wood, metal, plastic, etc.
+Material classification, eg. wood, metal, plastic, etc.
 
 ::: incremental
 
@@ -173,7 +177,7 @@ usually we would extract some low level features...
 ## Low Level Features
 
 The low level features, which are used the most often include
-SIFT and HOG features combined with some colour descriptors.
+_SIFT_ and _HOG_ features combined with some colour descriptors.
 
 ---
 
