@@ -291,7 +291,7 @@ We choose a certain configuration of cells and call it a _block_
 this step imparts some illumination invariance - the epsilon is a small constant to avoid division by zero.
 :::
 
-## {data-transition="slide"}
+## {data-transition="convex"}
 
 ![HOG example](assets/png/hog_example.png){width="85%"}
 
@@ -312,11 +312,11 @@ Once the features are extracted, we would often use _dictionaries_ of **visual w
 we could use the features directly - but it is better to do something extra...
 :::
 
-# Visual Words {data-auto-animate="true"}
+## Visual Words {data-transition="convex" data-auto-animate="true"}
 
 Features representing scenes should be able to **summarise** these scenes.
 
-# Visual Words {data-auto-animate="true"}
+## Visual Words {data-auto-animate="true"}
 
 Imagine we would like to classify images containing _sets_ of objects.
 
@@ -324,7 +324,7 @@ Imagine we would like to classify images containing _sets_ of objects.
 rather like your coursework - a kitchen has a lot of objects common to other kitchens.
 :::
 
-# Visual Words {data-auto-animate="true"}
+## Visual Words {data-auto-animate="true"}
 
 The precise location of objects may not be relevant.
 
@@ -340,7 +340,7 @@ rather like your coursework - a kitchen has a lot of objects common to other kit
 Some objects may not be present in some scenes.
 :::
 
-# Visual Words {data-auto-animate="true"}
+## Visual Words {data-auto-animate="true"}
 
 This suggests some kind of high level histogram representation of the scene.
 
@@ -357,7 +357,7 @@ Think of high level features as being the bins of a histogram.
 Of course HOG do not directly represent these objects...but edges , corners etc..
 :::
 
-# Visual Words {data-auto-animate="true"}
+## Visual Words {data-auto-animate="true"}
 
 Detect _interest_ points in the image.
 
@@ -371,3 +371,61 @@ Detect _interest_ points in the image.
 ::: notes
 How do we achieve this high level histogram?
 :::
+
+## Visual Words {data-auto-animate="true"}
+
+Describe these neighbourhoods with low level features.
+
+For example, **SIFT**
+
+::: notes
+How do we achieve this high level histogram?
+:::
+
+## Visual Words {data-auto-animate="true"}
+
+Vector-quantise these features.
+
+::: incremental
+
+- e.g. by **k-means** clustering.
+- These _clusters_ are very much like words.
+
+:::
+
+::: notes
+How do we achieve this high level histogram?
+eg SIFT is 128D point in in space.
+Many features form a point cloud...
+50 clusters...
+:::
+
+## Visual Words {data-auto-animate="true"}
+
+For each image, build a histogram of these visual words.
+
+::: incremental
+
+- Two _similar_ images should have _similar_ histograms.
+
+:::
+
+::: notes
+two images with similar objects should have similar histograms.
+:::
+
+## Visual Words {data-auto-animate="true"}
+
+Compare histograms using _histogram intersection_.
+
+$$HI = \sum_{i=1}^{n} \min(h_i, g_i)$$
+
+Sivic and Zisserman, "Efficient Visual Search...", Proc. IEEE 2008.
+
+::: notes
+Refer to Swain and Ballard, "Color Indexing" 1991.
+There is a relationship from histogram intersection to L1 or city block distance.
+This approach is from Sivic and Zisserman.
+:::
+
+# Spatial Pyramid Kernels {data-transition="convex"}
