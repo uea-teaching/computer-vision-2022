@@ -198,3 +198,106 @@ HOG - histograms of oriented gradients.
 
 - Also a gradient based feature.
 - next up!
+
+## Histograms of Oriented Gradients {data-auto-animate="true"}
+
+- Image is divided into regions - a window.
+- Each window is further divided into cells.
+- Each cell is typically 6 to 8 pixels wide.
+
+::: notes
+In the paper they describe the window as containing a grid of cells.
+so in practice, we decide a cell size, the build windows of cell blocks.
+:::
+
+## Histograms of Oriented Gradients {data-auto-animate="true"}
+
+A local 1D histogram of _gradient_ directions.
+
+::: incremental
+
+- 1D dimension is the **angle** of the gradient
+- the angle is _quantised_ into a discrete set of bins
+- for example, for a bin size 20 degrees, we have 18 bins
+- sum of all elements is equal to number of pixels in the _cell_
+
+:::
+
+::: notes
+so far you have been working with histograms of colour values.
+:::
+
+## Angle
+
+- A gradient is calculated using a centred $[-1,0,1]$ filter.
+- The filter is applied vertically and horizontally.
+- We derive the gradient direction from these first derivatives.
+
+$$\alpha = \tan^{-1} \frac{\delta g}{\delta y}~ / ~ \frac{\delta g}{\delta x}$$
+
+## Magnitude
+
+For colour images, we can calculate gradient for the three channels and select the one with the largest magnitude.
+
+$$|G| = \sqrt{\left(\frac{\delta g}{\delta x}\right)^2 + \left(\frac{\delta g}{\delta y}\right)^2} $$
+
+::: notes
+and, of course, we can get the gradient magnitude for each pixel with Pythagoras.
+:::
+
+## Binning
+
+For each pixel within a cell, its gradient orientation is used to increment the relevant histogram bin.
+
+::: incremental
+
+- in _proportion_ to the gradient magnitude
+
+:::
+
+::: notes
+different to colour histogram, where we just increment on value of colour.
+this is to promote edges in the image
+:::
+
+## Interpolation
+
+To enforce invariance to some small gradient orientation differences, we interpolate histogram contributions between the neighbouring bin centres.
+
+::: incremental
+
+- Typical binning - 20 degrees.
+
+:::
+
+::: notes
+to avoid bin mis-match where a small variation in a gradient can shift the assignment of a pixel to a bin.
+:::
+
+## Contrast Normalisation
+
+We choose a certain configuration of cells and call it a _block_
+
+::: incremental
+
+- typically 2-3 cell wide
+- perform _normalisation_ within each block
+- various schemes proposed in original paper
+- most common is slightly modified L2 norm $v \rightarrow v / \sqrt{||v||^2_2 + \epsilon^2}$
+
+:::
+
+::: notes
+this step imparts some illumination invariance - the epsilon is a small constant to avoid division by zero.
+:::
+
+## HOG
+
+![HOG example](assets/png/hog_example.png)
+
+Dalal and Triggs. "Histograms of Oriented Gradients for Human Detection", CVPR, 2005
+
+::: notes
+Histogram features from all cells are combined forming a feature vector which can be used for classification.
+We will look at this paper again later today.
+:::
