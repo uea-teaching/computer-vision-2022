@@ -291,9 +291,9 @@ We choose a certain configuration of cells and call it a _block_
 this step imparts some illumination invariance - the epsilon is a small constant to avoid division by zero.
 :::
 
-## HOG {data-transition="slide"}
+## {data-transition="slide"}
 
-![HOG example](assets/png/hog_example.png)
+![HOG example](assets/png/hog_example.png){width="85%"}
 
 Dalal and Triggs. "Histograms of Oriented Gradients for Human Detection", CVPR, 2005
 
