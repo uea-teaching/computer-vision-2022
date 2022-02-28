@@ -674,6 +674,7 @@ Easier to comprehend with an image, here are two classifiers compared.
 ## Classifier Evaluation {data-auto-animate="true"}
 
 **ROC** curves should be used when there are roughly equal numbers of observations for each class.
+
 **Precision-Recall** curves should be used when there is a moderate to large class imbalance.
 
 # Summary
