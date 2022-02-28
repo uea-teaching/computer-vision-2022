@@ -166,7 +166,140 @@ the idea of significant overlap is not precisely defined - it is another paramet
 Now we know _how_ to detect objects in an image, **what** can be detected?
 
 ::: notes
-These are not
+We of course enter another huge topic - so we will discuss a couple of really important applications.
 :::
 
 # Face Detection
+
+We will mostly discuss the classic _Viola-Jones_ algorithm for face detection.
+
+::: notes
+Before we dive into viola-jones, I want to mention some other classic methods you should be aware of.
+:::
+
+## Face Detection
+
+Another classic method in face classification is _Eigenfaces_.
+
+::: incremental
+
+- Eigenfaces use PCA on an aligned set of face images.
+- _Fisherfaces_ extends Eigenfaces to use Fisher LDA.
+- There is a document on Blackboard for you to read on these methods.
+
+:::
+
+::: notes
+There are some slides on these methods on BB - you might find the interesting - and they are a forerunner of some very contemporary techniques for face generation.
+:::
+
+## Viola-Jones object detection
+
+P. Viola, and M. Jones,
+
+Rapid Object Detection using a Boosted Cascade of Simple Features.
+
+International Conference on Computer Vision and Pattern Recognition, pp. 511-518, 2001.
+
+::: notes
+Ok, let's deep dive into this algorithm.
+:::
+
+## Viola-Jones object detection framework
+
+A fast and robust method for face detection.
+
+- Can be used for detection of other objects, not only faces.
+- Robust - high detection rate and low false-positive rate.
+- Detection only - not recognition.
+
+::: notes
+The idea is to distinguish faces from non faces.
+:::
+
+## Viola-Jones object detection framework
+
+The method comprises four stages:
+
+::: incremental
+
+- feature detection
+- integral image
+- learning algorithm using modified AdaBoost
+- _cascade_ of classifiers
+
+:::
+
+::: notes
+the integral image is a pre-processing step.
+:::
+
+## Viola-Jones Feature Extraction
+
+::: columns
+
+::::: column
+![Haar features](assets/png/haar_features.png)
+:::::
+
+::::: column
+
+Features need to be calculated **fast**!
+
+::: incremental
+
+- Use a simple set of _Haar-like_ features.
+- add light rectangle and subtract dark rectangle
+- features are translated within a sub-window
+
+:::
+
+:::::
+
+:::
+
+::: notes
+Haar like features are a simple orthogonal type operator - Haar was a mathematician from the early 20th century.
+Simple addition or subtraction of rectangles.
+For example A : sum the pixels under the light rectangle, and subtract the sum of the pixels under the dark rectangle. ONLY summations!
+:::
+
+## Viola-Jones Feature Extraction
+
+Features can be calculated very quickly by pre-calculating the **integral** image.
+
+$$
+I(x, y) = \sum_{\substack{x' \leq x \\ y' \leq y}} i(x', y')
+$$
+
+i.e. the sum of pixels to the left and above a given pixel.
+
+## Viola-Jones Feature Extraction
+
+::: columns
+
+::::: {.column width=47%}
+![Integral Image](assets/svg/integral-image.svg)
+:::::
+
+::::: column
+
+Sum of pixels under a rectangle:
+
+::: incremental
+
+- Value at pixel 1 is _sum_ of rectangle A.
+- Value at 2 is A + B.
+- Value at 3 is A + C.
+- at 4 is A + B + C + D.
+- D = 4 + 1 - (2 + 3)
+
+:::
+
+:::::
+
+:::
+
+::: notes
+one has to admire the simple genius of the integral image!
+:::
