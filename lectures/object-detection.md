@@ -365,7 +365,42 @@ those false positives are still very high given pixels in an image.
 ![Image from original paper](assets/png/vj-features.png){width=80%}
 
 ::: notes
+Features have been selected by adaboost...
 In both cases, the features can be recognised in the image of a face...
 the bright bridge of the nose..., dark eyes, light cheeks, etc.
 quite intuitive...
+:::
+
+## Viola-Jones Learning {data-auto-animate="true"}
+
+Attentional cascade of boosted classifiers.
+
+We can train a simple boosted classifier on a very low number of features and adjust its threshold to guarantee 100% detection rate.
+
+::: notes
+we will have lots of false positives...
+but even so - we will have rejected many sub windows.
+:::
+
+## Viola-Jones Learning {data-auto-animate="true"}
+
+Will produce _many_ false positives, but we can easily **reject** most sub-windows.
+
+- Sub-windows classified as positives are passed to the next stage of the cascade.
+- Additional features are used in a more complex classifier.
+- ...and so on, to reduce the number of false positives.
+
+::: notes
+extra features are calculated for these sub windows...
+:::
+
+## Viola-Jones Learning {data-auto-animate="true"}
+
+Attentional cascade of boosted classifiers.
+
+- 38 layers with 6061 features
+- Majority of sub-windows will be rejected in the early layers of the cascade where few features are needed.
+
+::: notes
+Its still a big number, but most of those windows are rejected early on, with small features - this is what makes it so fast.
 :::
