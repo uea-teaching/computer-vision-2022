@@ -124,5 +124,49 @@ Windows with a local maximum of _classifier confidence_ **suppress** nearby wind
 ::: notes
 Nearby windows usually means overlapping windows.
 
-This is a hih level description of sliding windows - let's discuss more formally.
+This is a high level description of sliding windows - let's discuss more formally.
 :::
+
+## Sliding Window {data-auto-animate="true"}
+
+Train the classifier on $n \times m$ windows.
+
+Choose a threshold $t$ and $\Delta x$ and $\Delta y$, where:
+
+- $t$ is a threshold for the classifier confidence.
+- $\Delta x$ and $\Delta y$ are the step distance for each direction.
+
+::: notes
+So - formally we train a classifier on windows - to achieve object detection.
+:::
+
+## Sliding Window {data-auto-animate="true"}
+
+Construct an Image Pyramid.
+
+For each level:
+
+- Apply the classifier to each $n \times m$ window, stepping by $\Delta x$ and $\Delta y$ in this level to get a classifier confidence $c$.
+- If $c$ is above $t$, insert a pointer to the window into a list $L$, _ranked_ by $c$.
+
+## Sliding Window {data-auto-animate="true"}
+
+For each window $w$ in $L$, from highest confidence:
+
+- remove all windows $u \neq w$ that overlap $w$ _significantly_
+- overlap is calculated in the _original_ image, by expanding coarser scales
+
+::: notes
+This is the non-maximal suppression step.
+the idea of significant overlap is not precisely defined - it is another parameter.
+:::
+
+# Detection Applications
+
+Now we know _how_ to detect objects in an image, **what** can be detected?
+
+::: notes
+These are not
+:::
+
+# Face Detection
