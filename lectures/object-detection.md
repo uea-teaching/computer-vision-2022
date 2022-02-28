@@ -32,8 +32,97 @@ We can use similar techniques we have learnt in Image Classification to detect o
 
 Here we apply these techniques to **sub-windows** of the image.
 
+This approach is called a _sliding window_ method.
+
 # Sliding Window
 
 Sliding window is a _meta_ algorithm - a concept found in many machine learning algorithms.
 
-## Sliding Window
+::: notes
+not perhaps a precise description - more a family of algorithms
+:::
+
+## Sliding Window {data-auto-animate="true"}
+
+First, let's assume our objects have relatively similar size and fit into $n \times m$ pixel windows.
+
+## Sliding Window {data-auto-animate="true"}
+
+Build the dataset of positive and negative instances and train the classifier.
+
+We could then _slide_ the classification window over the image to **search** for the object location.
+
+::: notes
+Classifier is trained as we have discussed - or even simpler.
+:::
+
+## Sliding Window {data-auto-animate="true"}
+
+But, there are problems:
+
+::: incremental
+
+- Objects may be of significantly _different sizes_.
+- Some windows will overlap - how do we avoid counting objects _multiple times_?
+
+:::
+
+::: notes
+How do we decide on the window size? - we account for only one size...
+
+We need to solve these two problems to achieve robust detection.
+:::
+
+## Sliding Window {data-auto-animate="true"}
+
+We tackle the first problem by searching over scale as well.
+
+::: incremental
+
+- We build the **Gaussian pyramid** of our image.
+
+:::
+
+::: notes
+Matlab has a function for this - `impyramid`.
+:::
+
+## Gaussian Pyramid {data-auto-animate="true"}
+
+Each layer of a pyramid is obtained by smoothing a previous layer with a Gaussian filter and subsampling it.
+
+## {data-transition="convex"}
+
+![Gaussian Pyramid](assets/png/gauss_pyramid.png){width=80%}
+
+::: notes
+here we have downsampled the image by a factor of 2.
+we could choose a different factor, and we have the gaussian parameters to adjust.
+:::
+
+## Gaussian Pyramid {data-auto-animate="true"}
+
+We search using our $n \times m$ window in each **layer** of the pyramid.
+
+::: notes
+This is how we tackle the first problem...objects of different sizes.
+:::
+
+## Sliding Window {data-auto-animate="true"}
+
+The second problem is usually solved using **non-maximum suppression**.
+
+::: notes
+The second problem - overlapping windows - counting objects multiple times.
+This is more apparent with windows of different sizes.
+:::
+
+## Non-Maximum Suppression {data-auto-animate="true"}
+
+Windows with a local maximum of _classifier confidence_ **suppress** nearby windows.
+
+::: notes
+Nearby windows usually means overlapping windows.
+
+This is a hih level description of sliding windows - let's discuss more formally.
+:::
