@@ -655,7 +655,7 @@ But, of course, we can use this for image retrieval and classification.
 
 ---
 
-![precision-recall for two models](assets/png/pr_curves.png)
+![precision-recall for two models](assets/png/pr_curves.png){width=90%}
 
 ::: notes
 Easier to comprehend with an image, here are two classifiers compared.
@@ -665,3 +665,25 @@ Easier to comprehend with an image, here are two classifiers compared.
 
 **ROC** curves should be used when there are roughly equal numbers of observations for each class.
 **Precision-Recall** curves should be used when there is a moderate to large class imbalance.
+
+# Summary
+
+- HOG features
+- Visual Words
+- Spatial Pyramid
+- PCA and LDA
+- Evaluation
+
+Reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.
+- Sonka et al., Image Processing, Analysis and Machine Vision, 4th ed., Chapter 10
+
+::: notes
+A lot covered in this lecture.
+We looked at one low level feature - HOG.
+How we can use this to create a higher level feature - visual words.
+And - extend that further - spatial pyramid.
+Dimensionality reduction using LDA - appropriate for some classification problems.
+and... another view on evaluation - useful for image classification, where we have class imbalance.
+:::
