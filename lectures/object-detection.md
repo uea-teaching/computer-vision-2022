@@ -384,7 +384,7 @@ but even so - we will have rejected many sub windows.
 
 ## Viola-Jones Learning {data-auto-animate="true"}
 
-Will produce _many_ false positives, but we can easily **reject** most sub-windows.
+_Many_ false positives, but we can easily **reject** most sub-windows.
 
 - Sub-windows classified as positives are passed to the next stage of the cascade.
 - Additional features are used in a more complex classifier.
@@ -403,4 +403,44 @@ Attentional cascade of boosted classifiers.
 
 ::: notes
 Its still a big number, but most of those windows are rejected early on, with small features - this is what makes it so fast.
+:::
+
+## Viola-Jones Multiple Detections {data-auto-animate="true"}
+
+The image is scanned with sub-windows at different _scales_ and different _locations_.
+
+- Results from individual sub-windows are combined for the final result.
+- Detected sub-windows are divided into disjoint sets.
+- In each disjoint set we calculate the mean of four corners.
+
+::: notes
+
+Disjoint sets have no intersection... so the detections in one set are all the same face.
+The mean box is the final detection.
+
+:::
+
+## Viola-Jones {data-auto-animate="true"}
+
+MATLAB has an implementation of the algorithm.
+
+![Viola Jones Face Detection](assets/jpg/detected-faces.jpg){width=80%}
+
+::: notes
+you can find the code to produce this image on the Mathworks Website.
+:::
+
+## Viola-Jones {data-auto-animate="true"}
+
+Very slow to train.
+The original paper reports _weeks_ of training for the training set they used
+(5k faces, 9.5k non-faces).
+
+Very fast to execute.
+On 700 MHz processor, it takes 0.067s to analyse 384x288 image.
+
+::: notes
+67 milliseconds 20 years ago - is fast!
+
+I really encourage reading the paper - it is well written and has some great ideas in it!
 :::
