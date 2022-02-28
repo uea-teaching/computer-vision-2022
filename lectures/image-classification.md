@@ -565,5 +565,103 @@ Easier to distinguish the classes along the discriminant mode.
 :::
 
 ::: notes
-The discriminant mode maximises class variation.
+The discriminant mode maximises between-class variation.
 :::
+
+# Classifier Evaluation {data-transition="convex"}
+
+How do we evaluate the performance of the classifier?
+
+## Classifier Evaluation
+
+Image Classification is often evaluated using two metrics:
+
+::: incremental
+
+- **precision** and **recall**.
+
+:::
+
+::: notes
+precision - recall stems from document retrieval - but can easily be extended to image retrieval, and image classification.
+:::
+
+## Classifier Evaluation {data-auto-animate="true"}
+
+**Precision** : the percentage of recovered items that are _relevant_.
+
+$$TP / (TP + FP)$$
+
+::: notes
+True positives divided by the number of true positives and false positives.
+relevant items are the items that are genuinely true.
+:::
+
+## Classifier Evaluation {data-auto-animate="true"}
+
+**Recall** : the percentage of relevant items that are _recovered_.
+
+$$TP / (TP + FN)$$
+
+::: notes
+all positives - (true positives + false negatives).
+AKA True Positive Rate (TPR)
+Receiver Operating Characteristic (ROC)
+In ROC curve, plotted TPR against FPR.
+Here we plot TPR (recall) against precision.
+Precision did not feature in ROC curves.
+:::
+
+## Classifier Evaluation {data-auto-animate="true"}
+
+We also calculate _average_ precision:
+
+$$A = \frac{1}{N_r} \sum_{r=1}^{N}P(r)rel(r)$$
+
+Average precision is the area under the Precision-Recall curve.
+
+::: notes
+This comes from document retrieval - you can see from the language used...
+Average precision is the area under the Precision-Recall curve.
+:::
+
+## Classifier Evaluation {data-auto-animate="true"}
+
+::: columns
+
+::::: column
+
+We also calculate _average_ precision:
+
+$$A = \frac{1}{N_r} \sum_{r=1}^{N}P(r)rel(r)$$
+
+:::::
+
+::::: column
+
+- $N_r$ is the number of relevant items
+- $N$ is the total number of items
+- $P(r)$ is the precision of first $r$ items in the ranked list.
+- $rel(r)$ a binary function that is 1 when the $r^{th}$ document is relevant.
+
+:::::
+
+:::
+
+::: notes
+This comes from document retrieval - you can see from the language used...
+But, of course, we can use this for image retrieval and classification.
+:::
+
+---
+
+![precision-recall for two models](assets/png/pr_curves.png)
+
+::: notes
+Easier to comprehend with an image, here are two classifiers compared.
+:::
+
+## Classifier Evaluation {data-auto-animate="true"}
+
+**ROC** curves should be used when there are roughly equal numbers of observations for each class.
+**Precision-Recall** curves should be used when there is a moderate to large class imbalance.
