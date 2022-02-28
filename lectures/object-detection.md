@@ -416,6 +416,7 @@ The image is scanned with sub-windows at different _scales_ and different _locat
 ::: notes
 
 Disjoint sets have no intersection... so the detections in one set are all the same face.
+Note: this is not non-maximum suppression.
 The mean box is the final detection.
 
 :::
@@ -440,7 +441,20 @@ Very fast to execute.
 On 700 MHz processor, it takes 0.067s to analyse 384x288 image.
 
 ::: notes
-67 milliseconds 20 years ago - is fast!
+training would still take a long time...
+
+but testing - 67 milliseconds 20 years ago - is fast!
 
 I really encourage reading the paper - it is well written and has some great ideas in it!
+
+Of course, there are many much better methods developed in the 20 years since this paper.
+But the method here is really simple - and it addresses the issues faced really well.
+
+This was a very influential paper!
 :::
+
+# Detecting Humans
+
+The original HOG paper also proposed detection of humans in the sliding window.
+
+## Detecting Humans {data-auto-animate="true"}
