@@ -89,7 +89,7 @@ Matlab has a function for this - `impyramid`.
 
 ## Gaussian Pyramid {data-auto-animate="true"}
 
-Each layer of a pyramid is obtained by smoothing a previous layer with a Gaussian filter and subsampling it.
+Each layer of a pyramid is obtained by _smoothing_ a previous layer with a Gaussian filter and _subsampling_ it.
 
 ## {data-transition="convex"}
 
