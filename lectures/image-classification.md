@@ -28,13 +28,23 @@ This week we will look at two computer vision application scenarios which can em
 Passing a **whole** image to a classifier.
 
 ::: notes
+Image classification really means to classify the whole image as belonging to a class, rather than identify objects within the image.
+
+Of course, if a particular object is present in an image, it could be the criteria for classification.
+
+But object recognition is a more specific problem - and we will talk about that later.
+
 We have previously studied various classifiers.
-the discussion talked of clouds of points to be classified, and these points will image features.
+That discussion talked of clouds of points to be classified, but now, these points will image features.
 :::
 
 # Feature Extraction
 
 What are good features?
+
+::: notes
+there are many ways to extract features - but are they useful to our task?
+:::
 
 ## Feature Extraction {data-auto-animate="true"}
 
@@ -176,8 +186,8 @@ usually we would extract some low level features...
 
 ## Low Level Features
 
-The low level features, which are used the most often include
-_SIFT_ and _HOG_ features combined with some colour descriptors.
+Two low level features, which are used often, include
+_SIFT_ and _HOG_ features, combined with some colour descriptors.
 
 ---
 
@@ -207,7 +217,7 @@ HOG - histograms of oriented gradients.
 
 ::: notes
 In the paper they describe the window as containing a grid of cells.
-so in practice, we decide a cell size, the build windows of cell blocks.
+so in practice, we decide a cell size, then build windows of cell blocks.
 :::
 
 ## Histograms of Oriented Gradients {data-auto-animate="true"}
