@@ -234,7 +234,7 @@ The method comprises four stages:
 the integral image is a pre-processing step.
 :::
 
-## Viola-Jones Feature Extraction
+## Viola-Jones Feature Extraction {data-auto-animate="true"}
 
 ::: columns
 
@@ -264,7 +264,7 @@ Simple addition or subtraction of rectangles.
 For example A : sum the pixels under the light rectangle, and subtract the sum of the pixels under the dark rectangle. ONLY summations!
 :::
 
-## Viola-Jones Feature Extraction
+## Viola-Jones Feature Extraction {data-auto-animate="true"}
 
 Features can be calculated very quickly by pre-calculating the **integral** image.
 
@@ -274,11 +274,11 @@ $$
 
 i.e. the sum of pixels to the left and above a given pixel.
 
-## Viola-Jones Feature Extraction
+## Viola-Jones Feature Extraction {data-auto-animate="true"}
 
 ::: columns
 
-::::: {.column width=47%}
+::::: {.column width=50%}
 ![Integral Image](assets/svg/integral-image.svg)
 :::::
 
@@ -301,5 +301,71 @@ Sum of pixels under a rectangle:
 :::
 
 ::: notes
+Any pixel in the integral image is the sum of the pixels above and left...
 one has to admire the simple genius of the integral image!
+:::
+
+## Viola-Jones Feature Extraction {data-auto-animate="true"}
+
+::: columns
+
+::::: column
+![Haar features](assets/png/haar_features.png)
+:::::
+
+::::: column
+
+Each of these 4 features can be scaled and shifted in a $24 \times 24$ pixel sub-window.
+
+- giving a total of approx 160,000 features.
+
+:::::
+
+:::
+
+## Viola-Jones Feature Learning {data-auto-animate="true"}
+
+The number of features extracted from an image is very large.
+
+::: incremental
+
+- We need a way to select the _subset_ of features, which are the most _important_ from the point of object **detection**.
+- We also need a **fast** classifier.
+- Solution: modified **AdaBoost**.
+
+:::
+
+::: notes
+so - what did they do??
+:::
+
+## Viola-Jones Feature Learning {data-auto-animate="true"}
+
+Modified Adaboost algorithm.
+
+::: incremental
+
+- Each _weak_ learner operates on only **one** feature.
+- Thus, Adaboost acts as a feature _selector_.
+- Can significantly reduce the initial number of 160,000 features.
+- e.g. 200 features can provide 95% detection rate with 1 in 14000 false positives.
+
+:::
+
+::: notes
+
+Very good, but probably not enough in a real application.
+We want to improve both detection rate and reduce the number of features to calculate.
+
+those false positives are still very high given pixels in an image.
+:::
+
+## Viola-Jones Features {data-auto-animate="true"}
+
+![Image from original paper](assets/png/vj-features.png){width=80%}
+
+::: notes
+In both cases, the features can be recognised in the image of a face...
+the bright bridge of the nose..., dark eyes, light cheeks, etc.
+quite intuitive...
 :::
