@@ -463,7 +463,7 @@ Another application - detecting humans...
 
 ## Detecting Humans {data-auto-animate="true"}
 
-![HOG - from original paper](assets/png/HOG-fig6.png)
+![HOG - from original paper](assets/png/hog-fig6.png)
 
 Dalal and Triggs used a linear SVM classifier.
 
@@ -538,6 +538,8 @@ Showing that the detector cues mainly on the contrast of silhouette contours and
 :::
 
 ::: notes
+Evidence for and against the hypothesis it is a human.
+
 f) the detector cues mainly on the contrast of silhouette contours against the background, not on internal edges or on silhouette contours against the foreground.
 
 g) illustrate that gradients inside the person (especially vertical ones) typically count as negative cues, presumably because this suppresses false pos
