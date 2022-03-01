@@ -10,7 +10,7 @@ date: March 2022
 - Classification or Object Detection
 - Sliding Window
 - Detecting Faces
-- Detecting Humans
+- Detecting Humans and other applications
 
 # Object Detection
 
@@ -544,3 +544,15 @@ f) the detector cues mainly on the contrast of silhouette contours against the b
 
 g) illustrate that gradients inside the person (especially vertical ones) typically count as negative cues, presumably because this suppresses false pos
 :::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+## Detecting Deforming Objects {data-auto-animate="true"}
+
+# Summary
+
+Reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.
+- Sonka et al., Image Processing, Analysis and Machine Vision, 4th ed., Chapter 10
+- Papers mentioned in the slides!
