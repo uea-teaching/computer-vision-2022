@@ -457,4 +457,88 @@ This was a very influential paper!
 
 The original HOG paper also proposed detection of humans in the sliding window.
 
+::: notes
+Another application - detecting humans...
+:::
+
 ## Detecting Humans {data-auto-animate="true"}
+
+![HOG - from original paper](assets/png/HOG-fig6.png)
+
+Dalal and Triggs used a linear SVM classifier.
+
+::: notes
+as well as the Hog features - they also detected humans...
+Using just a linear SVM.
+This is a figure from their original paper.
+:::
+
+## Detecting Humans {data-auto-animate="true"}
+
+::: columns
+::::: column
+![mean gradients and SVM weights](assets/png/hog-gradient-svm.png)
+:::::
+
+::::: column
+
+a. The mean gradient image for all data.
+b. The maximum positive SVM weights.
+c. The maximum negative SVM weights.
+
+The SVM weights provide a nice visualisation of the decision boundary.
+
+:::::
+:::
+
+::: notes
+a - The average gradient image over the training examples.
+b - Each pixel shows the maximum positive SVM weight in the block centred on the pixel.
+c - Likewise for the negative SVM weights.
+shows that the most important cells are the ones that typically contain major human contours
+(especially the head and shoulders and the feet)
+:::
+
+## Detecting Humans {data-auto-animate="true"}
+
+::: columns
+::::: column
+![hog test image](assets/png/hog-test-hog.png)
+:::::
+
+::::: column
+
+d. An example 64×128 test image.
+e. The computed HOG descriptor.
+
+Performance was reduced with less margin around the subject in the test images.
+
+:::::
+:::
+
+::: notes
+64×128 detection window - 16 pixel margin around human contours.
+:::
+
+## Detecting Humans {data-auto-animate="true"}
+
+::: columns
+::::: column
+![hog weighted](assets/png/hog-weighted.png)
+:::::
+
+::::: column
+
+f. Positively weighted HOG descriptor.
+g. Negatively weighted HOG descriptor.
+
+Showing that the detector cues mainly on the contrast of silhouette contours and gradients inside the person typically count as negative cues.
+
+:::::
+:::
+
+::: notes
+f) the detector cues mainly on the contrast of silhouette contours against the background, not on internal edges or on silhouette contours against the foreground.
+
+g) illustrate that gradients inside the person (especially vertical ones) typically count as negative cues, presumably because this suppresses false pos
+:::
