@@ -547,7 +547,80 @@ g) illustrate that gradients inside the person (especially vertical ones) typica
 
 ## Detecting Boundaries {data-auto-animate="true"}
 
-## Detecting Deforming Objects {data-auto-animate="true"}
+Object detection through segmentation using _boundary detection_.
+
+Edges are **not** the same as object contours or occluding contours.
+
+::: incremental
+
+- Some edges are irrelevant or confusing for object detection.
+- Solution: use a _sliding window_ to detect boundaries.
+
+:::
+
+::: notes
+One way to segment images is to detect relevant boundaries.
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+At each window we extract features that will decide whether the centre pixel in the window is an occluding contour or not.
+
+::: incremental
+
+- Each pixel is assigned a _probability_ of boundary.
+- Circular windows often used as boundaries are oriented.
+- A boundary splits the circular window into two halves.
+
+:::
+
+::: notes
+at each window centre pixel - is it a boundary?
+so we need to repeat for every pixel in the image!
+circular so everything is symmetrical.
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+Features could be _histograms_ produced from image intensity, oriented energy, brightness gradient, colour gradient etc.
+
+The histograms are extracted from two halves of the window,
+and the distance between them is calculated. E.g. $\chi^2$
+
+This distance is mapped to probability using _logistic regression_.
+
+::: notes
+chi squared distance between histograms is something useful for your literature review.
+logistic regression uses a sigmoid function to create a decision boundary.
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+Training and test data require _annotations_.
+
+![test image](assets/jpg/boundary-img.jpg){width=80%}
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+::: columns
+::::: column
+
+![annotation 1](assets/jpg/annotate-01.jpg){width=80%}
+![annotation 2](assets/jpg/annotate-02.jpg){width=80%}
+
+:::::
+::::: column
+
+Annotations are performed by different subjects.
+
+:::::
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+Inconsistent annotations are averaged.
+
+![test image](assets/jpg/weighted-annotation.jpg){width=80%}
 
 # Summary
 
