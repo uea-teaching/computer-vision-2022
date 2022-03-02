@@ -602,16 +602,17 @@ Training and test data require _annotations_.
 
 ## Detecting Boundaries {data-auto-animate="true"}
 
+Annotations are performed by different subjects.
+
 ::: columns
 ::::: column
 
-![annotation 1](assets/jpg/annotate-01.jpg){width=80%}
-![annotation 2](assets/jpg/annotate-02.jpg){width=80%}
+![annotation 1](assets/jpg/annotate-01.jpg)
 
 :::::
 ::::: column
 
-Annotations are performed by different subjects.
+![annotation 2](assets/jpg/annotate-02.jpg)
 
 :::::
 :::
@@ -621,6 +622,60 @@ Annotations are performed by different subjects.
 Inconsistent annotations are averaged.
 
 ![test image](assets/jpg/weighted-annotation.jpg){width=80%}
+
+::: notes
+So - this is the ground truth.
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+$$ P_b(x, y, \theta) $$
+
+The probability that the pixel is a boundary for some orientation.
+
+$$ P_b(x, y) = \max(\theta) P_b(x, y, \theta) $$
+
+The maximum probability that the pixel is a boundary for all orientations.
+
+::: notes
+Of the probability of boundary - we have two possibilities.
+
+Requires careful testing as boundary very close to the ground-truth annotation may not be a failure.
+2-3 pixels off may still be a good boundary.
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+Solution: weighted matching between the machine and human generated boundaries.
+
+- Predicted boundary point too far away from any annotation is considered a false positive.
+- If there are no predicted points close to the annotation, then this pixel is considered a false negative.
+- Probability boundary map can then be thresholded which allows us to calculate precision-recall curves.
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+::: columns
+::::: column
+![precision-recall curve](assets/png/boundary-prec-recall.png)
+:::::
+::::: column
+
+GD+H - Canny
+
+BG+CG+TG - Martin et al.
+
+Ground Truth
+
+:::::
+
+:::
+
+## Detecting Boundaries {data-auto-animate="true"}
+
+![results](assets/png/boundary-results.png)
+
+Martin, Fowlkes and Malik.
+Learning to Detect Natural Image Boundaries Using Local Brightness, Color and Texture Cues (2004).
 
 # Summary
 
