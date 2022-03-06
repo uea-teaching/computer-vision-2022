@@ -551,6 +551,18 @@ Each unit is connected to all units in previous layer.
 
 :::
 
+## MNIST Example
+
+The "Hello World" of neural networks.
+
+![MNIST-MLP](assets/png/MNIST-MLP.png)
+
+::: notes
+2 hidden layers, both 256 units
+after 300 iterations over training set:
+1.83% validation error
+:::
+
 ---
 
 ```{.python data-line-numbers="1-12"}
@@ -621,3 +633,83 @@ first , we flatten out the image.
 Then apply layers in sequence...
 and return the output.
 :::
+
+## MNIST
+
+MNIST is quite a special case.
+
+- Digits nicely centred within the image.
+- Scaled to approximately the same size.
+
+## Visualisation {data-auto-animate="true"}
+
+::: columns
+
+::::: column
+![MNIST Samples](assets/png/mnist-sample.png)
+:::::
+
+::::: column
+![Weight Visualisation](assets/png/mnist-mlp-features.png)
+:::::
+:::
+
+::: notes
+Visualising the learned weights can help to understand what the network is learning.
+looking at the weights of layer 1...
+The matrix is shape (784, 256) , so we can visualise a column as 28x28 image.
+:::
+
+## Visualisation {data-auto-animate="true"}
+
+Note the stroke features detected by the various units.
+
+::: columns
+
+::::: column
+![MNIST Samples](assets/png/mnist-sample.png)
+:::::
+
+::::: column
+![Weight Visualisation](assets/png/mnist-mlp-features.png)
+:::::
+:::
+
+::: notes
+Each image visualises the weights connecting pixels to a specific unit in the first hidden layer.
+Note the stroke features detected by the various units
+:::
+
+## Visualisation {data-auto-animate="true"}
+
+Learned features lack translation invariance.
+
+::: columns
+
+::::: column
+![MNIST Samples](assets/png/mnist-sample.png)
+:::::
+
+::::: column
+![Weight Visualisation](assets/png/mnist-mlp-features.png)
+:::::
+:::
+
+::: notes
+The fully connected networks so far have a weakness:
+No translation invariance; learned features are
+position dependent
+:::
+
+## MNIST
+
+For more general imagery:
+
+- Require a training set large enough to see all features in all possible positions.
+- Require network with enough units to represent this.
+
+::: notes
+Highly unlikely to achieve this...
+:::
+
+# Convolutional Neural Networks
