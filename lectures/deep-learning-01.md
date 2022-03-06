@@ -410,3 +410,160 @@ PyTorch optimizer objects update the parameters for us. In this case we use the 
 We give it the parameters we want it to update, and a learning rate.
 
 :::
+
+## Classification
+
+Final layer has a **softmax** non-linear function.
+
+The cost is the cross-entropy loss, which is the negative log-likelihood.
+
+## Softmax
+
+Softmax produces a probability vector:
+
+$$
+q(x) = \frac{e^{x_i}}{\sum_{i=0}^{N} e^{x_i}}
+$$
+
+::: notes
+Softmax scales the logits (the raw output of the last layer) to probabilities.
+:::
+
+## Classification Cost
+
+Negative log probability (categorical cross-entropy):
+
+- $q$ is the predicted probability.
+- $p$ is the true probability (usually 0 or 1).
+
+$$
+c = - \sum p_i \log q_i
+$$
+
+::: notes
+have a think about what this cost would be for a single example.
+:::
+
+## Classification in PyTorch
+
+```{.python data-line-numbers="1-7|2|4|6"}
+# Create a nn.CrossEntropyLoss object to compute loss
+criterion = torch.nn.CrossEntropyLoss()
+# Get predicted logits
+y_pred_logits = layer(x_train)
+# Use criterion to compute loss
+cost = criterion(y_pred_logits, y_train)
+...
+```
+
+::: notes
+Again, pytorch does a lot of the work for us.
+Calling a CrossEntropyLoss object will: apply softmax and compute cross entropy loss in one go
+:::
+
+## Regression
+
+To quantify something, with real-valued output.
+
+Cost: Mean squared error.
+
+## Mean Squared Error
+
+- $q$ is the predicted value.
+- $p$ is the true value.
+
+$$
+c = \frac{1}{N} \sum_{i=0}^{N} (q_i - p_i)^2
+$$
+
+## Regression in PyTorch
+
+```{.python data-line-numbers="1-7|2|4|6"}
+# Create a nn.CrossEntropyLoss object to compute loss
+criterion = torch.nn.MSELoss()
+# Get predicted logits
+y_pred_logits = layer(x_train)
+# Use criterion to compute loss
+cost = criterion(y_pred_logits, y_train)
+...
+```
+
+::: notes
+nn.MSELoss (mean squared error loss) computes MSE loss
+:::
+
+## Training
+
+Randomly split the training set into mini-batches of approximately 100 samples.
+
+- Train on a mini-batch in a single step.
+- The mini-batch cost is the mean of the costs of all samples in the mini-batch.
+
+---
+
+Training on mini-batches means that ~100 samples are processed in parallel.
+
+- Good news for GPUs that do lots of operations in parallel.
+
+---
+
+Training on enough mini-batches to cover all examples in the training set is called an epoch.
+
+- Run multiple epochs (often 200-300), until the cost converges.
+
+## Training - Recap
+
+::: incremental
+
+1. Take mini-batch of training examples.
+2. Compute the cost of the mini-batch.
+3. Use gradient descent to update the parameters and reduce the cost.
+4. Repeat, until done.
+
+:::
+
+::: notes
+Training is an iterative process...
+:::
+
+# Multi-Layer Perceptron
+
+The simplest network architecture...
+
+::: notes
+Nothing we haven't seen yet - uses only fully connected layers.
+:::
+
+## Multi-Layer Perceptron (MLP)
+
+::: columns
+
+::::: column
+![dense layer](assets/png/dense-layer.png)
+:::::
+
+::::: column
+
+### Dense layer
+
+Each unit is connected to all units in previous layer.
+:::::
+
+:::
+
+---
+
+```{.python data-line-numbers="1-12"}
+class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784, 256)
+        self.hidden = nn.Linear(256, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        return self.output(x)
+```
