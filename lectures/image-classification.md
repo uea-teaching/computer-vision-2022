@@ -35,7 +35,7 @@ Of course, if a particular object is present in an image, it could be the criter
 But object recognition is a more specific problem - and we will talk about that later.
 
 We have previously studied various classifiers.
-That discussion talked of clouds of points to be classified, but now, these points will image features.
+That discussion talked of clouds of points to be classified, but now, these points will be image features.
 :::
 
 # Feature Extraction
@@ -472,7 +472,7 @@ Also, small blocks may not have interest points...
 
 ## Spatial Pyramid Kernels {data-auto-animate="true"}
 
-The final _similarity_ figure is a sum of block-wise $HI$s _weighted_ by the **inverse** of the block width.
+The final _similarity_ figure is a sum of block-wise $HI$s **weighted** by the **inverse** of the block width.
 
 - Lazebnik et al. "Beyond bags of features...", CVPR 2006
 
