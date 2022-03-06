@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Image Classification</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Image Classification</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">March 2022</p>
+</section>
+
+<section id="content" class="title-slide slide level1">
+<h1>Content</h1>
+<ul>
+<li>HOG features</li>
+<li>Visual Words</li>
+<li>Spatial Pyramid</li>
+<li>PCA and LDA</li>
+<li>Evaluation</li>
+</ul>
+<aside class="notes">
+<p>briefly discuss HOGs… some other classification methods… PCA and LDA - PCA is everywhere! Some more on evaluation…</p>
+<p>This week we will look at two computer vision application scenarios which can employ the aforementioned classifiers.</p>
+</aside>
+</section>
+
+<section id="image-classification" class="title-slide slide level1">
+<h1>Image Classification</h1>
+<p>Passing a <strong>whole</strong> image to a classifier.</p>
+<aside class="notes">
+<p>Image classification really means to classify the whole image as belonging to a class, rather than identify objects within the image.</p>
+<p>Of course, if a particular object is present in an image, it could be the criteria for classification.</p>
+<p>But object recognition is a more specific problem - and we will talk about that later.</p>
+<p>We have previously studied various classifiers. That discussion talked of clouds of points to be classified, but now, these points will image features.</p>
+</aside>
+</section>
+
+<section>
+<section id="feature-extraction" class="title-slide slide level1">
+<h1>Feature Extraction</h1>
+<p>What are good features?</p>
+<aside class="notes">
+<p>there are many ways to extract features - but are they useful to our task?</p>
+</aside>
+</section>
+<section id="feature-extraction-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Feature Extraction</h2>
+<p>The main difficulty in solving these image classification problems is finding good image features.</p>
+<aside class="notes">
+<p>the trick is to extract good features… but what are they?</p>
+</aside>
+</section>
+<section id="what-are-good-features" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">What are good features?</h2>
+<div>
+<ul>
+<li class="fragment">Good features should <strong>exhibit</strong> <em>between-class</em> variation.</li>
+<li class="fragment">Good features should <strong>suppress</strong> <em>within-class</em> variation.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>to classify cats and dogs, we want features extracted from cats to be very different from features extracted from dogs. - between-class variation</p>
+<p>also, we want features extracted from different cats to be a s similar as possible.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Other desirable properties of features are:</p>
+<div>
+<ul>
+<li class="fragment"><em>invariant</em> to rotation, translation and scaling of an image</li>
+<li class="fragment"><em>invariant</em> to illumination</li>
+</ul>
+</div>
+<aside class="notes">
+<p>we don’t want the feature to change if it is in a different part of the image. we don’t want the feature to change if it has different illumination… black cat in coal cellar, white cat in white room, etc.</p>
+</aside>
+</section>
+<section id="what-are-good-features-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">What are good features?</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<figure>
+<img data-src="assets/jpg/texture.jpg" style="width:75.0%" alt="texture for features" /><figcaption aria-hidden="true">texture for features</figcaption>
+</figure>
+</div><div class="column">
+<p>Texture is a good feature, and often provides good diagnostics.</p>
+<ul>
+<li>e.g. summary statistics on gradient orientations</li>
+</ul>
+</div>
+</div>
+<aside class="notes">
+<p>you might guess - texture is a good feature… we learned earlier how to calculate gradient and gradient direction… gradient captures the smallest features of an image…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:35%;">
+<figure>
+<img data-src="assets/jpg/sun_aaesgnhzvszupuvo.jpg" style="width:85.0%" alt="kitchen 1" /><figcaption aria-hidden="true">kitchen 1</figcaption>
+</figure>
+<figure>
+<img data-src="assets/jpg/sun_aaevfnfhjudhbvxh.jpg" style="width:85.0%" alt="kitchen 2" /><figcaption aria-hidden="true">kitchen 2</figcaption>
+</figure>
+</div><div class="column">
+<p>Exact feature locations are not important.</p>
+<ul>
+<li>Small variations in the layout will not change the class label.</li>
+</ul>
+</div>
+</div>
+<aside class="notes">
+<p>These images from the coursework… 15 classes - one of which is kitchen… it does not matter where in the image is a window or microwave… translation invariance is important…</p>
+</aside>
+</section>
+<section id="classification-applications" class="slide level2">
+<h2>Classification Applications</h2>
+<p>Classify an X-ray image as containing cancer or not.</p>
+<div>
+<ul>
+<li class="fragment">A <em>binary</em> classification problem.</li>
+<li class="fragment">Normally requires significant human expertise!</li>
+</ul>
+</div>
+<aside class="notes">
+<p>We could fill the entire lecture with examples of classification applications, such is the rapid expansion of the field.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Material classification, eg. wood, metal, plastic, etc.</p>
+<div>
+<ul>
+<li class="fragment">Texture is likely useful, but…</li>
+<li class="fragment">Illumination may significantly change the texture.</li>
+<li class="fragment">Extract features invariant to illumination.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Scene classification e.g. kitchen, bathroom, beach.</p>
+<div>
+<ul>
+<li class="fragment">Importance of context.</li>
+<li class="fragment">Scenes contain many objects, but their exact location is less important.</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="image-classification-strategies" class="title-slide slide level1">
+<h1>Image Classification Strategies</h1>
+<p>Extracting <em>low level</em> features from an image.</p>
+<aside class="notes">
+<p>usually we would extract some low level features…</p>
+</aside>
+</section>
+<section id="low-level-features" class="slide level2">
+<h2>Low Level Features</h2>
+<p>Two low level features, which are used often, include <em>SIFT</em> and <em>HOG</em> features, combined with some colour descriptors.</p>
+</section>
+<section class="slide level2">
+
+<p>SIFT - Scale Invariant Feature Transform</p>
+<div>
+<ul>
+<li class="fragment">Localised feature based on image gradients.</li>
+<li class="fragment">One of the first of its kind.</li>
+<li class="fragment">Some proprietary aspects to its use.</li>
+<li class="fragment">covered in a later lecture.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<p>HOG - histograms of oriented gradients.</p>
+<ul>
+<li>Also a gradient based feature.</li>
+<li>next up!</li>
+</ul>
+</section>
+<section id="histograms-of-oriented-gradients" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Histograms of Oriented Gradients</h2>
+<ul>
+<li>Image is divided into regions - a window.</li>
+<li>Each window is further divided into cells.</li>
+<li>Each cell is typically 6 to 8 pixels wide.</li>
+</ul>
+<aside class="notes">
+<p>In the paper they describe the window as containing a grid of cells. so in practice, we decide a cell size, then build windows of cell blocks.</p>
+</aside>
+</section>
+<section id="histograms-of-oriented-gradients-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Histograms of Oriented Gradients</h2>
+<p>A local 1D histogram of <em>gradient</em> directions.</p>
+<div>
+<ul>
+<li class="fragment">1D dimension is the <strong>angle</strong> of the gradient</li>
+<li class="fragment">the angle is <em>quantised</em> into a discrete set of bins</li>
+<li class="fragment">for example, for a bin size 20 degrees, we have 18 bins</li>
+<li class="fragment">sum of all elements is equal to number of pixels in the <em>cell</em></li>
+</ul>
+</div>
+<aside class="notes">
+<p>so far you have been working with histograms of colour values.</p>
+</aside>
+</section>
+<section id="angle" class="slide level2" data-transition="slide">
+<h2 data-transition="slide">Angle</h2>
+<ul>
+<li>A gradient is calculated using a centred <span class="math inline">\([-1,0,1]\)</span> filter.</li>
+<li>The filter is applied vertically and horizontally.</li>
+<li>We derive the gradient direction from these first derivatives.</li>
+</ul>
+<p><span class="math display">\[\alpha = \tan^{-1} \frac{\delta g}{\delta y}~ / ~ \frac{\delta g}{\delta x}\]</span></p>
+</section>
+<section id="magnitude" class="slide level2" data-transition="slide">
+<h2 data-transition="slide">Magnitude</h2>
+<p>For colour images, we can calculate gradient for the three channels and select the one with the largest <em>magnitude</em>.</p>
+<p><span class="math display">\[|G| = \sqrt{\left(\frac{\delta g}{\delta x}\right)^2 + \left(\frac{\delta g}{\delta y}\right)^2} \]</span></p>
+<aside class="notes">
+<p>and, of course, we can get the gradient magnitude for each pixel with Pythagoras.</p>
+</aside>
+</section>
+<section id="binning" class="slide level2" data-transition="slide">
+<h2 data-transition="slide">Binning</h2>
+<p>For each pixel within a cell, its gradient <em>orientation</em> is used to increment the relevant histogram bin.</p>
+<div>
+<ul>
+<li class="fragment">in <em>proportion</em> to the gradient magnitude</li>
+</ul>
+</div>
+<aside class="notes">
+<p>different to colour histogram, where we just increment on value of colour. this is to promote edges in the image</p>
+</aside>
+</section>
+<section id="interpolation" class="slide level2" data-transition="slide">
+<h2 data-transition="slide">Interpolation</h2>
+<p>To enforce invariance to some small gradient orientation differences, we <em>interpolate</em> histogram contributions between the neighbouring bin centres.</p>
+<div>
+<ul>
+<li class="fragment">Typical binning - 20 degrees.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>to avoid bin mis-match where a small variation in a gradient can shift the assignment of a pixel to a bin.</p>
+</aside>
+</section>
+<section id="contrast-normalisation" class="slide level2" data-transition="slide">
+<h2 data-transition="slide">Contrast Normalisation</h2>
+<p>We choose a certain configuration of cells and call it a <em>block</em></p>
+<div>
+<ul>
+<li class="fragment">typically 2-3 cell wide</li>
+<li class="fragment">perform <em>normalisation</em> within each block</li>
+<li class="fragment">various schemes proposed in original paper</li>
+<li class="fragment">e.g. modified L2 norm <span class="math inline">\(v \rightarrow v / \sqrt{||v||^2_2 + \epsilon^2}\)</span></li>
+</ul>
+</div>
+<aside class="notes">
+<p>this step imparts some illumination invariance - the epsilon is a small constant to avoid division by zero.</p>
+</aside>
+</section>
+<section id="section" class="slide level2" data-transition="slide">
+<h2 data-transition="slide"></h2>
+<figure>
+<img data-src="assets/png/hog_example.png" style="width:85.0%" alt="HOG example" /><figcaption aria-hidden="true">HOG example</figcaption>
+</figure>
+<p>Dalal and Triggs. “Histograms of Oriented Gradients for Human Detection”, CVPR, 2005</p>
+<aside class="notes">
+<p>Histogram features from all cells are combined forming a feature vector which can be used for classification. We will look at this paper again later today when discussing applications. A very influential paper - 40k citatations.</p>
+</aside>
+</section></section>
+<section>
+<section id="visual-words" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1 data-transition="convex-in slide-out">Visual Words</h1>
+<p>Once the features are extracted, we would often use <em>dictionaries</em> of <strong>visual words</strong>.</p>
+<aside class="notes">
+<p>we could use the features directly - but it is better to do something extra…</p>
+</aside>
+</section>
+<section id="visual-words-1" class="slide level2" data-transition="slide" data-auto-animate="true">
+<h2 data-transition="slide" data-auto-animate="true">Visual Words</h2>
+<p>Features representing scenes should be able to <strong>summarise</strong> these scenes.</p>
+</section>
+<section id="visual-words-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>Imagine we would like to classify images containing <em>sets</em> of objects.</p>
+<aside class="notes">
+<p>rather like your coursework - a kitchen has a lot of objects common to other kitchens.</p>
+</aside>
+</section>
+<section id="visual-words-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>The precise location of objects may not be relevant.</p>
+<div>
+<ul>
+<li class="fragment">The objects may move or deform within the image.</li>
+<li class="fragment">The viewpoint may change or the image may be deformed or scaled.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>rather like your coursework - a kitchen has a lot of objects common to other kitchens. Some objects may not be present in some scenes.</p>
+</aside>
+</section>
+<section id="visual-words-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>This suggests some kind of high level histogram representation of the scene.</p>
+<div>
+<ul>
+<li class="fragment">How many cups or plates visible in a kitchen scene?</li>
+<li class="fragment">Will these objects be present in an outdoor scene?</li>
+<li class="fragment">How many trees might you expect in a kitchen?</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Think of high level features as being the bins of a histogram. Of course HOG do not directly represent these objects…but edges , corners etc..</p>
+</aside>
+</section>
+<section id="visual-words-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>Detect <em>interest</em> points in the image.</p>
+<div>
+<ul>
+<li class="fragment">e.g. corners, T-junctions etc.</li>
+<li class="fragment">build <em>neighbourhoods</em> around them.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>How do we achieve this high level histogram?</p>
+</aside>
+</section>
+<section id="visual-words-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>Describe these neighbourhoods with low level features.</p>
+<p>For example, <strong>SIFT</strong></p>
+<aside class="notes">
+<p>How do we achieve this high level histogram?</p>
+</aside>
+</section>
+<section id="visual-words-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>Vector-quantise these features.</p>
+<div>
+<ul>
+<li class="fragment">e.g. by <strong>k-means</strong> clustering.</li>
+<li class="fragment">These <em>clusters</em> are very much like words.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>How do we achieve this high level histogram? eg SIFT is 128D point in in space. Many features form a point cloud… 50 clusters…</p>
+</aside>
+</section>
+<section id="visual-words-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>For each image, build a histogram of these visual words.</p>
+<div>
+<ul>
+<li class="fragment">Two <em>similar</em> images should have <em>similar</em> histograms.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>two images with similar objects should have similar histograms.</p>
+</aside>
+</section>
+<section id="visual-words-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Words</h2>
+<p>Compare histograms using <em>histogram intersection</em>.</p>
+<p><span class="math display">\[HI = \sum_{i=1}^{n} \min(h_i, g_i)\]</span></p>
+<ul>
+<li>Sivic and Zisserman, “Efficient Visual Search…”, Proc. IEEE 2008.</li>
+</ul>
+<aside class="notes">
+<p>Refer to Swain and Ballard, “Color Indexing” 1991. There is a relationship from histogram intersection to L1 or city block distance. This approach is from Sivic and Zisserman.</p>
+</aside>
+</section></section>
+<section>
+<section id="spatial-pyramid-kernels" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Spatial Pyramid Kernels</h1>
+<p>Extending Visual Words…</p>
+</section>
+<section id="spatial-pyramid-kernels-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Spatial Pyramid Kernels</h2>
+<p>The concept of visual words can be taken further so that it incorporates a rough <em>layout</em> of the scene.</p>
+<aside class="notes">
+<p>This may seem like a backward step - we do want translation invariance! But, large scale translation may not be appropriate within the class… imagine the kitchen image with the plates on the floor, and the cups opn the ceiling.</p>
+</aside>
+</section>
+<section id="spatial-pyramid-kernels-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Spatial Pyramid Kernels</h2>
+<ul>
+<li>split an image into 4 quarters</li>
+<li>calculate <span class="math inline">\(HI\)</span> for each quarter <strong>and</strong> the whole image</li>
+<li>resulting in 5 <em>different</em> figures.</li>
+</ul>
+</section>
+<section id="spatial-pyramid-kernels-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Spatial Pyramid Kernels</h2>
+<p>The quarters can be subdivided further into smaller blocks</p>
+<ul>
+<li>too small blocks are less useful.</li>
+</ul>
+<aside class="notes">
+<p>We could go deeper and deeper… We lose completely the translation invariance we desire. Also, small blocks may not have interest points…</p>
+</aside>
+</section>
+<section id="spatial-pyramid-kernels-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Spatial Pyramid Kernels</h2>
+<p>The final <em>similarity</em> figure is a sum of block-wise <span class="math inline">\(HI\)</span>s <em>weighted</em> by the <strong>inverse</strong> of the block width.</p>
+<ul>
+<li>Lazebnik et al. “Beyond bags of features…”, CVPR 2006</li>
+</ul>
+<aside class="notes">
+<p>weighted because we want to favour the larger blocks, retaining translation invariance.</p>
+</aside>
+</section></section>
+<section>
+<section id="dimensionality-reduction" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Dimensionality Reduction</h1>
+<p>The features we create tend to be high dimensional.</p>
+</section>
+<section id="pca" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">PCA</h2>
+<p>Principal Component Analysis (PCA)</p>
+<ul>
+<li>There can be a lot of redundancy in this data.</li>
+<li>We could use PCA to <strong>compress</strong> this data.</li>
+</ul>
+<aside class="notes">
+<p>We have already mentioned PCA in point distribution models.</p>
+</aside>
+</section>
+<section id="fisher-lda" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Fisher LDA</h2>
+<p>The extension of PCA is Fisher LDA</p>
+<ul>
+<li>Linear Discriminant Analysis (LDA)</li>
+<li>also referred to as Dimension Reduction with Canonical Variates</li>
+</ul>
+<aside class="notes">
+<p>in the course text, Forsyth and Ponce, this is referred to as Dimension Reduction with Canonical Variates.</p>
+</aside>
+</section>
+<section id="fisher-lda-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Fisher LDA</h2>
+<p>Is a projection onto a subspace that <strong>maximises</strong> the <em>ratio</em> of the between-class variance to the within-class variance.</p>
+<aside class="notes">
+<p>PCA is a projection - but is only concerned with variance - not the ratio. LDA subspace will have a different orientation to PCA.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:70%;">
+<figure>
+<img data-src="assets/svg/LDA1.svg" alt="data" /><figcaption aria-hidden="true">data</figcaption>
+</figure>
+</div><div class="column">
+<p>We have some data points belonging to two classes.</p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:70%;">
+<figure>
+<img data-src="assets/svg/LDA2.svg" alt="PCA" /><figcaption aria-hidden="true">PCA</figcaption>
+</figure>
+</div><div class="column">
+<p>Difficult to distinguish the classes along the principal component.</p>
+</div>
+</div>
+<aside class="notes">
+<p>And this is an easy problem… The data is linearly separable - but after PCA they are not!</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:70%;">
+<figure>
+<img data-src="assets/svg/LDA3.svg" alt="LDA" /><figcaption aria-hidden="true">LDA</figcaption>
+</figure>
+</div><div class="column">
+<p>Easier to distinguish the classes along the discriminant mode.</p>
+</div>
+</div>
+<aside class="notes">
+<p>The discriminant mode maximises between-class variation.</p>
+</aside>
+</section></section>
+<section>
+<section id="classifier-evaluation" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Classifier Evaluation</h1>
+<p>How do we evaluate the performance of the classifier?</p>
+</section>
+<section id="classifier-evaluation-1" class="slide level2">
+<h2>Classifier Evaluation</h2>
+<p>Image Classification is often evaluated using two metrics:</p>
+<div>
+<ul>
+<li class="fragment"><strong>precision</strong> and <strong>recall</strong>.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>precision - recall stems from document retrieval - but can easily be extended to image retrieval, and image classification.</p>
+</aside>
+</section>
+<section id="classifier-evaluation-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Classifier Evaluation</h2>
+<p><strong>Precision</strong> : the percentage of recovered items that are <em>relevant</em>.</p>
+<p><span class="math display">\[TP / (TP + FP)\]</span></p>
+<aside class="notes">
+<p>True positives divided by the number of true positives and false positives. relevant items are the items that are genuinely true.</p>
+</aside>
+</section>
+<section id="classifier-evaluation-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Classifier Evaluation</h2>
+<p><strong>Recall</strong> : the percentage of relevant items that are <em>recovered</em>.</p>
+<p><span class="math display">\[TP / (TP + FN)\]</span></p>
+<aside class="notes">
+<p>all positives - (true positives + false negatives). AKA True Positive Rate (TPR) Receiver Operating Characteristic (ROC) In ROC curve, plotted TPR against FPR. Here we plot TPR (recall) against precision. Precision did not feature in ROC curves.</p>
+</aside>
+</section>
+<section id="classifier-evaluation-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Classifier Evaluation</h2>
+<p>We also calculate <em>average</em> precision:</p>
+<p><span class="math display">\[A = \frac{1}{N_r} \sum_{r=1}^{N}P(r)rel(r)\]</span></p>
+<p>Average precision is the area under the Precision-Recall curve.</p>
+<aside class="notes">
+<p>This comes from document retrieval - you can see from the language used… Average precision is the area under the Precision-Recall curve.</p>
+</aside>
+</section>
+<section id="classifier-evaluation-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Classifier Evaluation</h2>
+<div class="columns">
+<div class="column">
+<p>We also calculate <em>average</em> precision:</p>
+<p><span class="math display">\[A = \frac{1}{N_r} \sum_{r=1}^{N}P(r)rel(r)\]</span></p>
+</div><div class="column">
+<ul>
+<li><span class="math inline">\(N_r\)</span> is the number of relevant items</li>
+<li><span class="math inline">\(N\)</span> is the total number of items</li>
+<li><span class="math inline">\(P(r)\)</span> is the precision of first <span class="math inline">\(r\)</span> items in the ranked list.</li>
+<li><span class="math inline">\(rel(r)\)</span> a binary function that is 1 when the <span class="math inline">\(r^{th}\)</span> document is relevant.</li>
+</ul>
+</div>
+</div>
+<aside class="notes">
+<p>This comes from document retrieval - you can see from the language used… But, of course, we can use this for image retrieval and classification.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/pr_curves.png" style="width:90.0%" alt="precision-recall for two models" /><figcaption aria-hidden="true">precision-recall for two models</figcaption>
+</figure>
+<aside class="notes">
+<p>Easier to comprehend with an image, here are two classifiers compared.</p>
+</aside>
+</section>
+<section id="classifier-evaluation-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Classifier Evaluation</h2>
+<p><strong>ROC</strong> curves should be used when there are roughly equal numbers of observations for each class.</p>
+<p><strong>Precision-Recall</strong> curves should be used when there is a moderate to large class imbalance.</p>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>HOG features</li>
+<li>Visual Words</li>
+<li>Spatial Pyramid</li>
+<li>PCA and LDA</li>
+<li>Evaluation</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.</li>
+<li>Sonka et al., Image Processing, Analysis and Machine Vision, 4th ed., Chapter 10</li>
+</ul>
+<aside class="notes">
+<p>A lot covered in this lecture. We looked at one low level feature - HOG. How we can use this to create a higher level feature - visual words. And - extend that further - spatial pyramid. Dimensionality reduction using LDA - appropriate for some classification problems. and… another view on evaluation - useful for image classification, where we have class imbalance.</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
