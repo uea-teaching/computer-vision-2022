@@ -9,6 +9,7 @@ date: March 2022
 
 - ImageNet
 - Neural Networks
+- Practical Examples
 
 # ImageNet
 
@@ -208,10 +209,18 @@ in practical terms - we can flatten an image to a vector of size $M$
 
 ---
 
-A Neural Network is, built from _layers_, each of which is:
+A **Neural Network** is built from _layers_, each of which is:
 
 - a matrix multiplication
 - a bias
 - a non-linear activation function
 
+::: notes
+To answer the question - what is a neural network?
+:::
+
 <!-- $$\frac{e^{x*i}}{\sum^N*{i=0}} e^{x_i}$$ -->
+
+# Practical Examples
+
+Code examples in **PyTorch**.
