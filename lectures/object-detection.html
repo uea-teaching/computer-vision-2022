@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Object Detection</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Object Detection</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">March 2022</p>
+</section>
+
+<section id="content" class="title-slide slide level1">
+<h1>Content</h1>
+<ul>
+<li>Classification or Object Detection</li>
+<li>Sliding Window</li>
+<li>Detecting Faces</li>
+<li>Detecting Humans and other applications</li>
+</ul>
+</section>
+
+<section>
+<section id="object-detection" class="title-slide slide level1">
+<h1>Object Detection</h1>
+<p>What is object detection?</p>
+<aside class="notes">
+<p>We have just been talking about image classification - what are the differences between classification and object detection?</p>
+</aside>
+</section>
+<section id="object-detection-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Object Detection</h2>
+<p><em>Image classification</em> methods can detect an object in the image if there is just a <strong>single</strong> object in the scene and it clearly dominates the image.</p>
+<p>If this constraint is not met, we are in the <strong>object detection</strong> scenario.</p>
+</section>
+<section id="object-detection-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Object Detection</h2>
+<p>We can use similar techniques we have learnt in Image Classification to detect objects in an image.</p>
+<p>Here we apply these techniques to <strong>sub-windows</strong> of the image.</p>
+<p>This approach is called a <em>sliding window</em> method.</p>
+</section></section>
+<section>
+<section id="sliding-window" class="title-slide slide level1">
+<h1>Sliding Window</h1>
+<p>Sliding window is a <em>meta</em> algorithm - a concept found in many machine learning algorithms.</p>
+<aside class="notes">
+<p>not perhaps a precise description - more a family of algorithms</p>
+</aside>
+</section>
+<section id="sliding-window-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>First, let’s assume our objects have relatively similar size and fit into <span class="math inline">\(n \times m\)</span> pixel windows.</p>
+</section>
+<section id="sliding-window-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>Build the dataset of positive and negative instances and train the classifier.</p>
+<p>We could then <em>slide</em> the classification window over the image to <strong>search</strong> for the object location.</p>
+<aside class="notes">
+<p>Classifier is trained as we have discussed - or even simpler.</p>
+</aside>
+</section>
+<section id="sliding-window-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>But, there are problems:</p>
+<div>
+<ul>
+<li class="fragment">Objects may be of significantly <em>different sizes</em>.</li>
+<li class="fragment">Some windows will overlap - how do we avoid counting objects <em>multiple times</em>?</li>
+</ul>
+</div>
+<aside class="notes">
+<p>How do we decide on the window size? - we account for only one size…</p>
+<p>We need to solve these two problems to achieve robust detection.</p>
+</aside>
+</section>
+<section id="sliding-window-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>We tackle the first problem by searching over scale as well.</p>
+<div>
+<ul>
+<li class="fragment">We build the <strong>Gaussian pyramid</strong> of our image.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Matlab has a function for this - <code>impyramid</code>.</p>
+</aside>
+</section>
+<section id="gaussian-pyramid" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Gaussian Pyramid</h2>
+<p>Each layer of a pyramid is obtained by <em>smoothing</em> a previous layer with a Gaussian filter and <em>subsampling</em> it.</p>
+</section>
+<section id="section" class="slide level2" data-transition="convex">
+<h2 data-transition="convex"></h2>
+<figure>
+<img data-src="assets/png/gauss_pyramid.png" style="width:80.0%" alt="Gaussian Pyramid" /><figcaption aria-hidden="true">Gaussian Pyramid</figcaption>
+</figure>
+<aside class="notes">
+<p>here we have downsampled the image by a factor of 2. we could choose a different factor, and we have the gaussian parameters to adjust.</p>
+</aside>
+</section>
+<section id="gaussian-pyramid-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Gaussian Pyramid</h2>
+<p>We search using our <span class="math inline">\(n \times m\)</span> window in each <strong>layer</strong> of the pyramid.</p>
+<aside class="notes">
+<p>This is how we tackle the first problem…objects of different sizes.</p>
+</aside>
+</section>
+<section id="sliding-window-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>The second problem is usually solved using <strong>non-maximum suppression</strong>.</p>
+<aside class="notes">
+<p>The second problem - overlapping windows - counting objects multiple times. This is more apparent with windows of different sizes.</p>
+</aside>
+</section>
+<section id="non-maximum-suppression" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Non-Maximum Suppression</h2>
+<p>Windows with a local maximum of <em>classifier confidence</em> <strong>suppress</strong> nearby windows.</p>
+<aside class="notes">
+<p>Nearby windows usually means overlapping windows.</p>
+<p>This is a high level description of sliding windows - let’s discuss more formally.</p>
+</aside>
+</section>
+<section id="sliding-window-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>Train the classifier on <span class="math inline">\(n \times m\)</span> windows.</p>
+<p>Choose a threshold <span class="math inline">\(t\)</span> and <span class="math inline">\(\Delta x\)</span> and <span class="math inline">\(\Delta y\)</span>, where:</p>
+<ul>
+<li><span class="math inline">\(t\)</span> is a threshold for the classifier confidence.</li>
+<li><span class="math inline">\(\Delta x\)</span> and <span class="math inline">\(\Delta y\)</span> are the step distance for each direction.</li>
+</ul>
+<aside class="notes">
+<p>So - formally we train a classifier on windows - to achieve object detection.</p>
+</aside>
+</section>
+<section id="sliding-window-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>Construct an Image Pyramid.</p>
+<p>For each level:</p>
+<ul>
+<li>Apply the classifier to each <span class="math inline">\(n \times m\)</span> window, stepping by <span class="math inline">\(\Delta x\)</span> and <span class="math inline">\(\Delta y\)</span> in this level to get a classifier confidence <span class="math inline">\(c\)</span>.</li>
+<li>If <span class="math inline">\(c\)</span> is above <span class="math inline">\(t\)</span>, insert a pointer to the window into a list <span class="math inline">\(L\)</span>, <em>ranked</em> by <span class="math inline">\(c\)</span>.</li>
+</ul>
+</section>
+<section id="sliding-window-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Sliding Window</h2>
+<p>For each window <span class="math inline">\(w\)</span> in <span class="math inline">\(L\)</span>, from highest confidence:</p>
+<ul>
+<li>remove all windows <span class="math inline">\(u \neq w\)</span> that overlap <span class="math inline">\(w\)</span> <em>significantly</em></li>
+<li>overlap is calculated in the <em>original</em> image, by expanding coarser scales</li>
+</ul>
+<aside class="notes">
+<p>This is the non-maximal suppression step. the idea of significant overlap is not precisely defined - it is another parameter.</p>
+</aside>
+</section></section>
+<section id="detection-applications" class="title-slide slide level1">
+<h1>Detection Applications</h1>
+<p>Now we know <em>how</em> to detect objects in an image, <strong>what</strong> can be detected?</p>
+<aside class="notes">
+<p>We of course enter another huge topic - so we will discuss a couple of really important applications.</p>
+</aside>
+</section>
+
+<section>
+<section id="face-detection" class="title-slide slide level1">
+<h1>Face Detection</h1>
+<p>We will mostly discuss the classic <em>Viola-Jones</em> algorithm for face detection.</p>
+<aside class="notes">
+<p>Before we dive into viola-jones, I want to mention some other classic methods you should be aware of.</p>
+</aside>
+</section>
+<section id="face-detection-1" class="slide level2">
+<h2>Face Detection</h2>
+<p>Another classic method in face classification is <em>Eigenfaces</em>.</p>
+<div>
+<ul>
+<li class="fragment">Eigenfaces use PCA on an aligned set of face images.</li>
+<li class="fragment"><em>Fisherfaces</em> extends Eigenfaces to use Fisher LDA.</li>
+<li class="fragment">There is a document on Blackboard for you to read on these methods.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>There are some slides on these methods on BB - you might find the interesting - and they are a forerunner of some very contemporary techniques for face generation.</p>
+</aside>
+</section>
+<section id="viola-jones-object-detection" class="slide level2">
+<h2>Viola-Jones object detection</h2>
+<p>P. Viola, and M. Jones,</p>
+<p>Rapid Object Detection using a Boosted Cascade of Simple Features.</p>
+<p>International Conference on Computer Vision and Pattern Recognition, pp. 511-518, 2001.</p>
+<aside class="notes">
+<p>Ok, let’s deep dive into this algorithm.</p>
+</aside>
+</section>
+<section id="viola-jones-object-detection-framework" class="slide level2">
+<h2>Viola-Jones object detection framework</h2>
+<p>A fast and robust method for face detection.</p>
+<ul>
+<li>Can be used for detection of other objects, not only faces.</li>
+<li>Robust - high detection rate and low false-positive rate.</li>
+<li>Detection only - not recognition.</li>
+</ul>
+<aside class="notes">
+<p>The idea is to distinguish faces from non faces.</p>
+</aside>
+</section>
+<section id="viola-jones-object-detection-framework-1" class="slide level2">
+<h2>Viola-Jones object detection framework</h2>
+<p>The method comprises four stages:</p>
+<div>
+<ul>
+<li class="fragment">feature detection</li>
+<li class="fragment">integral image</li>
+<li class="fragment">learning algorithm using modified AdaBoost</li>
+<li class="fragment"><em>cascade</em> of classifiers</li>
+</ul>
+</div>
+<aside class="notes">
+<p>the integral image is a pre-processing step.</p>
+</aside>
+</section>
+<section id="viola-jones-feature-extraction" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Feature Extraction</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/haar_features.png" alt="Haar features" /><figcaption aria-hidden="true">Haar features</figcaption>
+</figure>
+</div><div class="column">
+<p>Features need to be calculated <strong>fast</strong>!</p>
+<div>
+<ul>
+<li class="fragment">Use a simple set of <em>Haar-like</em> features.</li>
+<li class="fragment">add light rectangle and subtract dark rectangle</li>
+<li class="fragment">features are translated within a sub-window</li>
+</ul>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Haar like features are a simple orthogonal type operator - Haar was a mathematician from the early 20th century. Simple addition or subtraction of rectangles. For example A : sum the pixels under the light rectangle, and subtract the sum of the pixels under the dark rectangle. ONLY summations!</p>
+</aside>
+</section>
+<section id="viola-jones-feature-extraction-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Feature Extraction</h2>
+<p>Features can be calculated very quickly by pre-calculating the <strong>integral</strong> image.</p>
+<p><span class="math display">\[
+I(x, y) = \sum_{\substack{x&#39; \leq x \\ y&#39; \leq y}} i(x&#39;, y&#39;)
+\]</span></p>
+<p>i.e. the sum of pixels to the left and above a given pixel.</p>
+</section>
+<section id="viola-jones-feature-extraction-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Feature Extraction</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<figure>
+<img data-src="assets/svg/integral-image.svg" alt="Integral Image" /><figcaption aria-hidden="true">Integral Image</figcaption>
+</figure>
+</div><div class="column">
+<p>Sum of pixels under a rectangle:</p>
+<div>
+<ul>
+<li class="fragment">Value at pixel 1 is <em>sum</em> of rectangle A.</li>
+<li class="fragment">Value at 2 is A + B.</li>
+<li class="fragment">Value at 3 is A + C.</li>
+<li class="fragment">at 4 is A + B + C + D.</li>
+<li class="fragment">D = 4 + 1 - (2 + 3)</li>
+</ul>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Any pixel in the integral image is the sum of the pixels above and left… one has to admire the simple genius of the integral image!</p>
+</aside>
+</section>
+<section id="viola-jones-feature-extraction-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Feature Extraction</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/haar_features.png" alt="Haar features" /><figcaption aria-hidden="true">Haar features</figcaption>
+</figure>
+</div><div class="column">
+<p>Each of these 4 features can be scaled and shifted in a <span class="math inline">\(24 \times 24\)</span> pixel sub-window.</p>
+<ul>
+<li>giving a total of approx 160,000 features.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="viola-jones-feature-learning" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Feature Learning</h2>
+<p>The number of features extracted from an image is very large.</p>
+<div>
+<ul>
+<li class="fragment">We need a way to select the <em>subset</em> of features, which are the most <em>important</em> from the point of object <strong>detection</strong>.</li>
+<li class="fragment">We also need a <strong>fast</strong> classifier.</li>
+<li class="fragment">Solution: modified <strong>AdaBoost</strong>.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>so - what did they do??</p>
+</aside>
+</section>
+<section id="viola-jones-feature-learning-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Feature Learning</h2>
+<p>Modified Adaboost algorithm.</p>
+<div>
+<ul>
+<li class="fragment">Each <em>weak</em> learner operates on only <strong>one</strong> feature.</li>
+<li class="fragment">Thus, Adaboost acts as a feature <em>selector</em>.</li>
+<li class="fragment">Can significantly reduce the initial number of 160,000 features.</li>
+<li class="fragment">e.g. 200 features can provide 95% detection rate with 1 in 14000 false positives.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Very good, but probably not enough in a real application. We want to improve both detection rate and reduce the number of features to calculate.</p>
+<p>those false positives are still very high given pixels in an image.</p>
+</aside>
+</section>
+<section id="viola-jones-features" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Features</h2>
+<figure>
+<img data-src="assets/png/vj-features.png" style="width:80.0%" alt="Image from original paper" /><figcaption aria-hidden="true">Image from original paper</figcaption>
+</figure>
+<aside class="notes">
+<p>Features have been selected by adaboost… In both cases, the features can be recognised in the image of a face… the bright bridge of the nose…, dark eyes, light cheeks, etc. quite intuitive…</p>
+</aside>
+</section>
+<section id="viola-jones-learning" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Learning</h2>
+<p>Attentional cascade of boosted classifiers.</p>
+<p>We can train a simple boosted classifier on a very low number of features and adjust its threshold to guarantee 100% detection rate.</p>
+<aside class="notes">
+<p>we will have lots of false positives… but even so - we will have rejected many sub windows.</p>
+</aside>
+</section>
+<section id="viola-jones-learning-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Learning</h2>
+<p><em>Many</em> false positives, but we can easily <strong>reject</strong> most sub-windows.</p>
+<ul>
+<li>Sub-windows classified as positives are passed to the next stage of the cascade.</li>
+<li>Additional features are used in a more complex classifier.</li>
+<li>…and so on, to reduce the number of false positives.</li>
+</ul>
+<aside class="notes">
+<p>extra features are calculated for these sub windows…</p>
+</aside>
+</section>
+<section id="viola-jones-learning-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Learning</h2>
+<p>Attentional cascade of boosted classifiers.</p>
+<ul>
+<li>38 layers with 6061 features</li>
+<li>Majority of sub-windows will be rejected in the early layers of the cascade where few features are needed.</li>
+</ul>
+<aside class="notes">
+<p>Its still a big number, but most of those windows are rejected early on, with small features - this is what makes it so fast.</p>
+</aside>
+</section>
+<section id="viola-jones-multiple-detections" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones Multiple Detections</h2>
+<p>The image is scanned with sub-windows at different <em>scales</em> and different <em>locations</em>.</p>
+<ul>
+<li>Results from individual sub-windows are combined for the final result.</li>
+<li>Detected sub-windows are divided into disjoint sets.</li>
+<li>In each disjoint set we calculate the mean of four corners.</li>
+</ul>
+<aside class="notes">
+<p>Disjoint sets have no intersection… so the detections in one set are all the same face. Note: this is not non-maximum suppression. The mean box is the final detection.</p>
+</aside>
+</section>
+<section id="viola-jones" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones</h2>
+<p>MATLAB has an implementation of the algorithm.</p>
+<figure>
+<img data-src="assets/jpg/detected-faces.jpg" style="width:80.0%" alt="Viola Jones Face Detection" /><figcaption aria-hidden="true">Viola Jones Face Detection</figcaption>
+</figure>
+<aside class="notes">
+<p>you can find the code to produce this image on the Mathworks Website.</p>
+</aside>
+</section>
+<section id="viola-jones-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Viola-Jones</h2>
+<p>Very slow to train. The original paper reports <em>weeks</em> of training for the training set they used (5k faces, 9.5k non-faces).</p>
+<p>Very fast to execute. On 700 MHz processor, it takes 0.067s to analyse 384x288 image.</p>
+<aside class="notes">
+<p>training would still take a long time…</p>
+<p>but testing - 67 milliseconds 20 years ago - is fast!</p>
+<p>I really encourage reading the paper - it is well written and has some great ideas in it!</p>
+<p>Of course, there are many much better methods developed in the 20 years since this paper. But the method here is really simple - and it addresses the issues faced really well.</p>
+<p>This was a very influential paper!</p>
+</aside>
+</section></section>
+<section>
+<section id="detecting-humans" class="title-slide slide level1">
+<h1>Detecting Humans</h1>
+<p>The original HOG paper also proposed detection of humans in the sliding window.</p>
+<aside class="notes">
+<p>Another application - detecting humans…</p>
+</aside>
+</section>
+<section id="detecting-humans-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Humans</h2>
+<figure>
+<img data-src="assets/png/hog-fig6.png" alt="HOG - from original paper" /><figcaption aria-hidden="true">HOG - from original paper</figcaption>
+</figure>
+<p>Dalal and Triggs used a linear SVM classifier.</p>
+<aside class="notes">
+<p>as well as the Hog features - they also detected humans… Using just a linear SVM. This is a figure from their original paper.</p>
+</aside>
+</section>
+<section id="detecting-humans-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Humans</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/hog-gradient-svm.png" alt="mean gradients and SVM weights" /><figcaption aria-hidden="true">mean gradients and SVM weights</figcaption>
+</figure>
+</div><div class="column">
+<ol type="a">
+<li>The mean gradient image for all data.</li>
+<li>The maximum positive SVM weights.</li>
+<li>The maximum negative SVM weights.</li>
+</ol>
+<p>The SVM weights provide a nice visualisation of the decision boundary.</p>
+</div>
+</div>
+<aside class="notes">
+<p>a - The average gradient image over the training examples. b - Each pixel shows the maximum positive SVM weight in the block centred on the pixel. c - Likewise for the negative SVM weights. shows that the most important cells are the ones that typically contain major human contours (especially the head and shoulders and the feet)</p>
+</aside>
+</section>
+<section id="detecting-humans-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Humans</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/hog-test-hog.png" alt="hog test image" /><figcaption aria-hidden="true">hog test image</figcaption>
+</figure>
+</div><div class="column">
+<ol start="4" type="a">
+<li>An example 64×128 test image.</li>
+<li>The computed HOG descriptor.</li>
+</ol>
+<p>Performance was reduced with less margin around the subject in the test images.</p>
+</div>
+</div>
+<aside class="notes">
+<p>64×128 detection window - 16 pixel margin around human contours.</p>
+</aside>
+</section>
+<section id="detecting-humans-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Humans</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/hog-weighted.png" alt="hog weighted" /><figcaption aria-hidden="true">hog weighted</figcaption>
+</figure>
+</div><div class="column">
+<ol start="6" type="a">
+<li>Positively weighted HOG descriptor.</li>
+<li>Negatively weighted HOG descriptor.</li>
+</ol>
+<p>Showing that the detector cues mainly on the contrast of silhouette contours and gradients inside the person typically count as negative cues.</p>
+</div>
+</div>
+<aside class="notes">
+<p>Evidence for and against the hypothesis it is a human.</p>
+<ol start="6" type="a">
+<li><p>the detector cues mainly on the contrast of silhouette contours against the background, not on internal edges or on silhouette contours against the foreground.</p></li>
+<li><p>illustrate that gradients inside the person (especially vertical ones) typically count as negative cues, presumably because this suppresses false pos</p></li>
+</ol>
+</aside>
+</section>
+<section id="detecting-boundaries" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>Object detection through segmentation using <em>boundary detection</em>.</p>
+<p>Edges are <strong>not</strong> the same as object contours or occluding contours.</p>
+<div>
+<ul>
+<li class="fragment">Some edges are irrelevant or confusing for object detection.</li>
+<li class="fragment">Solution: use a <em>sliding window</em> to detect boundaries.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>One way to segment images is to detect relevant boundaries.</p>
+</aside>
+</section>
+<section id="detecting-boundaries-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>At each window we extract features that will decide whether the centre pixel in the window is an occluding contour or not.</p>
+<div>
+<ul>
+<li class="fragment">Each pixel is assigned a <em>probability</em> of boundary.</li>
+<li class="fragment">Circular windows often used as boundaries are oriented.</li>
+<li class="fragment">A boundary splits the circular window into two halves.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>at each window centre pixel - is it a boundary? so we need to repeat for every pixel in the image! circular so everything is symmetrical.</p>
+</aside>
+</section>
+<section id="detecting-boundaries-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>Features could be <em>histograms</em> produced from image intensity, oriented energy, brightness gradient, colour gradient etc.</p>
+<p>The histograms are extracted from two halves of the window, and the distance between them is calculated. E.g. <span class="math inline">\(\chi^2\)</span></p>
+<p>This distance is mapped to probability using <em>logistic regression</em>.</p>
+<aside class="notes">
+<p>chi squared distance between histograms is something useful for your literature review. logistic regression uses a sigmoid function to create a decision boundary.</p>
+</aside>
+</section>
+<section id="detecting-boundaries-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>Training and test data require <em>annotations</em>.</p>
+<figure>
+<img data-src="assets/jpg/boundary-img.jpg" style="width:80.0%" alt="test image" /><figcaption aria-hidden="true">test image</figcaption>
+</figure>
+</section>
+<section id="detecting-boundaries-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>Annotations are performed by different subjects.</p>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/jpg/annotate-01.jpg" alt="annotation 1" /><figcaption aria-hidden="true">annotation 1</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/jpg/annotate-02.jpg" alt="annotation 2" /><figcaption aria-hidden="true">annotation 2</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="detecting-boundaries-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>Inconsistent annotations are averaged.</p>
+<figure>
+<img data-src="assets/jpg/weighted-annotation.jpg" style="width:80.0%" alt="test image" /><figcaption aria-hidden="true">test image</figcaption>
+</figure>
+<aside class="notes">
+<p>So - this is the ground truth.</p>
+</aside>
+</section>
+<section id="detecting-boundaries-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p><span class="math display">\[ P_b(x, y, \theta) \]</span></p>
+<p>The probability that the pixel is a boundary for some orientation.</p>
+<p><span class="math display">\[ P_b(x, y) = \max(\theta) P_b(x, y, \theta) \]</span></p>
+<p>The maximum probability that the pixel is a boundary for all orientations.</p>
+<aside class="notes">
+<p>Of the probability of boundary - we have two possibilities.</p>
+<p>Requires careful testing as boundary very close to the ground-truth annotation may not be a failure. 2-3 pixels off may still be a good boundary.</p>
+</aside>
+</section>
+<section id="detecting-boundaries-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<p>Solution: weighted matching between the machine and human generated boundaries.</p>
+<ul>
+<li>Predicted boundary point too far away from any annotation is considered a false positive.</li>
+<li>If there are no predicted points close to the annotation, then this pixel is considered a false negative.</li>
+<li>Probability boundary map can then be thresholded which allows us to calculate precision-recall curves.</li>
+</ul>
+</section>
+<section id="detecting-boundaries-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/boundary-prec-recall.png" alt="precision-recall curve" /><figcaption aria-hidden="true">precision-recall curve</figcaption>
+</figure>
+</div><div class="column">
+<p>GD+H - Canny</p>
+<p>BG+CG+TG - Martin et al.</p>
+<p>Ground Truth</p>
+</div>
+</div>
+</section>
+<section id="detecting-boundaries-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Detecting Boundaries</h2>
+<figure>
+<img data-src="assets/png/boundary-results.png" alt="results" /><figcaption aria-hidden="true">results</figcaption>
+</figure>
+<p>Martin, Fowlkes and Malik. Learning to Detect Natural Image Boundaries Using Local Brightness, Color and Texture Cues (2004).</p>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<p>Reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.</li>
+<li>Sonka et al., Image Processing, Analysis and Machine Vision, 4th ed., Chapter 10</li>
+<li>Papers mentioned in the slides!</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
