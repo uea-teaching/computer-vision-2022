@@ -23,6 +23,12 @@ Lectures are available as online html or printable pdf.
 - Point Distribution Models: [online](lectures/shapes-02.html)
   or printable [pdf](lectures/shapes-02.bmr.pdf).
 
+- Image Classification: [online](lectures/image-classification.html)
+  or printable [pdf](lectures/image-classification.bmr.pdf).
+
+- Object Detection: [online](lectures/object-detection.html)
+  or printable [pdf](lectures/object-detection.bmr.pdf).
+
 ## Labs
 
 Labs are usually a pdf file, or a zip file if additional resources are provided.
