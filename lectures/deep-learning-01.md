@@ -349,7 +349,7 @@ b'_0 &= b_0 - \lambda \frac{\partial c}{\partial b_0} \\
 \end{aligned}
 $$
 
-$\lambda$ is the learning rate: a hyperparameter.
+$\lambda$ is the learning rate: a _hyperparameter_.
 
 ::: notes
 learning rate must be set empirically, or from experience.
@@ -389,14 +389,13 @@ layer.W.grad and layer.b.grad will contain the gradients of the cost w.r.t. laye
 
 ## Gradient descent in PyTorch
 
-```{.python data-line-numbers="1-6|2|4|6"}
+```{.python data-line-numbers="1-12|2|5-6|8|10|12}"}
 # Create an optimizer to update the parameters of layer
 opt = torch.optim.Adam(layer.parameters(), lr=1e-3)
 
 # Get predictions and cost as before
 y_pred = layer(x_train)
 cost = ((y_pred - y_train) ** 2).mean()
-
 # Back-prop, zero the gradients attached to params first
 opt.zero_grads()
 # compute gradients
