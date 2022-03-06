@@ -567,3 +567,57 @@ class Model(nn.Module):
         x = F.relu(self.hidden(x))
         return self.output(x)
 ```
+
+::: notes
+here is the network architecture in its entirety.
+just 12 lines of code!
+:::
+
+---
+
+```{.python data-line-numbers="4|5|6"}
+class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784, 256)
+        self.hidden = nn.Linear(256, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        return self.output(x)
+```
+
+::: notes
+here we instantiate the layers.
+First fully connected layer takes 28x28 image flattened to 784-element vector.
+Second hidden layer - so called because it is not connected to the outside world.
+Third layer - output layer, with 10 predicted classes.
+ONE hot encoding is used for the output layer.
+:::
+
+---
+
+```{.python data-line-numbers="8|9|10|11|12"}
+class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784, 256)
+        self.hidden = nn.Linear(256, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        return self.output(x)
+```
+
+::: notes
+We declare a forward method that defines how the layers are applied.
+first , we flatten out the image.
+Then apply layers in sequence...
+and return the output.
+:::
