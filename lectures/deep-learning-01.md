@@ -25,9 +25,9 @@ $> ~$ 1,000 classes
 
 Actually...
 
-$> ~$ 10,000,000 images
+$> ~$ 15,000,000 images
 
-$> ~$ 1,000 classes
+$> ~$ 10,000 classes
 
 Ground truth annotated manually with Amazon _Mechanical Turk_.
 
@@ -219,8 +219,195 @@ A **Neural Network** is built from _layers_, each of which is:
 To answer the question - what is a neural network?
 :::
 
-<!-- $$\frac{e^{x*i}}{\sum^N*{i=0}} e^{x_i}$$ -->
-
 # Practical Examples
 
-Code examples in **PyTorch**.
+... using **PyTorch**.
+
+## Practical Examples
+
+::: columns
+::::: column
+![Code Examples](assets/png/examples-qr.png)
+:::::
+::::: column
+I've provided a small repository of code examples for you to try out, at:
+
+[https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision](https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision)
+:::::
+:::
+
+::: notes
+There are some instructions on setting up your environment, if you are not familiar with Python.
+:::
+
+## Practical Examples
+
+The first thing to note, is we usually work with **batches** of input data.
+
+- or, more strictly, _mini-batches_.
+- If a sample is a vector of M numbers Then a mini-batch of S samples is an S x M matrix.
+
+## {data-auto-animate="true"}
+
+```{.python data-line-numbers="1-12|1|4|7|10|12"}
+import torch, torch.nn.functional as F
+
+# Assume input_data is S * M matrix
+x = torch.tensor(input_data)
+
+# W: gaussian random M * N matrix, std-dev=1/sqrt(N)
+W = torch.randn(M, N) / math.sqrt(N)
+
+# Bias: zeros, N elements
+b = torch.zeros(1, N)
+
+y = F.relu(x @ W + b)
+```
+
+::: notes
+let's step through the code above.
+first the imports...
+then, input_data is a NumPy array, convert to Torch tensor
+then, W is a Torch tensor, with normally distributed random values, scaled.
+then, b is a Torch tensor, with zeros
+Finally, we perform the matrix multiplication and add the bias, and then apply the ReLU activation function (What we called f earlier).
+The arobase @ is the matrix multiplication symbol.
+libraries like PyTorch, NumPy, Matlab ‘broadcast’/replicate the 1xN to SxN for the addition
+:::
+
+---
+
+This is all a bit clunky.
+
+PyTorch provides nice convenient layers for you to use.
+
+---
+
+```{.python data-line-numbers="1-8|2|5|8"}
+# Assume input_data is S * M matrix
+x = torch.tensor(input_data)
+
+# Linear layer, M columns in, N columns out
+layer = torch.nn.Linear(M, N)
+
+# Call the layer like a function to apply it
+y = F.relu(layer(x))
+```
+
+::: notes
+The nn.Linear module contains the weights and biases and initialises itself, saving us effort.
+
+The matrix-multiply and applying the bias is done for us by nn.Linear.
+:::
+
+## Training {data-auto-animate="true"}
+
+On order to _learn_ the correct weights, we need to **train** the model.
+
+## Training {data-auto-animate="true"}
+
+Define a **cost**; a measure of error between predictions and ground truth.
+
+Use _back-propagation_ to modify parameters so that cost drops toward zero.
+
+## Initialisation
+
+Initialise weights randomly.
+
+- We can follow the scheme proposed by He, et al. in 2015.
+- We did this earlier, the scaled random normal initialisation.
+- Pytorch does this by default, so no need to worry about it.
+
+## Training {data-auto-animate="true"}
+
+For each example $x_{train}$ from the training set.
+
+::: incremental
+
+- Evaluate network the prediction $y_{pred}$ given the training input.
+- Measure _cost_ $c$: the difference between $y_{pred}$ output and ground truth $y_{train}$.
+- Iteratively reduce the cost using **gradient descent**.
+
+:::
+
+---
+
+Compute the derivative of _cost_ $c$ w.r.t. all parameters $W$ and $b$.
+
+::: notes
+so, we are looking for the gradient of the cost function.
+:::
+
+---
+
+Update parameters $W$ and $b$ using gradient descent:
+
+$$
+\begin{aligned}
+W'_0 &= W_0 - \lambda \frac{\partial c}{\partial W_0} \\
+b'_0 &= b_0 - \lambda \frac{\partial c}{\partial b_0} \\
+\end{aligned}
+$$
+
+$\lambda$ is the learning rate: a hyperparameter.
+
+::: notes
+learning rate must be set empirically, or from experience.
+:::
+
+---
+
+Theoretically...use the chain rule to calculate gradients.
+
+- This is time consuming.
+- Easy to make mistakes.
+
+## In Practice
+
+Many Neural Network tool-kits do all this for you automatically.
+
+Write the code that performs the **forward** operations, PyTorch keeps track of what you did and will compute _all_ the gradients in one step!
+
+## Computing gradients in PyTorch
+
+```{.python data-line-numbers="1-6|2|4|6"}
+# Get predictions, no non-linearity
+y_pred = layer(x_train)
+# Cost is mean squared error
+cost = ((y_pred - y_train) ** 2).mean()
+# Compute gradients using 'backward' method
+cost.backward()
+```
+
+::: notes
+Get predictions, no non-linearity, for brevity.
+Compute cost using mean squared error...
+Back-propagation: compute gradients of cost w.r.t. parameters
+
+layer.W.grad and layer.b.grad will contain the gradients of the cost w.r.t. layer.W and layer.b respectively
+:::
+
+## Gradient descent in PyTorch
+
+```{.python data-line-numbers="1-6|2|4|6"}
+# Create an optimizer to update the parameters of layer
+opt = torch.optim.Adam(layer.parameters(), lr=1e-3)
+
+# Get predictions and cost as before
+y_pred = layer(x_train)
+cost = ((y_pred - y_train) ** 2).mean()
+
+# Back-prop, zero the gradients attached to params first
+opt.zero_grads()
+# compute gradients
+cost.backward()
+# update the parameters
+opt.step()
+```
+
+::: notes
+PyTorch optimizer objects update the parameters for us. In this case we use the Adam rule; it’s a variant of stochastic gradient descent (SGD) that often works better
+
+We give it the parameters we want it to update, and a learning rate.
+
+:::
