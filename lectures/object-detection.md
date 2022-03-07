@@ -679,6 +679,11 @@ Learning to Detect Natural Image Boundaries Using Local Brightness, Color and Te
 
 # Summary
 
+- Classification or Object Detection
+- Sliding Window
+- Detecting Faces
+- Detecting Humans and other applications
+
 Reading:
 
 - Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.
