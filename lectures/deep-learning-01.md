@@ -79,7 +79,7 @@ Then the game changed!
 
 ## AlexNet
 
-In 2012, Krizhevsky et al. used a deep neural network to achieve a 15% error rate.
+In 2012, Krizhevsky et al. used a deep neural network to achieve a **15%** error rate.
 
 - AlexNet: Five convolutional layers, followed by three fully connected layers.
 - ImageNet Classification with Deep Convolutional Neural Networks. Krizhevsky et al. 2012.
