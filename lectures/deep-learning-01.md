@@ -868,6 +868,20 @@ Source code for the site is available at
 
 ::: notes
 
-We will explore Neural Networks in the lab.
+We have a small lab sheet today ...
+We will explore Neural Networks in the lab, using this website.
+:::
 
+# Summary
+
+- ImageNet
+- Neural Networks
+- MNIST Examples
+- Convolutional Neural Networks
+
+::: notes
+we have motivated Deep Learning - following the success with ImageNet.
+we have looked at how a neural network can be built with matrix operations.
+Worked through an example with the MNIST data set
+Realised we needed to move to CNNs to get location invarian features.
 :::
