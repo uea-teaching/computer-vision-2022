@@ -9,7 +9,8 @@ date: March 2022
 
 - ImageNet
 - Neural Networks
-- Practical Examples
+- MNIST Examples
+- Convolutional Neural Networks
 
 # ImageNet
 
@@ -701,7 +702,7 @@ No translation invariance; learned features are
 position dependent
 :::
 
-## MNIST
+---
 
 For more general imagery:
 
@@ -713,3 +714,160 @@ Highly unlikely to achieve this...
 :::
 
 # Convolutional Neural Networks
+
+The computer vision revolution...
+
+::: notes
+Really, the big power tool of modern computer vision.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+We have already discussed convolution.
+
+- Slide a filter, or kernel, over the image.
+- Multiply image pixels by filter weights and sum.
+- Do this for all possible positions of the filter.
+
+## Convolution {data-auto-animate="true"}
+
+![Convolution](assets/png/convolution.png)
+
+::: notes
+We have seen this operation for image smoothing, getting gradients, etc.
+We can perform convolution using matrix multiplication.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+![Gabor Filter](assets/png/gabor01.png)
+
+::: notes
+Gabor filters, named after Dennis Gabor, is a linear filter used for texture analysis.
+Rotated sinusoids, modulated by a Gaussian, are used to create a Gabor filter.
+Arguably model some responses in the visual cortex.
+
+Outputs show the filter response at each position.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+Convolution detects features in a _position independent_ manner.
+
+Convolutional neural networks **learn** _position independent_ filters.
+
+## Recap: Fully Connected Layer {data-auto-animate="true"}
+
+Each hidden unit is fully connected to all inputs.
+
+![Fully Connected Layer](assets/png/nn-layer.png)
+
+::: notes
+Look at all the red connections.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+Each hidden unit is only connected to inputs in its local neighbourhood.
+
+![Convolution Detections](assets/png/conv-connections.png)
+
+::: notes
+Look at the connections coming back from the hidden unit.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+Each group of weights is shared between all units in the layer.
+
+![Shared Weights](assets/png/conv-shared.png)
+
+::: notes
+red weights have the same value, as do green, as do yellow.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+The values of the weights form a **filter**.
+
+For practical computer vision, more than one filter must be used to extract a variety of features.
+
+## Convolution {data-auto-animate="true"}
+
+::: columns
+::::: column
+![Multiple Filters](assets/png/conv-multi-filters.png)
+:::::
+::::: column
+Multiple filter weights.
+
+Output is image with multiple channels.
+:::::
+:::
+
+::: notes
+RGB has 3 channels - feature images can have 100s of channels
+:::
+
+## Convolution {data-auto-animate="true"}
+
+Convolution can be expressed as multiplication by weight matrix.
+
+$$
+y = f(Wx + b)
+$$
+
+::: notes
+It's a matrix multiplication, but the weights are repeated to achieve this operation.
+:::
+
+## Convolution {data-auto-animate="true"}
+
+In subsequent layers, each filter connects to pixels in **all** channels in previous layer.
+
+::: notes
+eg. one filter operates on the R, G and B channels of input. And so on for feature images with multiple channels.
+:::
+
+## Max Pooling {data-auto-animate="true"}
+
+::: columns
+::::: column
+![Max Pooling](assets/png/max-pool.png)
+:::::
+::::: column
+Take the maximum from each $(p \times p)$ pooling region.
+
+Down sample the image by a factor of p.
+:::::
+:::
+
+::: notes
+We often need to downsample the image spatial resolution.
+Pooling is a common way to achieve this goal.
+:::
+
+## Striding {data-auto-animate="true"}
+
+We can also down-sample using **strided** convolution.
+
+- Generate output for 1 in every $n$ pixels.
+- Faster, can work as well as max-pooling.
+
+::: notes
+arguably, becoming more popular with deep learning.
+:::
+
+# ConvNetJS
+
+Nice Visualisations are avalable at ConvNetJS by Andrej Karpathy.
+
+[https://cs.stanford.edu/people/karpathy/convnetjs/index.html](https://cs.stanford.edu/people/karpathy/convnetjs/index.html)
+
+Source code for the site is available at
+
+::: notes
+
+We will explore Neural Networks in the lab.
+
+:::
