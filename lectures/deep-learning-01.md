@@ -2,7 +2,7 @@
 title: Introduction to Deep Learning
 subtitle: Computer Vision CMP-6035B
 author: Dr. David Greenwood
-date: March 2022
+date: Spring 2022
 ---
 
 # Content
