@@ -28,7 +28,7 @@ Actually...
 
 $> ~$ 15,000,000 images
 
-$> ~$ 10,000 classes
+$> ~$ 20,000 classes
 
 Ground truth annotated manually with Amazon _Mechanical Turk_.
 
@@ -80,6 +80,8 @@ Then the game changed!
 ## AlexNet
 
 In 2012, Krizhevsky et al. used a deep neural network to achieve a 15% error rate.
+
+- ImageNet Classification with Deep Convolutional Neural Networks. Krizhevsky et al. 2012.
 
 ::: notes
 Difficult to overstate the impact of this on the computer vision community.
