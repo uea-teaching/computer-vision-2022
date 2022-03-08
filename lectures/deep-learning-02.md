@@ -298,6 +298,108 @@ I also include an example using ResNet, probably the most popular network in the
 
 # Tricks of the Trade
 
+Best practice...
+
 ::: notes
 How to get successful results in a short time?
 :::
+
+## Data Standardisation {data-auto-animate="true"}
+
+Ensure zero-mean and unit standard deviation.
+
+- In numerically diverse data, learning will be dominated by larger values.
+- Arguably less important with image data.
+- Many pre-trained networks expect standardised data.
+
+::: notes
+as many images are well exposed 8 bit origination...
+:::
+
+## Data Standardisation {data-auto-animate="true"}
+
+For regression tasks, we need to standardise the output data too.
+
+::: incremental
+
+- Don't forget to invert the predictions back to the original scale.
+
+:::
+
+::: notes
+again this is common - and recommended for regression tasks.
+:::
+
+## Data Standardisation {data-auto-animate="true"}
+
+Extract sample data: pixel values in the case of images.
+
+Compute the mean and standard deviation of the samples.
+
+$$
+x' = \frac{x - \mu(x)}{\sigma(x)}
+$$
+
+::: notes
+how to do it?
+:::
+
+## Batch Size {data-auto-animate="true"}
+
+Small batch sizes, approximately 1-10.
+
+::: incremental
+
+- Small batch size results in regularisation, with lower ultimate error.
+- Low memory requirements.
+- Need to compensate with lower learning rate.
+- More epochs required.
+
+:::
+
+::: notes
+small batch - Goodfellow16
+Batch size is ultimately constrained by available memory, but below that, we can make choices.
+:::
+
+## Batch Size {data-auto-animate="true"}
+
+Large batch sizes, greater than 500-1000.
+
+::: incremental
+
+- Fast due to high parallelism
+- High memory usage - can run out of RAM on large networks.
+- Won’t reach the same error rate as smaller batches and may not learn at all.
+
+:::
+
+::: notes
+only fast if cuda cores are available.
+:::
+
+## Batch Size {data-auto-animate="true"}
+
+Typical choice around 64-256, lots of experiments use ~100.
+
+::: incremental
+
+- Effective training - reaches acceptable error rate or loss.
+- Balanced between speed and memory usage.
+
+:::
+
+::: notes
+Learns reasonably quickly – in terms of improvement per epoch
+~100 seems to work well; gets good results
+:::
+
+## Batch Size {data-auto-animate="true"}
+
+Increasing mini-batch size will improve performance up to the point where all GPU units are in use.
+
+Increasing it further will not improve performance; it will reduce accuracy!
+
+## DropOut {data-auto-animate="true"}
+
+Normally applied after later, fully connected layers.
