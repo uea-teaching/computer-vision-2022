@@ -889,5 +889,5 @@ we have motivated Deep Learning - following the success with ImageNet.
 we have looked at how a neural network can be built with matrix operations.
 and how we train a neural network.
 Worked through an example with the MNIST data set
-Realised we needed to move to CNNs to get location invarian features.
+Realised we needed to move to CNNs to get location invariant features.
 :::
