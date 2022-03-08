@@ -287,9 +287,17 @@ We usually have to replace the last layers to fit our own data - do we have the 
 There are examples of both fine tuning and feature extraction at the example repository:
 
 [https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision](https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision)
+
 :::::
 :::
 
 ::: notes
 I won't step through all the code here, but you can explore in your own time.
+I also include an example using ResNet, probably the most popular network in the literature.
+:::
+
+# Tricks of the Trade
+
+::: notes
+How to get successful results in a short time?
 :::
