@@ -158,6 +158,138 @@ Original AlexNet trained for 90 epochs, using 2 GPUs and took 6 days!
 
 ::: notes
 I can't wait...
+GTX 580
+What about the energy consumption?
 :::
 
 ## Pre-Trained Networks {data-auto-animate="true"}
+
+The term "Transfer Learning" simply means using a _pre-trained_ network to save on training.
+
+::: incremental
+
+- Motivation enough to use a pre-trained network.
+- but, there are bigger considerations.
+- What about data?
+
+:::
+
+::: notes
+could save hours or days of training time.
+:::
+
+## Pre-Trained Networks {data-auto-animate="true"}
+
+The greatest barrier to supervised machine learning is the lack of **labelled** data.
+
+::: incremental
+
+- use a network trained on one task to solve another problem
+- greatly reduces the requirement for labelled data
+
+:::
+
+::: notes
+How much human effort to label 10+ million images?
+How much effort to label the segmentation boundaries of  
+:::
+
+---
+
+Researchers have developed neural network architectures for Computer Vision tasks.
+
+::: incremental
+
+- The parameters of these networks have been made available for further research.
+
+:::
+
+---
+
+What can we use transfer learning for?
+
+::: incremental
+
+- classifying images not part of the original ImageNet dataset.
+- object detection
+- boundary detection
+
+:::
+
+::: notes
+in other words - transfer learning is applicable for every task we have seen so far.
+:::
+
+## VGG16 {data-auto-animate="true"}
+
+The **VGG** group at Oxford university trained _VGG-16_ and _VGG-19_ for ImageNet classification.
+
+::: notes
+Visual Geometry Group
+One such model is VGG 16
+We will use VGG-16; the 16-layer model
+:::
+
+## VGG16 {data-auto-animate="true"}
+
+VGG [Karen Simonyan & Andrew Zisserman, 2014] is a good choice for a first step in transfer learning.
+
+It has a relatively simple architecture:
+
+- Convolutional layers, increasing in depth, decreasing spatially.
+- fully-connected layers for classification.
+- Max-pooling layers.
+- ReLU activation functions.
+
+::: notes
+So, just what we have discussed so far...
+:::
+
+## VGG16 {data-auto-animate="true"}
+
+![VGG16 - image from Perez, et al. 2020](assets/png/vgg-16.png){width="90%"}
+
+## VGG16 {data-auto-animate="true"}
+
+This kind of architecture works well for many Computer Vision tasks.
+
+- Small convolutional filters (3x3)
+- Max-pooling layers
+- ReLU activation functions
+
+::: notes
+We have looked at lots of 3x3 kernel examples so far - but these have been designed for a specific task. Now we are looking at kernels learnt from data.
+:::
+
+## Transfer Learning
+
+Two strategies for transfer learning are:
+
+::: incremental
+
+- Fine _tuning_ the **whole** network on new data, with a small _learning rate_.
+- Leave all the early layers as is and use as a _feature extractor_.
+- In both cases, we usually have to replace the last fully-connected layers.
+
+:::
+
+::: notes
+We usually have to replace the last layers to fit our own data - do we have the same number of tasks? Are we doing classification?
+:::
+
+## Transfer Learning
+
+::: columns
+::::: column
+![Code Examples](assets/png/examples-qr.png)
+:::::
+::::: column
+There are examples of both fine tuning and feature extraction at the example repository:
+
+[https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision](https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision)
+:::::
+:::
+
+::: notes
+I won't step through all the code here, but you can explore in your own time.
+:::
