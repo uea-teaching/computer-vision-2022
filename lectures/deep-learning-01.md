@@ -867,10 +867,10 @@ Nice Visualisations are avalable at ConvNetJS by Andrej Karpathy.
 
 [https://cs.stanford.edu/people/karpathy/convnetjs/index.html](https://cs.stanford.edu/people/karpathy/convnetjs/index.html)
 
-Source code for the site is available at
+Source code for the site is available at:
+[https://github.com/karpathy/convnetjs](https://github.com/karpathy/convnetjs)
 
 ::: notes
-
 We have a small lab sheet today ...
 We will explore Neural Networks in the lab, using this website.
 :::
