@@ -402,4 +402,41 @@ Increasing it further will not improve performance; it will reduce accuracy!
 
 ## DropOut {data-auto-animate="true"}
 
-Normally applied after later, fully connected layers.
+Reduces over-fitting.
+
+Over-fitting is a well-known problem in machine learning, and affects neural networks particularly.
+
+A model over-fits when it is very good at correctly predicting samples in the training set
+but fails to generalise to samples in the test set.
+
+## DropOut {data-auto-animate="true"}
+
+During training, randomly choose units to 'drop out' by setting their output to 0, with probability $P$, usually around 0.5.
+
+Compensate by multiplying values by $\frac{1}{1 - P}$.
+
+Turn off dropout during testing.
+
+## DropOut {data-auto-animate="true"}
+
+Activates a different subset of units for each sample.
+
+- Causes units to learn more robust features.
+- Units can't rely on the presence of specific features to cover for flaws.
+- Emulates an ensemble of models.
+
+::: notes
+Geoffrey Hinton
+:::
+
+## DropOut {data-auto-animate="true"}
+
+Hinton on the inspiration for dropout:
+
+"I went to my bank. The tellers kept changing and I asked one of them why?
+He said he didn’t know but they got moved around a lot.
+I figured it must be because it would require cooperation between employees to successfully defraud the bank... This made me realise that randomly removing a different subset of neurons on each example would prevent conspiracies and thus reduce overfitting."
+
+::: notes
+Form the inventor Geoff Hinton.
+:::
