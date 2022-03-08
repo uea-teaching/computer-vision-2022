@@ -422,7 +422,7 @@ Turn off dropout during testing.
 Activates a different subset of units for each sample.
 
 - Causes units to learn more robust features.
-- Units can't rely on the presence of specific features to cover for flaws.
+- Units can't rely on the presence of specific features.
 - Emulates an ensemble of models.
 
 ::: notes
@@ -431,12 +431,66 @@ Geoffrey Hinton
 
 ## DropOut {data-auto-animate="true"}
 
-Hinton on the inspiration for dropout:
-
 "I went to my bank. The tellers kept changing and I asked one of them why?
 He said he didn’t know but they got moved around a lot.
-I figured it must be because it would require cooperation between employees to successfully defraud the bank... This made me realise that randomly removing a different subset of neurons on each example would prevent conspiracies and thus reduce overfitting."
+I figured it must be because it would require cooperation between employees
+to successfully defraud the bank...
+This made me realise that randomly removing a different subset of
+neurons on each example would prevent conspiracies and thus reduce over fitting."
 
 ::: notes
-Form the inventor Geoff Hinton.
+Geoff Hinton on the inspiration for dropout...
 :::
+
+## Batch normalisation {data-auto-animate="true"}
+
+Batch normalization (Ioffe, et al. 2015) is recommended in most cases.
+
+- Lets you build deeper networks
+- Speeds up training; loss and error drop faster per epoch.
+
+## Batch normalisation {data-auto-animate="true"}
+
+Apply after convolutional and fully-connected layers, before the non-linearity.
+
+- Use `BatchNorm2d` with a convolutional layer.
+- Use `BatchNorm1d` with a fully-connected layer.
+
+::: notes
+this is for pytorch, other frameworks may have different implementations.
+:::
+
+## Batch normalisation {data-auto-animate="true"}
+
+Standardise **activations** per-channel _between_ network layers.
+
+Solves problems caused by _exponential_ growth or shrinkage of layer activations in deep networks.
+
+::: notes
+the same operation we recommended for data outside of the network.
+This time - between the layers.
+if an activation doubles - for say n=50 layers it ends up at x\*2^50.
+resulting in numerical errors.
+:::
+
+## Dataset augmentation {data-auto-animate="true"}
+
+Reduce over-fitting by enlarging training set.
+
+::: incremental
+
+- _Artificially_ modify **existing** training samples to make new ones.
+- Apply transformations such as move, scale, rotate, reflect, etc.
+
+:::
+
+::: notes
+This is actually a big area of research, and there are some really clever augmentations of datasets.
+Another related area is creating entirely new synthetic datasets.
+:::
+
+## Learning Rate {data-auto-animate="true"}
+
+- Small learning rates can be slow to train, and can get stuck in local minima.
+- Large learning rates can be unstable and cause divergence.
+- Experiment with different learning rates - increase decrease by a factor of 10.
