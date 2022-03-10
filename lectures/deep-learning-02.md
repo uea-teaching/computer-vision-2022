@@ -494,3 +494,5 @@ Another related area is creating entirely new synthetic datasets.
 - Small learning rates can be slow to train, and can get stuck in local minima.
 - Large learning rates can be unstable and cause divergence.
 - Experiment with different learning rates - increase decrease by a factor of 10.
+
+# Work in the Field
