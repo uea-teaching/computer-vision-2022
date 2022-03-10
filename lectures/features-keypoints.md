@@ -365,3 +365,87 @@ D_y = \begin{bmatrix}
         1  & 0 & \llap{-}1
     \end{bmatrix}
 $$
+
+::: notes
+using these operators, moved over the image we can compute in a simple way all the gradients.
+We are just left to sum all the pixels in the local area.
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+Summarises the dominant gradient directions around a point.
+
+$$
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &\sum_{W}J_y^2
+\end{bmatrix}
+$$
+
+::: notes
+The actual values we end up with inside the SM gives us the summary of the gradient directions.
+
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+::: columns
+
+::::: {.column width="35%"}
+![corner](assets/png/patch_a.png)
+:::::
+
+::::: {.column style="font-size:1.5em;"}
+
+$$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\gg 1 \end{bmatrix} $$
+
+:::::
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+::: columns
+
+::::: {.column width="35%"}
+![edge](assets/png/patch_b.png)
+:::::
+
+::::: {.column style="font-size:1.5em;"}
+
+$$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\approx 0 \end{bmatrix} $$
+
+:::::
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+::: columns
+
+::::: {.column width="35%"}
+![flat](assets/png/patch_c.png)
+:::::
+
+::::: {.column style="font-size:1.5em;"}
+
+$$ M = \begin{bmatrix} \approx 0 &\approx 0 \\ \approx 0 &\approx 0 \end{bmatrix} $$
+
+:::::
+:::
+
+## Corners from Structure Matrix {data-auto-animate="true"}
+
+::: columns
+
+::::: {.column width="35%"}
+![corner](assets/png/patch_a.png)
+:::::
+
+::::: {.column style="font-size:1.5em;"}
+
+$$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\gg 1 \end{bmatrix} $$
+
+:::::
+:::
+
+**Consider points as corners if their structure matrix has two large Eigenvalues.**
