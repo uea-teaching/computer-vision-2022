@@ -458,7 +458,7 @@ Three similar approaches...
 We will look at three methods for finding corners...
 :::
 
-## Harris - Shi-Tomasi - Förstner
+## Harris, Shi-Tomasi and Förstner
 
 Three similar approaches:
 
@@ -545,10 +545,43 @@ you can see the overall idea is quite similar to Harris...
 ## Förstner Criterion {data-auto-animate="true"}
 
 - Similar to Harris corner detector.
-- Defined on the covariance matrix of possible shifts - inverse of $M$.
+- Criterion defined on the covariance matrix of possible shifts - inverse of $M$.
 - Similar criteria on error ellipse.
 
 ::: notes
 Small difference for Forstner - but provides sub-pixel estimation.
 useful for 3D reconstruction.
 :::
+
+## Non-Maxima Suppression {data-auto-animate="true"}
+
+Within a local region, look for position with maximum value $R$.
+
+Which would be maximum here?
+
+![non-maxima suppression](assets/svg/non-max-suppression.svg)
+
+::: notes
+the right hand example is the maximal value of the corner.
+:::
+
+## Harris Corner Example {data-auto-animate="true"}
+
+::: columns
+::::: column
+![view 1](assets/png/nd1_kp.png){width="80%"}
+:::::
+::::: column
+![view 2](assets/png/nd2_kp.png){width="80%"}
+:::::
+:::
+
+## Corner Detectors Comparison {data-auto-animate="true"}
+
+- All three detectors perform similarly
+- Förstner was the first one and additionally described subpixel estimation.
+- Harris became the most famous corner detector.
+- Shi-Tomasi seems to slightly outperform Harris.
+- Most libraries use Shi-Tomasi as the default corner detector (e.g., openCV).
+
+# Difference of Gaussians {data-auto-animate="true"}
