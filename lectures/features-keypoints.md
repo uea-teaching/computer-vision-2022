@@ -475,6 +475,7 @@ All rely on the _structure_ matrix.
 Forstner is earliest, but Harris became more popular.
 Shi-Tomasi is the most widely used now, but Harris still in many applications.
 They all follow the same idea and differ only in the way they decide what should be a corner...
+Forstner also offers sub-pixel estimation.
 :::
 
 ## Harris Corner Criterion {data-auto-animate="true"}
@@ -499,6 +500,8 @@ R &\gg 0 \Rightarrow \lambda_1 \approx \lambda_2 \gg 0
 $$
 
 ::: notes
+trace - sum on main diagonal
+all computed using the eigenvalues of the structure matrix.
 in the first case, the two eigenvalues are equal and equal to zero, so a flat region.
 2nd case, the two eigenvalues are unequal, so an edge.
 3rd case, the two eigenvalues are equally large, so a corner.
@@ -509,5 +512,43 @@ in the first case, the two eigenvalues are equal and equal to zero, so a flat re
 ![Harris Criterion](assets/png/harris-criterion.png){width="90%"}
 
 ::: notes
-we can show this graphically by plotting R according to different R values.
+we can show this graphically by plotting R according to different eigenvalues.
+We want to be in the central region where both eigenvalues are large.
+:::
+
+## Shi-Tomasi Criterion {data-auto-animate="true"}
+
+Threshold smallest Eigenvalue:
+
+$$
+\lambda_{min}(M) = \frac{trace(M)}{2} - \frac{1}{2} \sqrt{trace(M)^2 - 4 det(M)}
+$$
+
+corner:
+
+$$
+\lambda_{min}(M) \geq T
+$$
+
+::: notes
+Shi-Tomasi uses a different criteria looking for the smallest eigenvalue of the structure matrix above a threshold.
+:::
+
+---
+
+![Shi-Tomasi Criterion](assets/png/shi-tomasi-criterion.png){width="90%"}
+
+::: notes
+you can see the overall idea is quite similar to Harris...
+:::
+
+## Förstner Criterion {data-auto-animate="true"}
+
+- Similar to Harris corner detector.
+- Defined on the covariance matrix of possible shifts - inverse of $M$.
+- Similar criteria on error ellipse.
+
+::: notes
+Small difference for Forstner - but provides sub-pixel estimation.
+useful for 3D reconstruction.
 :::
