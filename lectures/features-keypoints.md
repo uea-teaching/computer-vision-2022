@@ -268,4 +268,100 @@ f(x, y) =
 \begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
 $$
 
+::: notes
+We are summing over the u and v of the local area W. We can move the summation to the matrix.
+When we move the summation inside the matrix, his matrix now contains all we need to know about the local patch. It contains the gradient information, with the shift matrix (u, v) on the outside...
+We get what is called the structure matrix.
+:::
+
 # Structure Matrix {data-auto-animate="true"}
+
+$$
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &\sum_{W}J_y^2
+\end{bmatrix}
+$$
+
+::: notes
+Summarises the first derivative of the image in a local area.
+And accumulates the gradients in the x and y directions, and xy.
+Given this information we can decide if a point is locally distinct or not.
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+- The structure matrix is key to finding edges and corners.
+- Encodes the image intensity changes in a local area.
+- built from image gradients.
+
+$$
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &\sum_{W}J_y^2
+\end{bmatrix}
+$$
+
+::: notes
+we will look at the eigen decomposition of the structure matrix.
+if one eigen value is large and another is small, we have an edge.
+If both are large, we have a corner.
+if both are small, we have a flat area.
+so the structure matrix encodes the info in a local area.
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+Matrix built from image gradients.
+
+$$
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &\sum_{W}J_y^2
+\end{bmatrix}
+$$
+
+Jacobians computed by _convolution_ with gradient kernel, e.g. Sobel:
+
+$$
+\begin{aligned}
+J_x^2  &= (D_x * I)^2 \\
+J_xJ_y &= (D_x * I) (D_y * I) \\
+J_y^2  &= (D_y * I)^2
+\end{aligned}
+$$
+
+::: notes
+We can compute these gradients using convolution using a small kernel (e.g. Sobel).
+In a standard way...we compute the whole image derivative.
+:::
+
+## Structure Matrix {data-auto-animate="true"}
+
+Matrix built from image gradients.
+
+$$
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &\sum_{W}J_y^2
+\end{bmatrix}
+$$
+
+Jacobians using Sobel:
+
+$$
+D_x = \begin{bmatrix}
+       1  &  2  &  1 \\
+       0  &  0  &  0 \\
+    \llap{-}1 & \llap{-}2 & \llap{-}1
+    \end{bmatrix}~, ~
+D_y = \begin{bmatrix}
+        1  & 0 & \llap{-}1 \\
+        2  & 0 & \llap{-}2 \\
+        1  & 0 & \llap{-}1
+    \end{bmatrix}
+$$
