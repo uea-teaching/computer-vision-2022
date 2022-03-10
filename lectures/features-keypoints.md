@@ -227,3 +227,46 @@ $$
 the jacobian for an image is the x, y gradient, the partial derivatives.
 Now, notice if we substitute, the intensity value will disappear.
 :::
+
+## Finding Corners {data-auto-animate="true"}
+
+Taylor approximation leads to:
+
+$$
+f(x, y) = \sum_{(u, v) \in W_{x,y} } \left( [J_x, J_y]
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}\right)^2
+$$
+
+Written in matrix form:
+
+$$
+f(x, y) = \sum_{(u, v) \in W_{x,y} }
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}^T
+\begin{bmatrix} J_x^2  &J_xJ_y \\ J_xJ_y  &J_y^2 \end{bmatrix}
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+$$
+
+## Finding Corners {data-auto-animate="true"}
+
+Given:
+
+$$
+f(x, y) = \sum_{(u, v) \in W_{x,y} }
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}^T
+\begin{bmatrix} J_x^2  &J_xJ_y \\ J_xJ_y  &J_y^2 \end{bmatrix}
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+$$
+
+Move the summation inside the matrix:
+
+$$
+f(x, y) =
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}^T
+\begin{bmatrix}
+\sum_{W}J_x^2   &\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &\sum_{W}J_y^2
+\end{bmatrix}
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+$$
+
+# Structure Matrix {data-auto-animate="true"}
