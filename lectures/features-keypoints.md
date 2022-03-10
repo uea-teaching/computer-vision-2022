@@ -435,6 +435,8 @@ $$ M = \begin{bmatrix} \approx 0 &\approx 0 \\ \approx 0 &\approx 0 \end{bmatrix
 
 ## Corners from Structure Matrix {data-auto-animate="true"}
 
+Consider points as corners if their structure matrix has **two large** Eigenvalues.
+
 ::: columns
 
 ::::: {.column width="35%"}
@@ -448,4 +450,64 @@ $$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\gg 1 \end{bmatrix} $$
 :::::
 :::
 
-**Consider points as corners if their structure matrix has two large Eigenvalues.**
+# Corner Detection
+
+Three similar approaches...
+
+::: notes
+We will look at three methods for finding corners...
+:::
+
+## Harris - Shi-Tomasi - Förstner
+
+Three similar approaches:
+
+- 1987 Förstner
+- 1988 Harris
+- 1994 Shi-Tomasi
+
+All rely on the _structure_ matrix.
+
+- Use different criterion for deciding if a point is a corner
+- Förstner offers subpixel estimation
+
+::: notes
+Forstner is earliest, but Harris became more popular.
+Shi-Tomasi is the most widely used now, but Harris still in many applications.
+They all follow the same idea and differ only in the way they decide what should be a corner...
+:::
+
+## Harris Corner Criterion {data-auto-animate="true"}
+
+Criterion:
+
+$$
+\begin{aligned}
+R &= det(M) - k(trace(M))^2 \\
+  &= \lambda_1 \lambda_2 - k(\lambda_1 + \lambda_2)^2
+\end{aligned}
+$$
+
+with $k \in [0.04, 0,06]$:
+
+$$
+\begin{aligned}
+|R| &\approx 0 \Rightarrow \lambda_1 \approx \lambda_2 \approx 0 \\
+R &< 0 \Rightarrow \lambda_1 \gg \lambda_2~ or ~\lambda_2 \gg \lambda_1 \\
+R &\gg 0 \Rightarrow \lambda_1 \approx \lambda_2 \gg 0
+\end{aligned}
+$$
+
+::: notes
+in the first case, the two eigenvalues are equal and equal to zero, so a flat region.
+2nd case, the two eigenvalues are unequal, so an edge.
+3rd case, the two eigenvalues are equally large, so a corner.
+:::
+
+---
+
+![Harris Criterion](assets/png/harris-criterion.png){width="90%"}
+
+::: notes
+we can show this graphically by plotting R according to different R values.
+:::
