@@ -194,3 +194,36 @@ These properties are why we choose corners.
 :::
 
 ## Finding Corners {data-auto-animate="true"}
+
+To find corners we need to **search** for _intensity changes_ in two directions.
+
+## Finding Corners {data-auto-animate="true"}
+
+Compute the SSD of pixels in the neighbourhood $W$ around $(x, ~y)$.
+
+$$
+f(x, y) = \sum_{(u, v) \in W_{x,y} } (I(u, v) - I(u + \delta u , v + \delta v))^2
+$$
+
+::: notes
+in some local area W, we look at the difference between a pixel and another at some small offset.
+In areas where the function is high, we have an area where there is a lot of gradient ... things will probably stand out...
+:::
+
+## Finding Corners {data-auto-animate="true"}
+
+$$
+f(x, y) = \sum_{(u, v) \in W_{x,y} } (I(u, v) - I(u + \delta u , v + \delta v))^2
+$$
+
+Using **Taylor** expansion, with _Jacobian_ $\left[J_x, J_y \right]$:
+
+$$
+I(u + \delta u , v + \delta v) \approx I(u, v) + \left[J_x, J_y \right]
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+$$
+
+::: notes
+the jacobian for an image is the x, y gradient, the partial derivatives.
+Now, notice if we substitute, the intensity value will disappear.
+:::
