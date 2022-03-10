@@ -172,5 +172,25 @@ corners are distinct because of gradients.
 :::
 
 ::: notes
+particularly for corners...
 gradients in two directions... which allows them to be localised **precisely**.
 :::
+
+## Corners {data-auto-animate="true"}
+
+::: incremental
+
+- Corners are often highly _distinct_ points.
+- Edges are a rapid change in pixel value.
+- Corners are formed from two _orthogonal_ edges.
+- Corners are _invariant_ to translation, rotation and illumination.
+
+:::
+
+::: notes
+For edges on their own they are only localised along the direction of brightness change (orthogonal to edge)... you could slide along the edge...
+
+These properties are why we choose corners.
+:::
+
+## Finding Corners {data-auto-animate="true"}
