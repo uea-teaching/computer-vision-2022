@@ -28,7 +28,7 @@ previously we talked about Hog in depth, today we will explore some more very im
 
 ::: columns
 ::::: column
-![keypoints](assets/png/nd1_kp.png)
+![keypoints](assets/png/nd1_kp.png){width="80%"}
 :::::
 ::::: column
 We want to find _locally distinct_ features in an image.
@@ -53,7 +53,7 @@ we hope that if we took another image form a different view, the local distincti
 
 ::: columns
 ::::: column
-![keypoints](assets/png/nd1_kp.png)
+![keypoints](assets/png/nd1_kp.png){width="80%"}
 :::::
 ::::: column
 We can take advantage of these locally distinct features for:
@@ -74,10 +74,10 @@ We can take advantage of these locally distinct features for:
 
 ::: columns
 ::::: column
-![view 1](assets/png/nd1_desc.png)
+![view 1](assets/png/nd1_desc.png){width="80%"}
 :::::
 ::::: column
-![view 2](assets/png/nd2_desc.png)
+![view 2](assets/png/nd2_desc.png){width="80%"}
 :::::
 :::
 
@@ -96,7 +96,7 @@ An important distinction:
 ::: incremental
 
 - Keypoint is a distinct **location** in an image
-- Descriptor is a **description** of that neighbourhood.
+- Descriptor is a summary **description** of that neighbourhood.
 
 :::
 
@@ -110,13 +110,11 @@ We do this by examining the neighbourhood of the feature and forming a vector of
 
 ::: columns
 ::::: column
-![view 1](assets/png/nd1_desc.png)
+![view 1](assets/png/nd1_desc.png){width="80%"}
 :::::
 ::::: column
 
-keypoint:
-
-$$(x, ~y)$$
+keypoint: $(x, ~y)$
 
 descriptor _at_ the keypoint:
 
@@ -164,10 +162,10 @@ corners are distinct because of gradients.
 
 ::: columns
 ::::: column
-![view 1](assets/png/nd1_kp.png)
+![view 1](assets/png/nd1_kp.png){width="80%"}
 :::::
 ::::: column
-![view 2](assets/png/nd2_kp.png)
+![view 2](assets/png/nd2_kp.png){width="80%"}
 :::::
 :::
 
@@ -206,6 +204,7 @@ f(x, y) = \sum_{(u, v) \in W_{x,y} } (I(u, v) - I(u + \delta u , v + \delta v))^
 $$
 
 ::: notes
+sum of squared differences...
 in some local area W, we look at the difference between a pixel and another at some small offset.
 In areas where the function is high, we have an area where there is a lot of gradient ... things will probably stand out...
 :::
