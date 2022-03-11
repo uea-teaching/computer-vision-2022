@@ -509,7 +509,7 @@ in the first case, the two eigenvalues are equal and equal to zero, so a flat re
 
 ---
 
-![Harris Criterion](assets/png/harris-criterion.png){width="90%"}
+![Harris Criterion](assets/svg/harris-criterion.svg)
 
 ::: notes
 we can show this graphically by plotting R according to different eigenvalues.
@@ -536,7 +536,7 @@ Shi-Tomasi uses a different criteria looking for the smallest eigenvalue of the 
 
 ---
 
-![Shi-Tomasi Criterion](assets/png/shi-tomasi-criterion.png){width="90%"}
+![Shi-Tomasi Criterion](assets/svg/shi-tomasi-criterion.svg)
 
 ::: notes
 you can see the overall idea is quite similar to Harris...
