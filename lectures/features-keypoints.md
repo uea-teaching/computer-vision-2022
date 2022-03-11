@@ -146,6 +146,7 @@ Finding locally distinct points.
 We can summarise as finding these distinct points in an image.
 Harris - early technique...
 Shi-Tomasi - later improvements...now standard...
+quick mention of Förstner operator...
 Förstner was the first, but Harris and Shi-Tomasi became more popular.
 DoG stack of blurred images - used in SIFT ...later
 :::
@@ -726,3 +727,36 @@ so again, we are selecting points that are locally extreme...
 ## Difference of Gaussians {data-auto-animate="true"}
 
 **keypoints** are the local _extrema_ in the DoG over different scales.
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+The DoG finds blob-like and corner-like image structures _but_ also has strong responses along _edges_.
+
+::: incremental
+
+- Edges are _undesirable_ for matching.
+- Eliminate edges via Eigenvalue test.
+
+:::
+
+::: notes
+(similar to Harris corners)
+:::
+
+# Summary
+
+Two approaches for finding locally distinct points.
+
+- Corners using the Structure Matrix.
+- Difference of Gaussians
+
+Reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.
+- A Combined Corner and Edge Detector, Harris, et al. 1988.
+- Good Features to Track. Shi & Tomasi. 1994.
+
+::: notes
+Harris, Shi-Tomasi, and Förstner are all corner detectors.
+DoG ... search different scales and blur ...find corners and blobs
+:::
