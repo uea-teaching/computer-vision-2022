@@ -576,12 +576,46 @@ the right hand example is the maximal value of the corner.
 :::::
 :::
 
+## Corner Detection in Practice {data-auto-animate="true"}
+
+- RGB to grey scale conversion.
+- Real images are noisy, so smoothing is recommended.
+
+::: notes
+you can detect cornersin greyscale images, and use the keypoints in the original.
+Often smooth with a gaussian filter, or a combined kernel.
+:::
+
+## Corner Detection Algorithm {data-auto-animate="true"}
+
+::: incremental
+
+- Convolution with Sobel to obtain $x, y$ derivatives.
+- Multiplication of $x, y$ derivatives to get $J_xJ_x, J_yJ_y, J_xJ_y$.
+- Summation of region, using box filter convolution.
+- Apply criterion, e.g finding Eigenvalues.
+
+:::
+
+::: notes
+the first convolution could be combined with smoothing to remove noise.
+we end up with two gradient images
+:::
+
 ## Corner Detectors Comparison {data-auto-animate="true"}
 
-- All three detectors perform similarly
-- Förstner was the first one and additionally described subpixel estimation.
-- Harris became the most famous corner detector.
+- All three detectors perform similarly.
+- Förstner was first and also described subpixel estimation.
+- Harris became the most popular corner detector.
 - Shi-Tomasi seems to slightly outperform Harris.
-- Most libraries use Shi-Tomasi as the default corner detector (e.g., openCV).
+- Many libraries use Shi-Tomasi as the default corner detector.
 
 # Difference of Gaussians {data-auto-animate="true"}
+
+Detecting edges, corners, and blobs...
+
+::: notes
+This is used in SIFT feature descriptor - one of the most popular features today.
+At least of the manually designed features...rather than learned.
+And because this is such an important feature, we need to discuss it here, before we move on to discuss SIFT later.
+:::
