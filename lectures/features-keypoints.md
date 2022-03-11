@@ -602,7 +602,7 @@ the first convolution could be combined with smoothing to remove noise.
 we end up with two gradient images
 :::
 
-## Corner Detectors Comparison {data-auto-animate="true"}
+## Corner Detectors Compared {data-auto-animate="true"}
 
 - All three detectors perform similarly.
 - Förstner was first and also described subpixel estimation.
@@ -612,10 +612,50 @@ we end up with two gradient images
 
 # Difference of Gaussians {data-auto-animate="true"}
 
-Detecting edges, corners, and blobs...
+Difference of Gaussians (DoG)
+
+Detecting edges, corners, and _blobs_...
 
 ::: notes
 This is used in SIFT feature descriptor - one of the most popular features today.
 At least of the manually designed features...rather than learned.
 And because this is such an important feature, we need to discuss it here, before we move on to discuss SIFT later.
 :::
+
+## DoG Keypoints {data-auto-animate="true"}
+
+A variant of corner detection.
+
+- Provides responses at corners, edges, and _blobs_.
+- Blob = mainly constant region but different to its surroundings.
+
+::: notes
+we can see this as a variant of corner detection.
+As well as some edges and corners, blobs are regions that are locally distinctive.
+For example a dark spot on a light background...
+You could pinpoint the centre of such a region, so this is something else that is interesting to us.
+:::
+
+## DoG over Scale Space Pyramid {data-auto-animate="true"}
+
+Over different image pyramid levels
+
+::: incremental
+
+1. Gaussian smoothing
+2. Difference-of-Gaussians: find extrema (over smoothing scales).
+3. maximal suppression at _edges_.
+
+:::
+
+::: notes
+Key idea... Why is it a Dog over a scale space pyramid?
+First smoothing - different kernel sizes.
+We then compare each pair in the stack and compute the difference.
+Then, select the regions that locally stand out.
+We also do this over different scales of images...
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+![DoG - different image blurs](assets/png/dog-first-octave.png)
