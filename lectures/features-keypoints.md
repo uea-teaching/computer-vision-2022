@@ -659,3 +659,70 @@ We also do this over different scales of images...
 ## Difference of Gaussians {data-auto-animate="true"}
 
 ![DoG - different image blurs](assets/png/dog-first-octave.png)
+
+::: notes
+here are images with different blurs - with different gaussian kernels.
+and for each successive pair, we compute the difference.
+this gives new images that show the difference of gaussians.
+which is a 3D structure...
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+::: columns
+::::: column
+![DoG - search](assets/png/dog-search.png)
+:::::
+::::: column
+We search in $(x, y)$ _and_ in the third dimension.
+:::::
+:::
+
+::: notes
+Then we are looking for points that stand out locally, either in the xy direction or in the 3rd dimension - the smoothing direction.
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+![DoG - octaves](assets/png/dog-next-octave.png){width="80%"}
+
+::: notes
+and then we resample the images and perform the same process on the images of different scales.
+we do this to find points that stand out in the locally, and are invariant to scale.
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+![DoG - example](assets/png/dog-example.png){width="90%"}
+
+::: notes
+difference of two blurred images
+increases visibility of points, edges, and other details.
+you can see that the local gradients become more apparent...
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+![Gaussian - smoothing scale](assets/png/scale-space.png){width="90%"}
+
+::: notes
+compute the difference between pairs of blurred images.
+larger blurs emphasise blobs...
+we look for extreme values in the xy direction and depth of the stack...
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+Blurring filters out high-frequencies (noise).
+
+Subtracting differently blurred images from each other only keeps the frequencies that lie between the blur level of both images
+
+DoG acts as a **band-pass** filter.
+
+::: notes
+so again, we are selecting points that are locally extreme...
+:::
+
+## Difference of Gaussians {data-auto-animate="true"}
+
+**keypoints** are the local _extrema_ in the DoG over different scales.
