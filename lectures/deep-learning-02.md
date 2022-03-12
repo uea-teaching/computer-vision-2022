@@ -247,7 +247,7 @@ So, just what we have discussed so far...
 
 ## VGG16 {data-auto-animate="true"}
 
-![VGG16 - image from Perez, et al. 2020](assets/png/vgg-16.png){width="90%"}
+![VGG16 - image from Perez, et al. 2020](assets/jpg/vgg16.jpg){width="90%"}
 
 ## VGG16 {data-auto-animate="true"}
 
