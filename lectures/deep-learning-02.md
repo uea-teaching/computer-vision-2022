@@ -560,7 +560,7 @@ here, images of bedrooms are generated from random input vectors.
 
 ---
 
-![DCGAN vector arithmetic](assets/png/gan-man.png)
+![DCGAN vector arithmetic](assets/png/gan-man.png){width="90%"}
 
 ::: notes
 vectors that produced a smiling woman minus the mean woman vector + mean man vector = smiling man.
@@ -572,7 +572,7 @@ A Style-Based Generator Architecture for Generative Adversarial Networks
 
 - Karras, et al. 2018
 
-![Style GAN](assets/png/gan-style.png)
+![Style GAN](assets/png/gan-style.png){width="90%"}
 
 ::: notes
 by understanding the distribution of the latent generator code Karras showed some stunning images of faces.
@@ -589,6 +589,7 @@ trained on flickr images - real people.
 Reading:
 
 - the papers mentioned in the lecture
+- visualisations of network training: https://losslandscape.com
 
 ::: notes
 
