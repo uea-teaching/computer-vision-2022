@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Introduction to Deep Learning</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Introduction to Deep Learning</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="content" class="title-slide slide level1">
+<h1>Content</h1>
+<ul>
+<li>ImageNet</li>
+<li>Neural Networks</li>
+<li>MNIST Examples</li>
+<li>Convolutional Neural Networks</li>
+</ul>
+</section>
+
+<section>
+<section id="imagenet" class="title-slide slide level1">
+<h1>ImageNet</h1>
+<div style="font-size: 2.0em">
+<p><span class="math inline">\(&gt; ~\)</span> 1,000,000 images</p>
+<p><span class="math inline">\(&gt; ~\)</span> 1,000 classes</p>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Actually…</p>
+<p><span class="math inline">\(&gt; ~\)</span> 15,000,000 images</p>
+<p><span class="math inline">\(&gt; ~\)</span> 20,000 classes</p>
+<p>Ground truth annotated manually with Amazon <em>Mechanical Turk</em>.</p>
+<p>Freely available for research here: <a href="https://www.image-net.org/">https://www.image-net.org/</a></p>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/jpg/image-net1.jpg" alt="mushrooms" /><figcaption aria-hidden="true">mushrooms</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/jpg/image-net2.jpg" alt="landscape" /><figcaption aria-hidden="true">landscape</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>ImageNet Top-5 challenge:</p>
+<p>You score if ground truth class is one your top 5 predictions!</p>
+<aside class="notes">
+<p>In the case of the top-5 score, you check if the target label is one of your top 5 predictions (the 5 ones with the highest probabilities).</p>
+</aside>
+</section>
+<section id="imagenet-in-2012" class="slide level2">
+<h2>ImageNet in 2012</h2>
+<div>
+<ul>
+<li class="fragment">Best approaches used hand-crafted features.</li>
+<li class="fragment">SIFT, HOGs, Fisher vectors, etc. plus a classifier.</li>
+<li class="fragment">Top-5 error rate: ~25%</li>
+</ul>
+</div>
+</section>
+<section id="section" class="slide level2" data-transition="zoom">
+<h2 data-transition="zoom"></h2>
+<div style="font-size: 2.5em">
+<p>Then the game changed!</p>
+</div>
+</section>
+<section id="alexnet" class="slide level2">
+<h2>AlexNet</h2>
+<p>In 2012, Krizhevsky et al. used a deep neural network to achieve a <strong>15%</strong> error rate.</p>
+<div>
+<ul>
+<li class="fragment">AlexNet</li>
+<li class="fragment">Five convolutional layers…</li>
+<li class="fragment">…followed by three fully connected layers.</li>
+<li class="fragment">ImageNet Classification with Deep Convolutional Neural Networks.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Difficult to overstate the impact of this on the computer vision community. AlexNet Further architectural improvements have reduced the error rate further since then…</p>
+</aside>
+</section>
+<section id="section-1" class="slide level2" data-transition="slide">
+<h2 data-transition="slide"></h2>
+<p>Prior approaches used hand <em>designed</em> features.</p>
+<p>Neural networks <strong>learn</strong> features that help them classify and quantify images.</p>
+</section></section>
+<section>
+<section id="neural-networks" class="title-slide slide level1">
+<h1>Neural Networks</h1>
+<p>What <em>is</em> a neural network?</p>
+<aside class="notes">
+<p>Actually, they have been around a long time. In 1959, Bernard Widrow and Marcian Hoff, developed MADALINE, the first neural network applied to a real world problem, using an adaptive filter that eliminates echoes on phone lines.</p>
+</aside>
+</section>
+<section id="neural-networks-1" class="slide level2">
+<h2>Neural Networks</h2>
+<p>Multiple <em>layers</em>.</p>
+<p>Data <em>propagates</em> through layers.</p>
+<p><em>Transformed</em> by each layer.</p>
+<aside class="notes">
+<p>we will hold onto the idea of layers for a while. Each transformation becomes more useful as we progress through the model.</p>
+</aside>
+</section>
+<section id="neural-network-classifier" class="slide level2">
+<h2>Neural Network Classifier</h2>
+<figure>
+<img data-src="assets/png/nn-classifier.png" alt="Neural Network for classification" /><figcaption aria-hidden="true">Neural Network for classification</figcaption>
+</figure>
+<aside class="notes">
+<p>It is common to represent such models graphically. So here - an input image is passed to layers, deeper layers, until we get a probability vector.</p>
+</aside>
+</section>
+<section id="neural-network-regressor" class="slide level2">
+<h2>Neural Network Regressor</h2>
+<figure>
+<img data-src="assets/png/nn-regressor.png" alt="Neural Network for regression" /><figcaption aria-hidden="true">Neural Network for regression</figcaption>
+</figure>
+<aside class="notes">
+<p>Things don’t change much for regression - where we want real values rather than categories.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/nn-weights.png" alt="Neural Network Weights" /><figcaption aria-hidden="true">Neural Network Weights</figcaption>
+</figure>
+<aside class="notes">
+<p>we learn these weighted connections…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/nn-layer.png" alt="Single Layer" /><figcaption aria-hidden="true">Single Layer</figcaption>
+</figure>
+<aside class="notes">
+<p>and we learn the biases.</p>
+<p>so each line is a weight and we take the product sum of the inputs. Using matrix multiplication…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><span class="math inline">\(x\)</span> input vector of size <span class="math inline">\(M\)</span></li>
+<li><span class="math inline">\(y\)</span> output vector of size <span class="math inline">\(N\)</span></li>
+<li><span class="math inline">\(W\)</span> weight matrix of size <span class="math inline">\(M \times N\)</span></li>
+<li><span class="math inline">\(b\)</span> bias vector of size <span class="math inline">\(N\)</span></li>
+<li><span class="math inline">\(f\)</span> activation function, e.g. ReLU: <span class="math inline">\(\max(x, 0)\)</span></li>
+</ul>
+<p><span class="math display">\[y = f(Wx + b)\]</span></p>
+<aside class="notes">
+<p>Activation functions can be sigmoid, tanh, ReLU, etc.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<div style="font-size: 1.5em">
+<p><span class="math display">\[y = f(Wx + b)\]</span></p>
+</div>
+<aside class="notes">
+<p>So, in a nutshell, this is a neural network - just need to repeat this function for each layer.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/nn-multi-layers.png" alt="Multiple Layers" /><figcaption aria-hidden="true">Multiple Layers</figcaption>
+</figure>
+<aside class="notes">
+<p>graphically, we can see the data flowing through the layers, left to right.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p><span class="math display">\[
+\begin{aligned}
+y_0 &amp;= f(W_0x + b_0) \\
+y_1 &amp;= f(W_1y_0 + b_1) \\
+ &amp; \dotsc \\
+y_L &amp;= f(W_L y_{L-1} + b_L)
+\end{aligned}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/nn-classifier-layers.png" alt="Classifier Layers" /><figcaption aria-hidden="true">Classifier Layers</figcaption>
+</figure>
+<aside class="notes">
+<p>in practical terms - we can flatten an image to a vector of size <span class="math inline">\(M\)</span></p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>A <strong>Neural Network</strong> is built from <em>layers</em>, each of which is:</p>
+<ul>
+<li>a matrix multiplication</li>
+<li>a bias</li>
+<li>a non-linear activation function</li>
+</ul>
+<aside class="notes">
+<p>To answer the question - what is a neural network?</p>
+</aside>
+</section></section>
+<section>
+<section id="practical-examples" class="title-slide slide level1">
+<h1>Practical Examples</h1>
+<p>… using <strong>PyTorch</strong>.</p>
+</section>
+<section id="practical-examples-1" class="slide level2">
+<h2>Practical Examples</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/examples-qr.png" alt="Code Examples" /><figcaption aria-hidden="true">Code Examples</figcaption>
+</figure>
+</div><div class="column">
+<p>I’ve provided a small repository of code examples for you to try out, at:</p>
+<p><a href="https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision">https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision</a></p>
+</div>
+</div>
+<aside class="notes">
+<p>There are some instructions on setting up your environment, if you are not familiar with Python.</p>
+</aside>
+</section>
+<section id="practical-examples-2" class="slide level2">
+<h2>Practical Examples</h2>
+<p>The first thing to note, is we usually work with <strong>batches</strong> of input data.</p>
+<div>
+<ul>
+<li class="fragment">or, more strictly, <em>mini-batches</em>.</li>
+<li class="fragment">For a sample of M values, then a mini-batch of S samples is an S x M matrix.</li>
+</ul>
+</div>
+</section>
+<section id="section-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<pre ><code class="python" data-line-numbers="1-12|1|4|7|10|12">import torch, torch.nn.functional as F
+
+# Assume input_data is S * M matrix
+x = torch.tensor(input_data)
+
+# W: gaussian random M * N matrix, std-dev=1/sqrt(N)
+W = torch.randn(M, N) / math.sqrt(N)
+
+# Bias: zeros, N elements
+b = torch.zeros(1, N)
+
+y = F.relu(x @ W + b)</code></pre>
+<aside class="notes">
+<p>let’s step through the code above. first the imports… then, input_data is a NumPy array, convert to Torch tensor then, W is a Torch tensor, with normally distributed random values, scaled. then, b is a Torch tensor, with zeros Finally, we perform the matrix multiplication and add the bias, and then apply the ReLU activation function (What we called f earlier). The arobase @ is the matrix multiplication symbol. libraries like PyTorch, NumPy, Matlab ‘broadcast’/replicate the 1xN to SxN for the addition</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>This is all a bit clunky.</p>
+<p>PyTorch provides nice convenient layers for you to use.</p>
+</section>
+<section class="slide level2">
+
+<pre ><code class="python" data-line-numbers="1-8|2|5|8"># Assume input_data is S * M matrix
+x = torch.tensor(input_data)
+
+# Linear layer, M columns in, N columns out
+layer = torch.nn.Linear(M, N)
+
+# Call the layer like a function to apply it
+y = F.relu(layer(x))</code></pre>
+<aside class="notes">
+<p>The nn.Linear module contains the weights and biases and initialises itself, saving us effort.</p>
+<p>The matrix-multiply and applying the bias is done for us by nn.Linear.</p>
+</aside>
+</section>
+<section id="training" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Training</h2>
+<p>On order to <em>learn</em> the correct weights, we need to <strong>train</strong> the model.</p>
+</section>
+<section id="training-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Training</h2>
+<p>Define a <strong>cost</strong> to measure the <em>error</em> between predictions and ground truth.</p>
+</section>
+<section id="training-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Training</h2>
+<p>Use <strong>back-propagation</strong> to modify <em>parameters</em> so that cost drops toward zero.</p>
+</section>
+<section id="initialisation" class="slide level2">
+<h2>Initialisation</h2>
+<p>Initialise weights randomly.</p>
+<ul>
+<li>We can follow the scheme proposed by He, et al. in 2015.</li>
+<li>We did this earlier, the scaled random normal initialisation.</li>
+<li>Pytorch does this by default, so no need to worry about it.</li>
+</ul>
+</section>
+<section id="training-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Training</h2>
+<p>For each example <span class="math inline">\(~x_{train}~\)</span> from the training set.</p>
+<div>
+<ul>
+<li class="fragment"><em>Evaluate</em> <span class="math inline">\(~y_{pred}~\)</span> given the training input.</li>
+<li class="fragment">Measure the <em>cost</em>: <span class="math inline">\(~c = (y_{pred} - y_{train})\)</span></li>
+<li class="fragment">Iteratively reduce the cost using <strong>gradient descent</strong>.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>we evaluate the model on the training data, and then we measure the cost.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Compute the derivative of <em>cost</em> <span class="math inline">\(~c\)</span></p>
+<ul>
+<li>w.r.t. all parameters <span class="math inline">\(W\)</span> and <span class="math inline">\(b\)</span>.</li>
+</ul>
+<aside class="notes">
+<p>so, we are looking for the gradient of the cost function.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Update parameters <span class="math inline">\(W\)</span> and <span class="math inline">\(b\)</span> using gradient descent:</p>
+<p><span class="math display">\[
+\begin{aligned}
+W&#39;_0 &amp;= W_0 - \lambda \frac{\partial c}{\partial W_0} \\
+b&#39;_0 &amp;= b_0 - \lambda \frac{\partial c}{\partial b_0} \\
+\end{aligned}
+\]</span></p>
+<p><span class="math inline">\(\lambda\)</span> is the learning rate: a <em>hyperparameter</em>.</p>
+<aside class="notes">
+<p>learning rate must be set empirically, or from experience.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Theoretically…use the chain rule to calculate gradients.</p>
+<ul>
+<li>This is time consuming.</li>
+<li>Easy to make mistakes.</li>
+</ul>
+</section>
+<section id="in-practice" class="slide level2">
+<h2>In Practice</h2>
+<p>Many Neural Network tool-kits do all this for you automatically.</p>
+<p>Write the code that performs the <strong>forward</strong> operations, PyTorch keeps track of what you did and will compute <em>all</em> the gradients in one step!</p>
+</section>
+<section id="computing-gradients-in-pytorch" class="slide level2">
+<h2>Computing gradients in PyTorch</h2>
+<pre ><code class="python" data-line-numbers="1-6|2|4|6"># Get predictions, no non-linearity
+y_pred = layer(x_train)
+# Cost is mean squared error
+cost = ((y_pred - y_train) ** 2).mean()
+# Compute gradients using 'backward' method
+cost.backward()</code></pre>
+<aside class="notes">
+<p>Get predictions, no non-linearity, for brevity. Compute cost using mean squared error… Back-propagation: compute gradients of cost w.r.t. parameters</p>
+<p>layer.W.grad and layer.b.grad will contain the gradients of the cost w.r.t. layer.W and layer.b respectively</p>
+</aside>
+</section>
+<section id="gradient-descent-in-pytorch" class="slide level2">
+<h2>Gradient descent in PyTorch</h2>
+<pre ><code class="python" data-line-numbers="1-12|2|5-6|8|10|12}"># Create an optimizer to update the parameters of layer
+opt = torch.optim.Adam(layer.parameters(), lr=1e-3)
+
+# Get predictions and cost as before
+y_pred = layer(x_train)
+cost = ((y_pred - y_train) ** 2).mean()
+# Back-prop, zero the gradients attached to params first
+opt.zero_grads()
+# compute gradients
+cost.backward()
+# update the parameters
+opt.step()</code></pre>
+<aside class="notes">
+<p>PyTorch optimizer objects update the parameters for us. In this case we use the Adam rule; it’s a variant of stochastic gradient descent (SGD) that often works better</p>
+<p>We give it the parameters we want it to update, and a learning rate.</p>
+<p>Adam was presented by Diederik Kingma from OpenAI and Jimmy Ba from the University of Toronto in their 2015 ICLR paper (poster) titled Adam: A Method for Stochastic Optimization.</p>
+<p>The algorithm is called Adam. It is not an acronym, the name Adam is derived from adaptive moment estimation.</p>
+</aside>
+</section>
+<section id="classification" class="slide level2">
+<h2>Classification</h2>
+<p>Final layer has a <strong>softmax</strong> non-linear function.</p>
+<p>The cost is the cross-entropy loss, which is the negative log-likelihood.</p>
+</section>
+<section id="softmax" class="slide level2">
+<h2>Softmax</h2>
+<p>Softmax produces a probability vector:</p>
+<p><span class="math display">\[
+q(x) = \frac{e^{x_i}}{\sum_{i=0}^{N} e^{x_i}}
+\]</span></p>
+<aside class="notes">
+<p>Softmax scales the logits (the raw output of the last layer) to probabilities.</p>
+</aside>
+</section>
+<section id="classification-cost" class="slide level2">
+<h2>Classification Cost</h2>
+<p>Negative log probability (categorical cross-entropy):</p>
+<ul>
+<li><span class="math inline">\(q\)</span> is the predicted probability.</li>
+<li><span class="math inline">\(p\)</span> is the true probability (usually 0 or 1).</li>
+</ul>
+<p><span class="math display">\[
+c = - \sum p_i \log q_i
+\]</span></p>
+<aside class="notes">
+<p>have a think about what this cost would be for a single example.</p>
+</aside>
+</section>
+<section id="classification-in-pytorch" class="slide level2">
+<h2>Classification in PyTorch</h2>
+<pre ><code class="python" data-line-numbers="1-7|2|4|6"># Create a nn.CrossEntropyLoss object to compute loss
+criterion = torch.nn.CrossEntropyLoss()
+# Get predicted logits
+y_pred_logits = layer(x_train)
+# Use criterion to compute loss
+cost = criterion(y_pred_logits, y_train)
+...</code></pre>
+<aside class="notes">
+<p>Again, pytorch does a lot of the work for us. Calling a CrossEntropyLoss object will: apply softmax and compute cross entropy loss in one go</p>
+</aside>
+</section>
+<section id="regression" class="slide level2">
+<h2>Regression</h2>
+<p>To quantify something, with real-valued output.</p>
+<p>Cost: Mean squared error.</p>
+</section>
+<section id="mean-squared-error" class="slide level2">
+<h2>Mean Squared Error</h2>
+<ul>
+<li><span class="math inline">\(q\)</span> is the predicted value.</li>
+<li><span class="math inline">\(p\)</span> is the true value.</li>
+</ul>
+<p><span class="math display">\[
+c = \frac{1}{N} \sum_{i=0}^{N} (q_i - p_i)^2
+\]</span></p>
+</section>
+<section id="regression-in-pytorch" class="slide level2">
+<h2>Regression in PyTorch</h2>
+<pre ><code class="python" data-line-numbers="1-7|2|4|6"># Create a nn.CrossEntropyLoss object to compute loss
+criterion = torch.nn.MSELoss()
+# Get predicted logits
+y_pred_logits = layer(x_train)
+# Use criterion to compute loss
+cost = criterion(y_pred_logits, y_train)
+...</code></pre>
+<aside class="notes">
+<p>nn.MSELoss (mean squared error loss) computes MSE loss</p>
+</aside>
+</section>
+<section id="training-4" class="slide level2">
+<h2>Training</h2>
+<p>Randomly split the training set into mini-batches of approximately 100 samples.</p>
+<ul>
+<li>Train on a mini-batch in a single step.</li>
+<li>The mini-batch cost is the mean of the costs of all samples in the mini-batch.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Training on mini-batches means that ~100 samples are processed in parallel.</p>
+<ul>
+<li>Good news for GPUs that do lots of operations in parallel.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Training on enough mini-batches to cover all examples in the training set is called an epoch.</p>
+<ul>
+<li>Run multiple epochs (often 200-300), until the cost converges.</li>
+</ul>
+</section>
+<section id="training---recap" class="slide level2">
+<h2>Training - Recap</h2>
+<div>
+<ol type="1">
+<li class="fragment">Take mini-batch of training examples.</li>
+<li class="fragment">Compute the cost of the mini-batch.</li>
+<li class="fragment">Use gradient descent to update parameters and reduce cost.</li>
+<li class="fragment">Repeat, until done.</li>
+</ol>
+</div>
+<aside class="notes">
+<p>Training is an iterative process…</p>
+</aside>
+</section></section>
+<section>
+<section id="multi-layer-perceptron" class="title-slide slide level1">
+<h1>Multi-Layer Perceptron</h1>
+<p>The simplest network architecture…</p>
+<aside class="notes">
+<p>Nothing we haven’t seen yet - uses only fully connected layers.</p>
+</aside>
+</section>
+<section id="multi-layer-perceptron-mlp" class="slide level2">
+<h2>Multi-Layer Perceptron (MLP)</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/dense-layer.png" alt="dense layer" /><figcaption aria-hidden="true">dense layer</figcaption>
+</figure>
+</div><div class="column">
+<h3 id="dense-layer">Dense layer</h3>
+<p>Each unit is connected to all units in previous layer.</p>
+</div>
+</div>
+</section>
+<section id="mnist-example" class="slide level2">
+<h2>MNIST Example</h2>
+<p>The “Hello World” of neural networks.</p>
+<figure>
+<img data-src="assets/png/MNIST-MLP.png" alt="MNIST-MLP" /><figcaption aria-hidden="true">MNIST-MLP</figcaption>
+</figure>
+<aside class="notes">
+<p>2 hidden layers, both 256 units after 300 iterations over training set: 1.83% validation error</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<pre ><code class="python" data-line-numbers="1-12">class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784, 256)
+        self.hidden = nn.Linear(256, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        return self.output(x)</code></pre>
+<aside class="notes">
+<p>here is the network architecture in its entirety. just 12 lines of code!</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<pre ><code class="python" data-line-numbers="4|5|6">class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784, 256)
+        self.hidden = nn.Linear(256, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        return self.output(x)</code></pre>
+<aside class="notes">
+<p>here we instantiate the layers. First fully connected layer takes 28x28 image flattened to 784-element vector. Second hidden layer - so called because it is not connected to the outside world. Third layer - output layer, with 10 predicted classes. ONE hot encoding is used for the output layer.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<pre ><code class="python" data-line-numbers="8|9|10|11|12">class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784, 256)
+        self.hidden = nn.Linear(256, 256)
+        self.output = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        return self.output(x)</code></pre>
+<aside class="notes">
+<p>We declare a forward method that defines how the layers are applied. first , we flatten out the image. Then apply layers in sequence… and return the output.</p>
+</aside>
+</section>
+<section id="mnist" class="slide level2">
+<h2>MNIST</h2>
+<p>MNIST is quite a special case.</p>
+<ul>
+<li>Digits nicely centred within the image.</li>
+<li>Scaled to approximately the same size.</li>
+</ul>
+</section>
+<section id="visualisation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visualisation</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/mnist-sample.png" alt="MNIST Samples" /><figcaption aria-hidden="true">MNIST Samples</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/mnist-mlp-features.png" alt="Weight Visualisation" /><figcaption aria-hidden="true">Weight Visualisation</figcaption>
+</figure>
+</div>
+</div>
+<aside class="notes">
+<p>Visualising the learned weights can help to understand what the network is learning. looking at the weights of layer 1… The matrix is shape (784, 256) , so we can visualise a column as 28x28 image.</p>
+</aside>
+</section>
+<section id="visualisation-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visualisation</h2>
+<p>Note the stroke features detected by the various units.</p>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/mnist-sample.png" alt="MNIST Samples" /><figcaption aria-hidden="true">MNIST Samples</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/mnist-mlp-features.png" alt="Weight Visualisation" /><figcaption aria-hidden="true">Weight Visualisation</figcaption>
+</figure>
+</div>
+</div>
+<aside class="notes">
+<p>Each image visualises the weights connecting pixels to a specific unit in the first hidden layer. Note the stroke features detected by the various units</p>
+</aside>
+</section>
+<section id="visualisation-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visualisation</h2>
+<p>Learned features lack translation invariance.</p>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/mnist-sample.png" alt="MNIST Samples" /><figcaption aria-hidden="true">MNIST Samples</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/mnist-mlp-features.png" alt="Weight Visualisation" /><figcaption aria-hidden="true">Weight Visualisation</figcaption>
+</figure>
+</div>
+</div>
+<aside class="notes">
+<p>The fully connected networks so far have a weakness: No translation invariance; learned features are position dependent</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>For more general imagery:</p>
+<ul>
+<li>Require a training set large enough to see all features in all possible positions.</li>
+<li>Require network with enough units to represent this.</li>
+</ul>
+<aside class="notes">
+<p>Highly unlikely to achieve this…</p>
+</aside>
+</section></section>
+<section>
+<section id="convolutional-neural-networks" class="title-slide slide level1">
+<h1>Convolutional Neural Networks</h1>
+<p>The computer vision revolution…</p>
+<aside class="notes">
+<p>Really, the big power tool of modern computer vision.</p>
+</aside>
+</section>
+<section id="convolution" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>We have already discussed convolution.</p>
+<ul>
+<li>Slide a filter, or kernel, over the image.</li>
+<li>Multiply image pixels by filter weights and sum.</li>
+<li>Do this for all possible positions of the filter.</li>
+</ul>
+</section>
+<section id="convolution-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<figure>
+<img data-src="assets/png/convolution.png" alt="Convolution" /><figcaption aria-hidden="true">Convolution</figcaption>
+</figure>
+<aside class="notes">
+<p>We have seen this operation for image smoothing, getting gradients, etc. We can perform convolution using matrix multiplication.</p>
+</aside>
+</section>
+<section id="convolution-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<figure>
+<img data-src="assets/png/gabor01.png" alt="Gabor Filter" /><figcaption aria-hidden="true">Gabor Filter</figcaption>
+</figure>
+<aside class="notes">
+<p>Gabor filters, named after Dennis Gabor, is a linear filter used for texture analysis. Rotated sinusoids, modulated by a Gaussian, are used to create a Gabor filter. Arguably model some responses in the visual cortex.</p>
+<p>Outputs show the filter response at each position.</p>
+</aside>
+</section>
+<section id="convolution-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>Convolution detects features in a <em>position independent</em> manner.</p>
+<p>Convolutional neural networks <strong>learn</strong> position independent filters.</p>
+</section>
+<section id="recap-fully-connected-layer" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Recap: Fully Connected Layer</h2>
+<p>Each hidden unit is fully connected to all inputs.</p>
+<figure>
+<img data-src="assets/png/nn-layer.png" alt="Fully Connected Layer" /><figcaption aria-hidden="true">Fully Connected Layer</figcaption>
+</figure>
+<aside class="notes">
+<p>Look at all the red connections.</p>
+</aside>
+</section>
+<section id="convolution-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>Each hidden unit is only connected to inputs in its local neighbourhood.</p>
+<figure>
+<img data-src="assets/png/conv-connections.png" alt="Convolution Detections" /><figcaption aria-hidden="true">Convolution Detections</figcaption>
+</figure>
+<aside class="notes">
+<p>Look at the connections coming back from the hidden unit.</p>
+</aside>
+</section>
+<section id="convolution-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>Each group of weights is shared between all units in the layer.</p>
+<figure>
+<img data-src="assets/png/conv-shared.png" alt="Shared Weights" /><figcaption aria-hidden="true">Shared Weights</figcaption>
+</figure>
+<aside class="notes">
+<p>red weights have the same value, as do green, as do yellow.</p>
+</aside>
+</section>
+<section id="convolution-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>The values of the weights form a <strong>filter</strong>.</p>
+<p>For practical computer vision, more than one filter must be used to extract a variety of features.</p>
+</section>
+<section id="convolution-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/conv-multi-filters.png" alt="Multiple Filters" /><figcaption aria-hidden="true">Multiple Filters</figcaption>
+</figure>
+</div><div class="column">
+<p>Multiple filter weights.</p>
+<p>Output is image with multiple channels.</p>
+</div>
+</div>
+<aside class="notes">
+<p>RGB has 3 channels - feature images can have 100s of channels</p>
+</aside>
+</section>
+<section id="convolution-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>Convolution can be expressed as multiplication by weight matrix.</p>
+<p><span class="math display">\[
+y = f(Wx + b)
+\]</span></p>
+<aside class="notes">
+<p>It’s a matrix multiplication, but the weights are repeated to achieve this operation.</p>
+</aside>
+</section>
+<section id="convolution-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Convolution</h2>
+<p>In subsequent layers, each filter connects to pixels in <strong>all</strong> channels in previous layer.</p>
+<aside class="notes">
+<p>eg. one filter operates on the R, G and B channels of input. And so on for feature images with multiple channels.</p>
+</aside>
+</section>
+<section id="max-pooling" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Max Pooling</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/max-pool.png" alt="Max Pooling" /><figcaption aria-hidden="true">Max Pooling</figcaption>
+</figure>
+</div><div class="column">
+<p>Take the maximum from each <span class="math inline">\((p \times p)\)</span> pooling region.</p>
+<p>Down sample the image by a factor of p.</p>
+</div>
+</div>
+<aside class="notes">
+<p>We often need to downsample the image spatial resolution. Pooling is a common way to achieve this goal.</p>
+</aside>
+</section>
+<section id="striding" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Striding</h2>
+<p>We can also down-sample using <strong>strided</strong> convolution.</p>
+<ul>
+<li>Generate output for 1 in every <span class="math inline">\(n\)</span> pixels.</li>
+<li>Faster, can work as well as max-pooling.</li>
+</ul>
+<aside class="notes">
+<p>arguably, becoming more popular with deep learning.</p>
+</aside>
+</section></section>
+<section id="convnetjs" class="title-slide slide level1">
+<h1>ConvNetJS</h1>
+<p>Visualisations are avalable at ConvNetJS by Andrej Karpathy.</p>
+<p><a href="https://cs.stanford.edu/people/karpathy/convnetjs/index.html">https://cs.stanford.edu/people/karpathy/convnetjs/index.html</a></p>
+<p>Source code for the site is available at:</p>
+<p><a href="https://github.com/karpathy/convnetjs">https://github.com/karpathy/convnetjs</a></p>
+<aside class="notes">
+<p>Really nice visualisations at convnetjs. We have a small lab sheet today … We will explore Neural Networks in the lab, using this website.</p>
+</aside>
+</section>
+
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>ImageNet</li>
+<li>Neural Networks</li>
+<li>MNIST Examples</li>
+<li>Convolutional Neural Networks</li>
+</ul>
+<aside class="notes">
+<p>we have motivated Deep Learning - following the success with ImageNet. we have looked at how a neural network can be built with matrix operations. and how we train a neural network. Worked through an example with the MNIST data set Realised we needed to move to CNNs to get location invariant features.</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
