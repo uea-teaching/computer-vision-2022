@@ -81,8 +81,14 @@ Then the game changed!
 
 In 2012, Krizhevsky et al. used a deep neural network to achieve a **15%** error rate.
 
-- AlexNet: Five convolutional layers, followed by three fully connected layers.
-- ImageNet Classification with Deep Convolutional Neural Networks. Krizhevsky et al. 2012.
+::: incremental
+
+- AlexNet
+- Five convolutional layers...
+- ...followed by three fully connected layers.
+- ImageNet Classification with Deep Convolutional Neural Networks.
+
+:::
 
 ::: notes
 Difficult to overstate the impact of this on the computer vision community.
@@ -248,8 +254,12 @@ There are some instructions on setting up your environment, if you are not famil
 
 The first thing to note, is we usually work with **batches** of input data.
 
+::: incremental
+
 - or, more strictly, _mini-batches_.
-- If a sample is a vector of M numbers Then a mini-batch of S samples is an S x M matrix.
+- For a sample of M values, then a mini-batch of S samples is an S x M matrix.
+
+:::
 
 ## {data-auto-animate="true"}
 
@@ -310,9 +320,11 @@ On order to _learn_ the correct weights, we need to **train** the model.
 
 ## Training {data-auto-animate="true"}
 
-Define a **cost**; a measure of error between predictions and ground truth.
+Define a **cost** to measure the _error_ between predictions and ground truth.
 
-Use _back-propagation_ to modify parameters so that cost drops toward zero.
+## Training {data-auto-animate="true"}
+
+Use **back-propagation** to modify _parameters_ so that cost drops toward zero.
 
 ## Initialisation
 
@@ -324,19 +336,25 @@ Initialise weights randomly.
 
 ## Training {data-auto-animate="true"}
 
-For each example $x_{train}$ from the training set.
+For each example $~x_{train}~$ from the training set.
 
 ::: incremental
 
-- Evaluate network the prediction $y_{pred}$ given the training input.
-- Measure _cost_ $c$: the difference between $y_{pred}$ output and ground truth $y_{train}$.
+- _Evaluate_ $~y_{pred}~$ given the training input.
+- Measure the _cost_: $~c = (y_{pred} - y_{train})$
 - Iteratively reduce the cost using **gradient descent**.
 
 :::
 
+::: notes
+we evaluate the model on the training data, and then we measure the cost.
+:::
+
 ---
 
-Compute the derivative of _cost_ $c$ w.r.t. all parameters $W$ and $b$.
+Compute the derivative of _cost_ $~c$
+
+- w.r.t. all parameters $W$ and $b$.
 
 ::: notes
 so, we are looking for the gradient of the cost function.
@@ -413,6 +431,10 @@ PyTorch optimizer objects update the parameters for us. In this case we use the 
 
 We give it the parameters we want it to update, and a learning rate.
 
+Adam was presented by Diederik Kingma from OpenAI and Jimmy Ba from the University of Toronto in their 2015 ICLR paper (poster) titled Adam: A Method for Stochastic Optimization.
+
+The algorithm is called Adam. It is not an acronym,
+the name Adam is derived from adaptive moment estimation.
 :::
 
 ## Classification
@@ -521,7 +543,7 @@ Training on enough mini-batches to cover all examples in the training set is cal
 
 1. Take mini-batch of training examples.
 2. Compute the cost of the mini-batch.
-3. Use gradient descent to update the parameters and reduce the cost.
+3. Use gradient descent to update parameters and reduce cost.
 4. Repeat, until done.
 
 :::
@@ -757,7 +779,7 @@ Outputs show the filter response at each position.
 
 Convolution detects features in a _position independent_ manner.
 
-Convolutional neural networks **learn** _position independent_ filters.
+Convolutional neural networks **learn** position independent filters.
 
 ## Recap: Fully Connected Layer {data-auto-animate="true"}
 
