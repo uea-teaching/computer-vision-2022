@@ -23,6 +23,8 @@ There is also a Makefile in the root of this repo if you already have Docker ins
 - Point Distribution Models
 - Image Classification
 - Object Detection
+- Introduction to Deep Learning:
+- Practical Deep Learning
 
 ## Labs
 
