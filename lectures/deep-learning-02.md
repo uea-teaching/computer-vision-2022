@@ -360,6 +360,7 @@ Small batch sizes, approximately 1-10.
 ::: notes
 small batch - Goodfellow16
 Batch size is ultimately constrained by available memory, but below that, we can make choices.
+The loss landscape is spikier with small batch sizes.
 :::
 
 ## Batch Size {data-auto-animate="true"}
@@ -399,6 +400,16 @@ Learns reasonably quickly – in terms of improvement per epoch
 Increasing mini-batch size will improve performance up to the point where all GPU units are in use.
 
 Increasing it further will not improve performance; it will reduce accuracy!
+
+## Learning Rate {data-auto-animate="true"}
+
+- Small learning rates can be slow to train, and can get stuck in local minima.
+- Large learning rates can be unstable and cause divergence.
+- Experiment with different learning rates - increase or decrease by a factor of 10.
+
+::: notes
+using a decreasing learning rate over the time period is a powerful technique.
+:::
 
 ## DropOut {data-auto-animate="true"}
 
@@ -489,10 +500,10 @@ This is actually a big area of research, and there are some really clever augmen
 Another related area is creating entirely new synthetic datasets.
 :::
 
-## Learning Rate {data-auto-animate="true"}
-
-- Small learning rates can be slow to train, and can get stuck in local minima.
-- Large learning rates can be unstable and cause divergence.
-- Experiment with different learning rates - increase decrease by a factor of 10.
-
 # Work in the Field
+
+Some interesting work in the field...
+
+::: notes
+So to wrap up, I want to show you a few selections from the research community.
+:::
