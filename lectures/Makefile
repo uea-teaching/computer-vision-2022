@@ -7,7 +7,7 @@ all : $(HTM) $(BMR)
 	pandoc $^ \
 	--defaults revealjs \
 	--css assets/style.css \
-	-V highlightjs-theme=atom-one-dark \
+	-V highlightjs-theme=monokai \
 	-V theme=black \
 	-V transition=none \
 	-V width=1200 \

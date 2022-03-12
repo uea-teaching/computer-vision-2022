@@ -56,9 +56,9 @@ Hence, we pass **4D** Tensors to the network.
 And this is why we have these particular shaped arrays...
 :::
 
-## LeNet for MNIST
+---
 
-![Simplified LeNet](assets/png/lenet.png)
+![Simplified LeNet for MNIST](assets/png/lenet.png){width=80%}
 
 ::: notes
 definitely simplified - original paper had more layers.
@@ -224,6 +224,8 @@ in other words - transfer learning is applicable for every task we have seen so 
 
 The **VGG** group at Oxford university trained _VGG-16_ and _VGG-19_ for ImageNet classification.
 
+- Karen Simonyan & Andrew Zisserman, (2014)
+
 ::: notes
 Visual Geometry Group
 One such model is VGG 16
@@ -232,7 +234,7 @@ We will use VGG-16; the 16-layer model
 
 ## VGG16 {data-auto-animate="true"}
 
-**VGG**, Karen Simonyan & Andrew Zisserman, (2014) is a good choice for a first step in transfer learning.
+VGG-16 is a good choice for a first step in transfer learning.
 
 It has a relatively simple architecture:
 
@@ -247,7 +249,7 @@ So, just what we have discussed so far...
 
 ## VGG16 {data-auto-animate="true"}
 
-![VGG16 - image from Perez, et al. 2020](assets/jpg/vgg16.jpg){width="90%"}
+![VGG16 - architecture](assets/svg/vgg16.svg)
 
 ## VGG16 {data-auto-animate="true"}
 
@@ -358,7 +360,7 @@ Small batch sizes, approximately 1-10.
 :::
 
 ::: notes
-small batch - Goodfellow16
+small batch - Goodfellow 16
 Batch size is ultimately constrained by available memory, but below that, we can make choices.
 The loss landscape is spikier with small batch sizes.
 :::
@@ -371,7 +373,8 @@ Large batch sizes, greater than 500-1000.
 
 - Fast due to high parallelism
 - High memory usage - can run out of RAM on large networks.
-- Won’t reach the same error rate as smaller batches and may not learn at all.
+- Won’t reach the same error rate as smaller batches.
+- may not learn at all...
 
 :::
 
@@ -403,9 +406,17 @@ Increasing it further will not improve performance; it will reduce accuracy!
 
 ## Learning Rate {data-auto-animate="true"}
 
-- Small learning rates can be slow to train, and can get stuck in local minima.
+The amount of change applied to the parameters at each iteration.
+
+::: incremental
+
+- Small learning rates can be slow to train.
+- Small learning rates can get stuck in local minima.
 - Large learning rates can be unstable and cause divergence.
-- Experiment with different learning rates - increase or decrease by a factor of 10.
+- Experiment with different learning rates.
+- Increase or decrease by a factor of 10.
+
+:::
 
 ::: notes
 using a decreasing learning rate over the time period is a powerful technique.
@@ -413,28 +424,39 @@ using a decreasing learning rate over the time period is a powerful technique.
 
 ## DropOut {data-auto-animate="true"}
 
-Reduces over-fitting.
+Over-fitting is a well-known problem in machine learning.
 
-Over-fitting is a well-known problem in machine learning, and affects neural networks particularly.
+- Dropout _reduces_ over-fitting.
 
+::: notes
+... affects neural networks particularly.
 A model over-fits when it is very good at correctly predicting samples in the training set
 but fails to generalise to samples in the test set.
+:::
 
 ## DropOut {data-auto-animate="true"}
 
-During training, randomly choose units to 'drop out' by setting their output to 0, with probability $P$, usually around 0.5.
+During training, randomly choose units to _'drop out'_.
 
-Compensate by multiplying values by $\frac{1}{1 - P}$.
+::: incremental
 
-Turn off dropout during testing.
+- Set output to 0, with probability $P$, usually around 0.5.
+- Compensate by multiplying other values by $\frac{1}{1 - P}$.
+- Turn off dropout during testing.
+
+:::
 
 ## DropOut {data-auto-animate="true"}
 
 Activates a different subset of units for each sample.
 
+::: incremental
+
 - Causes units to learn more robust features.
 - Units can't rely on the presence of specific features.
 - Emulates an ensemble of models.
+
+:::
 
 ::: notes
 Geoffrey Hinton
@@ -455,20 +477,26 @@ Geoff Hinton on the inspiration for dropout...
 
 ## Batch normalisation {data-auto-animate="true"}
 
-Batch normalization (Ioffe, et al. 2015) is recommended in most cases.
+Batch normalization (Ioffe, et al. 2015).
 
-- Lets you build deeper networks
+::: incremental
+
+- Recommended in most cases.
+- Lets you build deeper networks.
 - Speeds up training; loss and error drop faster per epoch.
+
+:::
 
 ## Batch normalisation {data-auto-animate="true"}
 
-Apply after convolutional and fully-connected layers, before the non-linearity.
+Apply between internal layers.
 
 - Use `BatchNorm2d` with a convolutional layer.
 - Use `BatchNorm1d` with a fully-connected layer.
 
 ::: notes
 this is for pytorch, other frameworks may have different implementations.
+Originally, apply after convolutional, before the non-linearity.
 :::
 
 ## Batch normalisation {data-auto-animate="true"}
@@ -510,11 +538,14 @@ So to wrap up, I want to show you a few selections from the research community.
 
 ---
 
-Robust Physical-World Attacks on Deep Learning Models.
-
-- Eykholt, et al. 2018.
-
-![Adversarial attacks](assets/png/sign-adversarial.png){width="60%"}
+::: columns
+::::: column
+![Adversarial attacks](assets/png/sign-adversarial.png)
+:::::
+::::: column
+Robust Physical-World Attacks on Deep Learning Models. Eykholt, et al. 2018.
+:::::
+:::
 
 ::: notes
 Deep learning for computer vision is a powerful tool, but we don't always get models that are as smart as we want. This work showed how easily a network could be fooled by making small changes to images of road signs...
@@ -522,9 +553,7 @@ Deep learning for computer vision is a powerful tool, but we don't always get mo
 
 ---
 
-Accessorize to a Crime: Real and Stealthy Attacks on State-of-the-Art Face Recognition.
-
-- Sharif, et al. 2016.
+Accessorize to a Crime: Real and Stealthy Attacks on State-of-the-Art Face Recognition. Sharif, et al. 2016.
 
 ![Accessorize to a Crime](assets/png/face-adversarial.png){width="80%"}
 
@@ -534,9 +563,7 @@ Here, researchers fooled facial recognition networks by constructing spectacles 
 
 ## Generative Adversarial Networks {data-auto-animate="true"}
 
-Generative Adversarial Nets.
-
-- Goodfellow et al. 2014.
+Generative Adversarial Nets. Goodfellow et al. 2014.
 
 Train **two** networks; one given random parameters to _generate_ an image, another to _discriminate_ between a generated image and one from the training set.
 
@@ -548,11 +575,9 @@ forger and detective...
 
 ---
 
-Unsupervised representation Learning with Deep Convolutional Generative Adversarial Nets.
+Unsupervised representation Learning with Deep Convolutional Generative Adversarial Nets. Radford, et al. 2015.
 
-- Radford, et al. 2015.
-
-![DCGAN](assets/png/gan-room.png){width="90%"}
+![DCGAN](assets/png/gan-room.png){width="80%"}
 
 ::: notes
 here, images of bedrooms are generated from random input vectors.
@@ -560,7 +585,7 @@ here, images of bedrooms are generated from random input vectors.
 
 ---
 
-![DCGAN vector arithmetic](assets/png/gan-man.png){width="90%"}
+![DCGAN vector arithmetic](assets/png/gan-man.png){width="80%"}
 
 ::: notes
 vectors that produced a smiling woman minus the mean woman vector + mean man vector = smiling man.
@@ -568,11 +593,9 @@ vectors that produced a smiling woman minus the mean woman vector + mean man vec
 
 ---
 
-A Style-Based Generator Architecture for Generative Adversarial Networks
+A Style-Based Generator Architecture for Generative Adversarial Networks. Karras, et al. 2018
 
-- Karras, et al. 2018
-
-![Style GAN](assets/png/gan-style.png){width="90%"}
+![Style GAN](assets/png/gan-style.png){width="80%"}
 
 ::: notes
 by understanding the distribution of the latent generator code Karras showed some stunning images of faces.
@@ -588,6 +611,7 @@ trained on flickr images - real people.
 
 Reading:
 
+- Deep Learning, Goodfellow et al: https://www.deeplearningbook.org
 - the papers mentioned in the lecture
 - visualisations of network training: https://losslandscape.com
 
