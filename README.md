@@ -21,6 +21,10 @@ There is also a Makefile in the root of this repo if you already have Docker ins
 
 - Chain Codes and Elliptical Fourier Descriptors
 - Point Distribution Models
+- Image Classification
+- Object Detection
+- Introduction to Deep Learning:
+- Practical Deep Learning
 
 ## Labs
 
