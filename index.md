@@ -29,6 +29,12 @@ Lectures are available as online html or printable pdf.
 - Object Detection: [online](lectures/object-detection.html)
   or printable [pdf](lectures/object-detection.bmr.pdf).
 
+- Introduction to Deep Learning: [online](lectures/deep-learning-01.html)
+  or printable [pdf](lectures/deep-learning-01.bmr.pdf).
+
+- Practical Deep Learning: [online](lectures/deep-learning-02.html)
+  or printable [pdf](lectures/deep-learning-02.bmr.pdf).
+
 ## Labs
 
 Labs are usually a pdf file, or a zip file if additional resources are provided.
