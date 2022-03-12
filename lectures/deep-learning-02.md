@@ -232,7 +232,7 @@ We will use VGG-16; the 16-layer model
 
 ## VGG16 {data-auto-animate="true"}
 
-VGG [Karen Simonyan & Andrew Zisserman, 2014] is a good choice for a first step in transfer learning.
+**VGG**, Karen Simonyan & Andrew Zisserman, (2014) is a good choice for a first step in transfer learning.
 
 It has a relatively simple architecture:
 
@@ -497,7 +497,7 @@ Reduce over-fitting by enlarging training set.
 
 ::: notes
 This is actually a big area of research, and there are some really clever augmentations of datasets.
-Another related area is creating entirely new synthetic datasets.
+Another related area is creating entirely new synthetic datasets, to give perfect ground truth.
 :::
 
 # Work in the Field
@@ -506,4 +506,90 @@ Some interesting work in the field...
 
 ::: notes
 So to wrap up, I want to show you a few selections from the research community.
+:::
+
+---
+
+Robust Physical-World Attacks on Deep Learning Models.
+
+- Eykholt, et al. 2018.
+
+![Adversarial attacks](assets/png/sign-adversarial.png){width="60%"}
+
+::: notes
+Deep learning for computer vision is a powerful tool, but we don't always get models that are as smart as we want. This work showed how easily a network could be fooled by making small changes to images of road signs...
+:::
+
+---
+
+Accessorize to a Crime: Real and Stealthy Attacks on State-of-the-Art Face Recognition.
+
+- Sharif, et al. 2016.
+
+![Accessorize to a Crime](assets/png/face-adversarial.png){width="80%"}
+
+::: notes
+Here, researchers fooled facial recognition networks by constructing spectacles that convinced the network person A had identity B. Milla Jovovich.
+:::
+
+## Generative Adversarial Networks {data-auto-animate="true"}
+
+Generative Adversarial Nets.
+
+- Goodfellow et al. 2014.
+
+Train **two** networks; one given random parameters to _generate_ an image, another to _discriminate_ between a generated image and one from the training set.
+
+::: notes
+The seminal work for this technique - just a small paper, 6 pages or so... but very influential.
+A beautiful idea - has proved very popular since...
+forger and detective...
+:::
+
+---
+
+Unsupervised representation Learning with Deep Convolutional Generative Adversarial Nets.
+
+- Radford, et al. 2015.
+
+![DCGAN](assets/png/gan-room.png){width="90%"}
+
+::: notes
+here, images of bedrooms are generated from random input vectors.
+:::
+
+---
+
+![DCGAN vector arithmetic](assets/png/gan-man.png)
+
+::: notes
+vectors that produced a smiling woman minus the mean woman vector + mean man vector = smiling man.
+:::
+
+---
+
+A Style-Based Generator Architecture for Generative Adversarial Networks
+
+- Karras, et al. 2018
+
+![Style GAN](assets/png/gan-style.png)
+
+::: notes
+by understanding the distribution of the latent generator code Karras showed some stunning images of faces.
+trained on flickr images - real people.
+:::
+
+# Summary
+
+- Convolutional Neural Networks
+- Transfer Learning
+- Useful techniques
+- Deep learning examples.
+
+Reading:
+
+- the papers mentioned in the lecture
+
+::: notes
+
 :::
