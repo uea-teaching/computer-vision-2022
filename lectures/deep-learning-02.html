@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Practical Deep Learning</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Practical Deep Learning</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="content" class="title-slide slide level1">
+<h1>Content</h1>
+<ul>
+<li>Convolutional Neural Network (CNN)</li>
+<li>Transfer Learning</li>
+<li>Tricks of the Trade</li>
+<li>Work in the Field</li>
+</ul>
+</section>
+
+<section>
+<section id="convolutional-neural-network-cnn" class="title-slide slide level1">
+<h1>Convolutional Neural Network (CNN)</h1>
+<p>A simplified LeNet for MNIST digits.</p>
+<ul>
+<li>Gradient Based Learning Applied to Document Recognition. LeCun, et al. 1998</li>
+</ul>
+</section>
+<section id="images-as-tensors" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Images as Tensors</h2>
+<p>Images are sampled on a 2D grid.</p>
+<div>
+<ul>
+<li class="fragment">Greyscale 2D <span class="math inline">\(h~ \times ~w\)</span></li>
+<li class="fragment">RGB Images have a 3rd <em>channel</em> dimension.</li>
+<li class="fragment">Feature images, inside the network, can have many channels.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>before we step into the design of the network, we need to introduce the notion of a tensor.</p>
+</aside>
+</section>
+<section id="images-as-tensors-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Images as Tensors</h2>
+<p>In Pytorch, the channel dimension is <strong>before</strong> the spatial dimensions.</p>
+<p><span class="math display">\[C~ \times ~H~ \times ~W\]</span></p>
+<aside class="notes">
+<p>This is not true for all frameworks - and can cause confusion!</p>
+</aside>
+</section>
+<section id="images-as-tensors-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Images as Tensors</h2>
+<p>When training Neural Networks, we use mini-batches.</p>
+<p><span class="math display">\[S~ \times ~C~ \times ~H~ \times ~W\]</span></p>
+<p>Hence, we pass <strong>4D</strong> Tensors to the network.</p>
+<aside class="notes">
+<p>And this is why we have these particular shaped arrays…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/lenet.png" style="width:80.0%" alt="Simplified LeNet for MNIST" /><figcaption aria-hidden="true">Simplified LeNet for MNIST</figcaption>
+</figure>
+<aside class="notes">
+<p>definitely simplified - original paper had more layers. talking through the network image n<em>n, filter f</em>f, &gt;&gt; n - f + 1</p>
+</aside>
+</section>
+<section id="mnist-cnn-in-pytorch" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">MNIST CNN in PyTorch</h2>
+<pre ><code class="python" data-line-numbers="1-8|1-3|4-5|6|7-8">class Model(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, kernel_size=5)
+        self.conv2 = nn.Conv2d(20, 50, kernel_size=5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.fc1 = nn.Linear(800, 256)
+        self.output = nn.Linear(256, 10)</code></pre>
+<aside class="notes">
+<p>conv2d: in_channels, out_channels, kernel_size why 800? 4x4x50 = 800 why 10? 10 classes</p>
+</aside>
+</section>
+<section id="mnist-cnn-in-pytorch-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">MNIST CNN in PyTorch</h2>
+<pre ><code class="python" data-line-numbers="1-8|3-4|5|6-8">...
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = x.view(-1, 800)
+        x = F.relu(self.fc1(x))
+        x = self.output(x)
+        return x</code></pre>
+<aside class="notes">
+<p>and the forward method… we call the pool method twice - once for each convolutional layer then we flatten the output - why 800? 4x4x50 = 800 and carry on out with linear layers</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>After 300 iterations over training set: <strong>99.21%</strong> validation accuracy.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>FC64</td>
+<td>2.85%</td>
+</tr>
+<tr class="even">
+<td>FC256-FC256</td>
+<td>1.83%</td>
+</tr>
+<tr class="odd">
+<td>SimpLeNet</td>
+<td>0.79%</td>
+</tr>
+</tbody>
+</table>
+<aside class="notes">
+<p>I have attached the simplenet name to the example we have just looked at.</p>
+</aside>
+</section>
+<section id="learned-kernels" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Learned Kernels</h2>
+<figure>
+<img data-src="assets/png/cnn-features-01.png" alt="Image from Krizhevsky 2012" /><figcaption aria-hidden="true">Image from Krizhevsky 2012</figcaption>
+</figure>
+<aside class="notes">
+<p>It is really interesting to see how the network learns the kernels. From the ImageNet paper. You can see the upper part looks like Gabor filters… The lower half understands colour… Network was trained on 2 GPUs to explain the split look.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/zeiler14-01.png" alt="Image from Zeiler 2014" /><figcaption aria-hidden="true">Image from Zeiler 2014</figcaption>
+</figure>
+<aside class="notes">
+<p>Zeiler 14: Visualizing and Understanding Convolutional Networks These are images of the activations of the convolutional layers. We can see that middle layers respond to texture patterns.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/zeiler14-02.png" alt="Image from Zeiler 2014" /><figcaption aria-hidden="true">Image from Zeiler 2014</figcaption>
+</figure>
+<aside class="notes">
+<p>Zeiler 14: Visualizing and Understanding Convolutional Networks Going deeper… We can see now that later layers respond to high level structure patterns.</p>
+</aside>
+</section></section>
+<section>
+<section id="transfer-learning" class="title-slide slide level1">
+<h1>Transfer Learning</h1>
+<p>Original AlexNet trained for 90 epochs, using 2 GPUs and took 6 days!</p>
+<aside class="notes">
+<p>I can’t wait… GTX 580 What about the energy consumption?</p>
+</aside>
+</section>
+<section id="pre-trained-networks" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Pre-Trained Networks</h2>
+<p>The term “Transfer Learning” simply means using a <em>pre-trained</em> network to save on training.</p>
+<div>
+<ul>
+<li class="fragment">Motivation enough to use a pre-trained network.</li>
+<li class="fragment">but, there are bigger considerations.</li>
+<li class="fragment">What about data?</li>
+</ul>
+</div>
+<aside class="notes">
+<p>could save hours or days of training time.</p>
+</aside>
+</section>
+<section id="pre-trained-networks-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Pre-Trained Networks</h2>
+<p>The greatest barrier to supervised machine learning is the lack of <strong>labelled</strong> data.</p>
+<div>
+<ul>
+<li class="fragment">use a network trained on one task to solve another problem</li>
+<li class="fragment">greatly reduces the requirement for labelled data</li>
+</ul>
+</div>
+<aside class="notes">
+<p>How much human effort to label 10+ million images? How much effort to label the segmentation boundaries of</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Researchers have developed neural network architectures for Computer Vision tasks.</p>
+<div>
+<ul>
+<li class="fragment">The parameters of these networks have been made available for further research.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<p>What can we use transfer learning for?</p>
+<div>
+<ul>
+<li class="fragment">classifying images not part of the original ImageNet dataset.</li>
+<li class="fragment">object detection</li>
+<li class="fragment">boundary detection</li>
+</ul>
+</div>
+<aside class="notes">
+<p>in other words - transfer learning is applicable for every task we have seen so far.</p>
+</aside>
+</section>
+<section id="vgg16" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">VGG16</h2>
+<p>The <strong>VGG</strong> group at Oxford university trained <em>VGG-16</em> and <em>VGG-19</em> for ImageNet classification.</p>
+<ul>
+<li>Karen Simonyan &amp; Andrew Zisserman, (2014)</li>
+</ul>
+<aside class="notes">
+<p>Visual Geometry Group One such model is VGG 16 We will use VGG-16; the 16-layer model</p>
+</aside>
+</section>
+<section id="vgg16-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">VGG16</h2>
+<p>VGG-16 is a good choice for a first step in transfer learning.</p>
+<p>It has a relatively simple architecture:</p>
+<ul>
+<li>Convolutional layers, increasing in depth, decreasing spatially.</li>
+<li>fully-connected layers for classification.</li>
+<li>Max-pooling layers.</li>
+<li>ReLU activation functions.</li>
+</ul>
+<aside class="notes">
+<p>So, just what we have discussed so far…</p>
+</aside>
+</section>
+<section id="vgg16-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">VGG16</h2>
+<figure>
+<img data-src="assets/svg/vgg16.svg" alt="VGG16 - architecture" /><figcaption aria-hidden="true">VGG16 - architecture</figcaption>
+</figure>
+</section>
+<section id="vgg16-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">VGG16</h2>
+<p>This kind of architecture works well for many Computer Vision tasks.</p>
+<ul>
+<li>Small convolutional filters (3x3)</li>
+<li>Max-pooling layers</li>
+<li>ReLU activation functions</li>
+</ul>
+<aside class="notes">
+<p>We have looked at lots of 3x3 kernel examples so far - but these have been designed for a specific task. Now we are looking at kernels learnt from data.</p>
+</aside>
+</section>
+<section id="transfer-learning-1" class="slide level2">
+<h2>Transfer Learning</h2>
+<p>Two strategies for transfer learning are:</p>
+<div>
+<ul>
+<li class="fragment">Fine <em>tuning</em> the <strong>whole</strong> network on new data, with a small <em>learning rate</em>.</li>
+<li class="fragment">Leave all the early layers as is and use as a <em>feature extractor</em>.</li>
+<li class="fragment">In both cases, we usually have to replace the last fully-connected layers.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>We usually have to replace the last layers to fit our own data - do we have the same number of tasks? Are we doing classification?</p>
+</aside>
+</section>
+<section id="transfer-learning-2" class="slide level2">
+<h2>Transfer Learning</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/examples-qr.png" alt="Code Examples" /><figcaption aria-hidden="true">Code Examples</figcaption>
+</figure>
+</div><div class="column">
+<p>There are examples of both fine tuning and feature extraction at the example repository:</p>
+<p><a href="https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision">https://github.com/uea-teaching/Deep-Learning-for-Computer-Vision</a></p>
+</div>
+</div>
+<aside class="notes">
+<p>I won’t step through all the code here, but you can explore in your own time. I also include an example using ResNet, probably the most popular network in the literature.</p>
+</aside>
+</section></section>
+<section>
+<section id="tricks-of-the-trade" class="title-slide slide level1">
+<h1>Tricks of the Trade</h1>
+<p>Best practice…</p>
+<aside class="notes">
+<p>How to get successful results in a short time?</p>
+</aside>
+</section>
+<section id="data-standardisation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Data Standardisation</h2>
+<p>Ensure zero-mean and unit standard deviation.</p>
+<ul>
+<li>In numerically diverse data, learning will be dominated by larger values.</li>
+<li>Arguably less important with image data.</li>
+<li>Many pre-trained networks expect standardised data.</li>
+</ul>
+<aside class="notes">
+<p>as many images are well exposed 8 bit origination…</p>
+</aside>
+</section>
+<section id="data-standardisation-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Data Standardisation</h2>
+<p>For regression tasks, we need to standardise the output data too.</p>
+<div>
+<ul>
+<li class="fragment">Don’t forget to invert the predictions back to the original scale.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>again this is common - and recommended for regression tasks.</p>
+</aside>
+</section>
+<section id="data-standardisation-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Data Standardisation</h2>
+<p>Extract sample data: pixel values in the case of images.</p>
+<p>Compute the mean and standard deviation of the samples.</p>
+<p><span class="math display">\[
+x&#39; = \frac{x - \mu(x)}{\sigma(x)}
+\]</span></p>
+<aside class="notes">
+<p>how to do it?</p>
+</aside>
+</section>
+<section id="batch-size" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch Size</h2>
+<p>Small batch sizes, approximately 1-10.</p>
+<div>
+<ul>
+<li class="fragment">Small batch size results in regularisation, with lower ultimate error.</li>
+<li class="fragment">Low memory requirements.</li>
+<li class="fragment">Need to compensate with lower learning rate.</li>
+<li class="fragment">More epochs required.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>small batch - Goodfellow 16 Batch size is ultimately constrained by available memory, but below that, we can make choices. The loss landscape is spikier with small batch sizes.</p>
+</aside>
+</section>
+<section id="batch-size-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch Size</h2>
+<p>Large batch sizes, greater than 500-1000.</p>
+<div>
+<ul>
+<li class="fragment">Fast due to high parallelism</li>
+<li class="fragment">High memory usage - can run out of RAM on large networks.</li>
+<li class="fragment">Won’t reach the same error rate as smaller batches.</li>
+<li class="fragment">may not learn at all…</li>
+</ul>
+</div>
+<aside class="notes">
+<p>only fast if cuda cores are available.</p>
+</aside>
+</section>
+<section id="batch-size-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch Size</h2>
+<p>Typical choice around 64-256, lots of experiments use ~100.</p>
+<div>
+<ul>
+<li class="fragment">Effective training - reaches acceptable error rate or loss.</li>
+<li class="fragment">Balanced between speed and memory usage.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Learns reasonably quickly – in terms of improvement per epoch ~100 seems to work well; gets good results</p>
+</aside>
+</section>
+<section id="batch-size-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch Size</h2>
+<p>Increasing mini-batch size will improve performance up to the point where all GPU units are in use.</p>
+<p>Increasing it further will not improve performance; it will reduce accuracy!</p>
+</section>
+<section id="learning-rate" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Learning Rate</h2>
+<p>The amount of change applied to the parameters at each iteration.</p>
+<div>
+<ul>
+<li class="fragment">Small learning rates can be slow to train.</li>
+<li class="fragment">Small learning rates can get stuck in local minima.</li>
+<li class="fragment">Large learning rates can be unstable and cause divergence.</li>
+<li class="fragment">Experiment with different learning rates.</li>
+<li class="fragment">Increase or decrease by a factor of 10.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>using a decreasing learning rate over the time period is a powerful technique.</p>
+</aside>
+</section>
+<section id="dropout" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DropOut</h2>
+<p>Over-fitting is a well-known problem in machine learning.</p>
+<ul>
+<li>Dropout <em>reduces</em> over-fitting.</li>
+</ul>
+<aside class="notes">
+<p>… affects neural networks particularly. A model over-fits when it is very good at correctly predicting samples in the training set but fails to generalise to samples in the test set.</p>
+</aside>
+</section>
+<section id="dropout-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DropOut</h2>
+<p>During training, randomly choose units to <em>‘drop out’</em>.</p>
+<div>
+<ul>
+<li class="fragment">Set output to 0, with probability <span class="math inline">\(P\)</span>, usually around 0.5.</li>
+<li class="fragment">Compensate by multiplying other values by <span class="math inline">\(\frac{1}{1 - P}\)</span>.</li>
+<li class="fragment">Turn off dropout during testing.</li>
+</ul>
+</div>
+</section>
+<section id="dropout-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DropOut</h2>
+<p>Activates a different subset of units for each sample.</p>
+<div>
+<ul>
+<li class="fragment">Causes units to learn more robust features.</li>
+<li class="fragment">Units can’t rely on the presence of specific features.</li>
+<li class="fragment">Emulates an ensemble of models.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Geoffrey Hinton</p>
+</aside>
+</section>
+<section id="dropout-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DropOut</h2>
+<p>“I went to my bank. The tellers kept changing and I asked one of them why? He said he didn’t know but they got moved around a lot. I figured it must be because it would require cooperation between employees to successfully defraud the bank… This made me realise that randomly removing a different subset of neurons on each example would prevent conspiracies and thus reduce over fitting.”</p>
+<aside class="notes">
+<p>Geoff Hinton on the inspiration for dropout…</p>
+</aside>
+</section>
+<section id="batch-normalisation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch normalisation</h2>
+<p>Batch normalization (Ioffe, et al. 2015).</p>
+<div>
+<ul>
+<li class="fragment">Recommended in most cases.</li>
+<li class="fragment">Lets you build deeper networks.</li>
+<li class="fragment">Speeds up training; loss and error drop faster per epoch.</li>
+</ul>
+</div>
+</section>
+<section id="batch-normalisation-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch normalisation</h2>
+<p>Apply between internal layers.</p>
+<ul>
+<li>Use <code>BatchNorm2d</code> with a convolutional layer.</li>
+<li>Use <code>BatchNorm1d</code> with a fully-connected layer.</li>
+</ul>
+<aside class="notes">
+<p>this is for pytorch, other frameworks may have different implementations. Originally, apply after convolutional, before the non-linearity.</p>
+</aside>
+</section>
+<section id="batch-normalisation-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Batch normalisation</h2>
+<p>Standardise <strong>activations</strong> per-channel <em>between</em> network layers.</p>
+<p>Solves problems caused by <em>exponential</em> growth or shrinkage of layer activations in deep networks.</p>
+<aside class="notes">
+<p>the same operation we recommended for data outside of the network. This time - between the layers. if an activation doubles - for say n=50 layers it ends up at x*2^50. resulting in numerical errors.</p>
+</aside>
+</section>
+<section id="dataset-augmentation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Dataset augmentation</h2>
+<p>Reduce over-fitting by enlarging training set.</p>
+<div>
+<ul>
+<li class="fragment"><em>Artificially</em> modify <strong>existing</strong> training samples to make new ones.</li>
+<li class="fragment">Apply transformations such as move, scale, rotate, reflect, etc.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>This is actually a big area of research, and there are some really clever augmentations of datasets. Another related area is creating entirely new synthetic datasets, to give perfect ground truth.</p>
+</aside>
+</section></section>
+<section>
+<section id="work-in-the-field" class="title-slide slide level1">
+<h1>Work in the Field</h1>
+<p>Some interesting work in the field…</p>
+<aside class="notes">
+<p>So to wrap up, I want to show you a few selections from the research community.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/sign-adversarial.png" alt="Adversarial attacks" /><figcaption aria-hidden="true">Adversarial attacks</figcaption>
+</figure>
+</div><div class="column">
+<p>Robust Physical-World Attacks on Deep Learning Models. Eykholt, et al. 2018.</p>
+</div>
+</div>
+<aside class="notes">
+<p>Deep learning for computer vision is a powerful tool, but we don’t always get models that are as smart as we want. This work showed how easily a network could be fooled by making small changes to images of road signs…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Accessorize to a Crime: Real and Stealthy Attacks on State-of-the-Art Face Recognition. Sharif, et al. 2016.</p>
+<figure>
+<img data-src="assets/png/face-adversarial.png" style="width:80.0%" alt="Accessorize to a Crime" /><figcaption aria-hidden="true">Accessorize to a Crime</figcaption>
+</figure>
+<aside class="notes">
+<p>Here, researchers fooled facial recognition networks by constructing spectacles that convinced the network person A had identity B. Milla Jovovich.</p>
+</aside>
+</section>
+<section id="generative-adversarial-networks" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Generative Adversarial Networks</h2>
+<p>Generative Adversarial Nets. Goodfellow et al. 2014.</p>
+<p>Train <strong>two</strong> networks; one given random parameters to <em>generate</em> an image, another to <em>discriminate</em> between a generated image and one from the training set.</p>
+<aside class="notes">
+<p>The seminal work for this technique - just a small paper, 6 pages or so… but very influential. A beautiful idea - has proved very popular since… forger and detective…</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>Unsupervised representation Learning with Deep Convolutional Generative Adversarial Nets. Radford, et al. 2015.</p>
+<figure>
+<img data-src="assets/png/gan-room.png" style="width:80.0%" alt="DCGAN" /><figcaption aria-hidden="true">DCGAN</figcaption>
+</figure>
+<aside class="notes">
+<p>here, images of bedrooms are generated from random input vectors.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/gan-man.png" style="width:80.0%" alt="DCGAN vector arithmetic" /><figcaption aria-hidden="true">DCGAN vector arithmetic</figcaption>
+</figure>
+<aside class="notes">
+<p>vectors that produced a smiling woman minus the mean woman vector + mean man vector = smiling man.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<p>A Style-Based Generator Architecture for Generative Adversarial Networks. Karras, et al. 2018</p>
+<figure>
+<img data-src="assets/png/gan-style.png" style="width:80.0%" alt="Style GAN" /><figcaption aria-hidden="true">Style GAN</figcaption>
+</figure>
+<aside class="notes">
+<p>by understanding the distribution of the latent generator code Karras showed some stunning images of faces. trained on flickr images - real people.</p>
+</aside>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>Convolutional Neural Networks</li>
+<li>Transfer Learning</li>
+<li>Useful techniques</li>
+<li>Deep learning examples.</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>Deep Learning, Goodfellow et al: https://www.deeplearningbook.org</li>
+<li>the papers mentioned in the lecture</li>
+<li>visualisations of network training: https://losslandscape.com</li>
+</ul>
+<aside class="notes">
+
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
