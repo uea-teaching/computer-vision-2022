@@ -5,7 +5,7 @@ author: Dr. David Greenwood
 date: Spring 2022
 ---
 
-# Contents
+# Contents {data-transition="convex"}
 
 - Motivation
 - SIFT - Scale-Invariant Feature Transform
@@ -20,7 +20,7 @@ We will look at 3 approaches. SIFT - the modern standard traditional approach.
 We will also look at BRIEF and ORB, which are 'binary' features, which are popular for certain applications when we need to compute features very quickly, for example SLAM.
 :::
 
-# Visual Features {data-auto-animate="true"}
+# Visual Features {data-transition="convex"}
 
 ::: columns
 ::::: column
@@ -49,7 +49,7 @@ These are points from which I want to do certain tasks.
 Maybe a 3D reconstruction - I may not be able to do it for all pixels in an image (too many, no correspondence) - but for a subset.
 :::
 
----
+## {data-transition="convex"}
 
 How do we **describe** keypoints in a way that similar points can be matched?
 
@@ -131,7 +131,7 @@ We are now going to compute this feature descriptor.
 There are many popular descriptors, we have already seen HoG, but there is a huge range of research on visual descriptors and this is just a selection.
 :::
 
-## Descriptors {data-auto-animate="true"}
+## Descriptors {data-transition="slide"}
 
 Describing a keypoint.
 
@@ -143,7 +143,7 @@ Describing a keypoint.
 
 :::
 
-# SIFT
+# SIFT {data-transition="slide"}
 
 Scale-Invariant Feature Transform
 
@@ -153,7 +153,7 @@ there was some issue with patents - but they have now expired recently - you can
 so let's look at the SIFT descriptor, we can start with some of the properties of SIFT.
 :::
 
-## SIFT Descriptors {data-auto-animate="true"}
+## SIFT Features {data-auto-animate="true"}
 
 Image content is transformed into features that are **invariant** to:
 
@@ -165,9 +165,9 @@ Image content is transformed into features that are **invariant** to:
 these are highly desirable properties of image features - it is unlikely that images are always taken from the same angle or position...
 :::
 
-## SIFT Descriptors {data-auto-animate="true"}
+## SIFT Features {data-auto-animate="true"}
 
-SIFT Descriptors are _partially_ invariant to:
+SIFT Features are _partially_ invariant to:
 
 - illumination changes
 - affine transformations and 3D projections
@@ -177,9 +177,9 @@ these are gradient based features, so absolute illumination level changes do not
 affine and projective transformations occur when we move camera position in our 3D world space.
 :::
 
-## SIFT Descriptors {data-auto-animate="true"}
+## SIFT Features {data-auto-animate="true"}
 
-SIFT Descriptors are _suitable_ for detecting visual landmarks:
+SIFT Features are _suitable_ for detecting visual landmarks:
 
 - from different angles and distances.
 - with a different illumination.
@@ -199,6 +199,83 @@ Over different image pyramid levels:
 3. _Maxima_ suppression for edges.
 
 ::: notes
-SIFT keypoints come from the difference of Gaussians we discussed in the first part of this lecture.
+SIFT keypoints start with the difference of Gaussians we discussed earlier.
 So quick recap...
+This is how we get the keypoints...
+:::
+
+## SIFT Features {data-auto-animate="true"}
+
+A SIFT feature is given by a vector computed at a local extreme point in the scale space.
+
+::: {style="font-size: 2em"}
+$$ \langle p, s, r, f \rangle$$
+:::
+
+::: notes
+p : position, s : scale, r : rotation, f : feature
+:::
+
+## SIFT Features {data-auto-animate="true"}
+
+![SIFT vector](assets/svg/sift1.svg)
+
+::: notes
+
+:::
+
+## SIFT Features {data-auto-animate="true"}
+
+![SIFT vector](assets/svg/sift2.svg)
+
+::: notes
+
+:::
+
+## SIFT Features {data-auto-animate="true"}
+
+::: columns
+::::: column
+![Input Image - Vedaldi & Fulkerson](assets/jpg/sift_basic_0.jpg)
+:::::
+::::: column
+From an input image we convert to grey scale then compute the Difference of Gaussians (DoG) and find the extrema.
+:::::
+:::
+
+::: notes
+image from VLFeat library.
+:::
+
+## SIFT Features {data-auto-animate="true"}
+
+::: columns
+::::: column
+![Keypoints, scale and orientation](assets/jpg/sift_basic_2.jpg)
+:::::
+::::: column
+We preserve the scale, and compute a peak of the histogram of orientations.
+:::::
+:::
+
+::: notes
+image from VLFeat library.
+:::
+
+## SIFT Features {data-auto-animate="true"}
+
+::: columns
+::::: column
+![locally rotated patch](assets/jpg/sift_basic_3.jpg)
+:::::
+::::: column
+We compute a local patch, based on the scale and orientation.
+
+It is from this patch we compute the 128D feature _descriptor_ vector.
+
+:::::
+:::
+
+::: notes
+image from VLFeat library.
 :::
