@@ -65,8 +65,12 @@ How do we **describe** keypoints in a way that similar points can be matched?
 ::: notes
 I might want to find where an image was taken with respect to another image.
 Here we have two different images - I want to compute, where was the camera?
-Now I need to find a certain number or correspondences between the two images - points I can recognise in both images.
-Now I want to discuss how to **describe** these points in a way that similar points will be able to be matched.
+
+Now I need to find a certain number or correspondences between the two images,
+points I can recognise in both images.
+
+Now I want to discuss how to **describe** these points in a way
+that similar points will be able to be matched.
 :::
 
 ## Keypoint and Descriptor {data-auto-animate="true"}
@@ -140,3 +144,48 @@ Describing a keypoint.
 :::
 
 # SIFT
+
+Scale-Invariant Feature Transform
+
+::: notes
+SIFT is the gold standard of feature descriptor - it's been around for about 20 years...
+there was some issue with patents - but they have now expired recently - you can find SIFT in many popular libraries.
+so let's look at the SIFT descriptor, we can start with some of the properties of SIFT.
+:::
+
+## SIFT Descriptors {data-auto-animate="true"}
+
+Image content is transformed into features that are **invariant** to:
+
+- image translation
+- image rotation
+- image scale
+
+::: notes
+these are highly desirable properties of image features - it is unlikely that images are always taken from the same angle or position...
+:::
+
+## SIFT Descriptors {data-auto-animate="true"}
+
+SIFT Descriptors are _partially_ invariant to:
+
+- illumination changes
+- affine transformations and 3D projections
+
+::: notes
+these are gradient based features, so absolute illumination level changes do not change gradient values.
+affine and projective transformations occur when we move camera position in our 3D world space.
+:::
+
+## SIFT Descriptors {data-auto-animate="true"}
+
+SIFT Descriptors are _suitable_ for detecting visual landmarks:
+
+- from different angles and distances.
+- with a different illumination.
+
+::: notes
+Think about recognising a microwave oven in a kitchen...
+different angles of view, near and far...
+SIFT are a very good choice for this type of image data.
+:::
