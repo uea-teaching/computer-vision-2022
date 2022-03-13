@@ -332,3 +332,45 @@ we have arrived at the final SIFT descriptor.
 :::
 
 # Matching
+
+How do we match features from two images?
+
+##
+
+::: columns
+::::: column
+![view 1](assets/png/nd1_desc.png){width="80%"}
+:::::
+::::: column
+![view 2](assets/png/nd2_desc.png){width="80%"}
+:::::
+:::
+
+## Distance Matching {data-auto-animate="true"}
+
+![descriptor distance](assets/png/sift-match1.png){width="90%"}
+
+## Ratio Test {data-auto-animate="true"}
+
+Eliminate ambiguous matches for a query feature $q$.
+
+1. Find closest descriptors, $p_1$ and $p_2$ using **Euclidian** distance.
+
+2. Test if distance to best match is smaller than a threshold:
+
+$$d(q, p_1) < t$$
+
+3. Accept only if the best match is substantially better than second:
+
+$$\frac{d(q, p_1)}{d(q, p_2)} < \frac{1}{2}$$
+
+## Ratio Test {data-auto-animate="true"}
+
+![ratio test](assets/png/sift-match2.png){width="90%"}
+
+## Ratio Test {data-auto-animate="true"}
+
+Lowe's Ratio test works well.
+
+- There will still remain few outliers.
+- Outliers require extra treatment.
