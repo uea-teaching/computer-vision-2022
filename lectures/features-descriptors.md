@@ -279,3 +279,56 @@ It is from this patch we compute the 128D feature _descriptor_ vector.
 ::: notes
 image from VLFeat library.
 :::
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+Compute image gradients in local 16x16 area at the selected scale.
+
+- Create an array of orientation histograms
+- 8 orientations x 4x4 histogram array = 128 dimensions
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+![sift descriptor](assets/png/sift-descriptor.png){width="70%"}
+
+::: notes
+this example uses 8x8 area...
+:::
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+![rotate and scale to 16x16](assets/png/sift-mont.png)
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+![gradients and segregate to 16 x 4x4 regions](assets/png/sift-16x16-grads.png)
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+![4x4 region to 8 direction bins](assets/png/sift-8-bins.png)
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+Concatenate all histograms to form a 128D vector.
+
+![concatenate histograms](assets/png/sift-concat.png)
+
+::: notes
+I have not illustrated all 16 histograms...
+:::
+
+## SIFT Descriptor {data-auto-animate="true"}
+
+![Descriptor Summary](assets/png/sift-summary.png)
+
+## SIFT Features {data-auto-animate="true"}
+
+**Keypoints** : Using DoG
+
+**Descriptor** : Using Gradient Histogram
+
+::: notes
+we have arrived at the final SIFT descriptor.
+:::
+
+# Matching
