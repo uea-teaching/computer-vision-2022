@@ -372,5 +372,80 @@ $$\frac{d(q, p_1)}{d(q, p_2)} < \frac{1}{2}$$
 
 Lowe's Ratio test works well.
 
-- There will still remain few outliers.
+- There will still be a few outliers.
 - Outliers require extra treatment.
+
+# Binary Descriptors
+
+Computing descriptors _fast_
+
+## Why Binary Descriptors?
+
+Complex features such as SIFT work well.
+
+But...
+
+::: incremental
+
+- SIFT is _expensive_ to compute.
+- SIFT ~~has~~ **had** patenting issues.
+- Binary descriptors are easy to compute _and_ compare.
+
+:::
+
+## Key Idea of Binary Descriptors
+
+- Select a patch around a keypoint.
+- Select a _set_ of pixel **pairs** in that patch
+- For each pair, compare the intensities.
+- concatenate all $b$ to a string.
+
+$$
+b=
+\begin{cases}
+    1, & \text{if}\ I(s_1) > I(s_2) \\
+    0, & \text{otherwise}
+\end{cases}
+$$
+
+## Example
+
+::: columns
+::::: column
+![image region](assets/png/binary-patch.png){width="60%"}
+:::::
+::::: column
+![region index](assets/png/binary-index.png){width="60%"}
+:::::
+:::
+
+- pairs: $~\{(5, 1), (5, 9), (4, 6), (8, 2), (3, 7)\}$
+- test: $~b=0, ~b=0, ~b=0, ~b=1, ~b=1$
+- result: $~B=00011$
+
+## Advantages of Binary Descriptors {data-auto-animate="true"}
+
+Compact descriptor
+
+- The number of pairs gives the length in bits
+
+## Advantages of Binary Descriptors {data-auto-animate="true"}
+
+Fast to compute
+
+- Simply intensity value comparisons
+
+## Advantages of Binary Descriptors {data-auto-animate="true"}
+
+Trivial and fast to compare _Hamming_ distance:
+
+$$
+d_{Hamming}(B_1, B_2) = sum(xor(B_1, B_2) )
+$$
+
+---
+
+Different binary descriptors differ mainly by the
+strategy of selecting the pairs.
+
+---
