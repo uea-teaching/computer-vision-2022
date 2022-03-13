@@ -381,9 +381,7 @@ Computing descriptors _fast_
 
 ## Why Binary Descriptors?
 
-Complex features such as SIFT work well.
-
-But...
+Complex features such as SIFT work well, but...
 
 ::: incremental
 
@@ -395,8 +393,8 @@ But...
 
 ## Key Idea of Binary Descriptors
 
-- Select a patch around a keypoint.
-- Select a _set_ of pixel **pairs** in that patch
+- Select a region around a keypoint.
+- Select a _set_ of pixel **pairs** in that region
 - For each pair, compare the intensities.
 - concatenate all $b$ to a string.
 
@@ -448,4 +446,9 @@ $$
 Different binary descriptors differ mainly by the
 strategy of selecting the pairs.
 
----
+## Important
+
+In order to compare descriptors we must:
+
+- Use the same pairs
+- Maintain the same order in which the pairs are tested.
