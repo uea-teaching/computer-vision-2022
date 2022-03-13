@@ -189,3 +189,16 @@ Think about recognising a microwave oven in a kitchen...
 different angles of view, near and far...
 SIFT are a very good choice for this type of image data.
 :::
+
+## DoG over Scale-Space Pyramid {data-auto-animate="true"}
+
+Over different image pyramid levels:
+
+1. Gaussian smoothing.
+2. Difference-of-Gaussians (DoG) and find **extrema**.
+3. _Maxima_ suppression for edges.
+
+::: notes
+SIFT keypoints come from the difference of Gaussians we discussed in the first part of this lecture.
+So quick recap...
+:::
