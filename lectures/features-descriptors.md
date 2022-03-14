@@ -331,6 +331,26 @@ I have not illustrated all 16 histograms...
 we have arrived at the final SIFT descriptor.
 :::
 
+## Dense SIFT
+
+Variation of the SIFT feature, where the keypoints are sampled over a uniform grid in the image domain, rather than using the sparse points from the DoG.
+
+::: notes
+particularly suited to your coursework and bag of words applications.
+:::
+
+## Dense SIFT
+
+At each uniform grid point:
+
+- Compute the SIFT descriptor.
+- Cluster the descriptors into a vocabulary.
+- K-means clustering.
+
+::: notes
+Beyond bags of features: Spatial pyramid matching for recognizing natural scene categories
+:::
+
 # Matching
 
 How do we match features from two images?
