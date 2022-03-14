@@ -752,7 +752,7 @@ Two approaches for finding locally distinct points.
 
 Reading:
 
-- Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed., Chapters 16,17 and 5.
+- Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed.
 - A Combined Corner and Edge Detector, Harris, et al. 1988.
 - Good Features to Track. Shi & Tomasi. 1994.
 
