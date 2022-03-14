@@ -452,3 +452,118 @@ In order to compare descriptors we must:
 
 - Use the same pairs
 - Maintain the same order in which the pairs are tested.
+
+# BRIEF
+
+Binary Robust Independent Elementary Features.
+
+- BRIEF: Binary Robust Independent Elementary Features.
+- Calonder, et al. 2010.
+
+## BRIEF {data-auto-animate="true"}
+
+First binary image descriptor.
+
+- Proposed in 2010
+- 256 bit descriptor
+- Provides five different sampling strategies
+- Operations performed on a smoothed image to deal with noise
+
+::: notes
+
+:::
+
+---
+
+![BRIEF sampling pairs](assets/png/brief-pairs.png){width="80%"}
+
+## BRIEF sampling pairs
+
+- G I: Uniform random sampling
+- G II: Gaussian sampling
+- G III: $~s_1~$ Gaussian; $~s_2~$ Gaussian centred around $~s_1~$.
+- G IV: Discrete location from a coarse polar grid.
+- G V: $s_1=(0,0)$, $~s_2~$ are all locations from a coarse polar grid.
+
+---
+
+![BRIEF sampling performance](assets/png/brief-performance.png){width="80%"}
+
+# ORB
+
+Oriented FAST Rotated BRIEF.
+
+- ORB: an efficient alternative to SIFT or SURF
+- Rublee, et al. 2011.
+
+## ORB
+
+An extension to BRIEF that:
+
+- Adds rotation compensation.
+- Learns the optimal sampling pairs.
+
+## ORB: Rotation Compensation
+
+Estimates the centre of mass and the main orientation of the local area.
+
+Image moment:
+
+$$
+m_{pq} = \sum_{x,y} x^p y^q I(x,y)
+$$
+
+Centre of Mass, Orientation:
+
+$$
+C = \left( \frac{m_{10}}{m_{00}} , \frac{m_{01}}{m_{00}} \right)~,
+~\theta = \arctan2(m_{01}, m_{10})
+$$
+
+::: notes
+section 3.2 in paper - moments a weighted average of the image values.
+:::
+
+## ORB: Rotation Compensation
+
+Rotate the coordinates of all pairs by $\theta$ around $C$:
+
+$$
+s' = T(C, \theta) s
+$$
+
+- Use the transformed pixel coordinates for performing the test.
+- Rotation is invariant in the image plane.
+
+## ORB: Learning Sampling Pairs
+
+Pairs should be **uncorrelated**.
+
+- each new pair adds new information to the descriptor
+
+Pairs should have **high variance**.
+
+- makes a feature more discriminative
+
+ORB defines a strategy for selecting 256 pairs, optimising for these properties using a training database.
+
+## ORB versus SIFT
+
+- ORB is 100x faster than SIFT
+- ORB: 256 bit vs. SIFT: 4096 bit
+- ORB is not scale invariant (achievable via an image pyramid)
+- ORB mainly in-plane rotation invariant
+- ORB has a similar matching performance as SIFT (w/o scale)
+- Several modern online systems (e.g. SLAM) use binary features
+
+# Summary
+
+- Keypoint and descriptor together define visual features
+- Keypoint describes the appearance
+- SIFT
+- Binary descriptors
+
+Reading:
+
+- The papers mentioned in the lecture
+- Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed.
