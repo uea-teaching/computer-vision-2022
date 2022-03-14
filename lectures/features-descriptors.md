@@ -599,3 +599,4 @@ Reading:
 
 - The papers mentioned in the lecture
 - Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed.
+- [VLFeat.org](https://www.vlfeat.org) - nice tutorials.
