@@ -542,6 +542,9 @@ $$
 
 ::: notes
 section 3.2 in paper - moments a weighted average of the image values.
+C becomes the mean values of the x values and y values.
+and theta is from the rise, y, over run, x, of mean image intensities.
+and this is the trick to add rotation compensation.
 :::
 
 ## ORB: Rotation Compensation
@@ -555,6 +558,11 @@ $$
 - Use the transformed pixel coordinates for performing the test.
 - Rotation is invariant in the image plane.
 
+::: notes
+and so the we rotate the patch of pairs around the centre of mass, by theta
+to get rotation invariance around the image plane
+:::
+
 ## ORB: Learning Sampling Pairs
 
 Pairs should be **uncorrelated**.
@@ -566,6 +574,10 @@ Pairs should have **high variance**.
 - makes a feature more discriminative
 
 ORB defines a strategy for selecting 256 pairs, optimising for these properties using a training database.
+
+::: notes
+collect training data to select the pairs that are optimal for these properties.
+:::
 
 ## ORB versus SIFT
 
