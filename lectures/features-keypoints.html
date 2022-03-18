@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Visual Features - Keypoints</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Visual Features - Keypoints</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="contents" class="title-slide slide level1">
+<h1>Contents</h1>
+<ul>
+<li>Motivation</li>
+<li>Harris Corner Detection</li>
+<li>Shi-Tomasi Corner Detection</li>
+<li>Difference of Gaussian</li>
+</ul>
+<aside class="notes">
+<p>visual features for classification, forming bag of words… but other really important applications are: SLAM, SFM, 3D reconstruction, etc. two images side by side with the same features - correspondence… geometric tasks and also image recognition. Lecture in 2 parts: keypoints, then descriptors…</p>
+<p>previously we talked about Hog in depth, today we will explore some more very important visual features.</p>
+</aside>
+</section>
+
+<section>
+<section id="visual-features" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Visual Features</h1>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_kp.png" style="width:80.0%" alt="keypoints" /><figcaption aria-hidden="true">keypoints</figcaption>
+</figure>
+</div><div class="column">
+<p>We want to find <em>locally distinct</em> features in an image.</p>
+<div>
+<ul>
+<li class="fragment">How do we <strong>find</strong> these features?</li>
+<li class="fragment">How do we <strong>describe</strong> them?</li>
+</ul>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Look at the image… these red dots are distinct… They stand out from their surroundings… we hope that if we took another image form a different view, the local distinction would still apply in that image, and we could find a correspondence.</p>
+</aside>
+</section>
+<section id="visual-features-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Features</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_kp.png" style="width:80.0%" alt="keypoints" /><figcaption aria-hidden="true">keypoints</figcaption>
+</figure>
+</div><div class="column">
+<p>We can take advantage of these locally distinct features for:</p>
+<div>
+<ul>
+<li class="fragment">image classification</li>
+<li class="fragment">image retrieval</li>
+<li class="fragment">correspondence between two images</li>
+<li class="fragment">3D reconstruction</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="visual-features-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Visual Features</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_desc.png" style="width:80.0%" alt="view 1" /><figcaption aria-hidden="true">view 1</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/nd2_desc.png" style="width:80.0%" alt="view 2" /><figcaption aria-hidden="true">view 2</figcaption>
+</figure>
+</div>
+</div>
+<aside class="notes">
+<p>here are two images - taken from different views of the same object. we can try to find correspondences between these two images. we wont be able to find all correspondence… this can allow us to find the camera motion for example… we can look at a keypoint in one image and search amongst all the keypoints in the other image….</p>
+</aside>
+</section>
+<section id="keypoint-and-descriptor" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Keypoint and Descriptor</h2>
+<p>An important distinction:</p>
+<div>
+<ul>
+<li class="fragment">Keypoint is a distinct <strong>location</strong> in an image</li>
+<li class="fragment">Descriptor is a summary <strong>description</strong> of that neighbourhood.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>we want to localise the feature so we want to know where it is with a (sub) pixel location. Then, how can we describe the feature - what distinguishes it from a possibly large number of other features? We do this by examining the neighbourhood of the feature and forming a vector of values- more later…</p>
+</aside>
+</section>
+<section id="keypoint-and-descriptor-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Keypoint and Descriptor</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_desc.png" style="width:80.0%" alt="view 1" /><figcaption aria-hidden="true">view 1</figcaption>
+</figure>
+</div><div class="column">
+<p>keypoint: <span class="math inline">\((x, ~y)\)</span></p>
+<p>descriptor <em>at</em> the keypoint:</p>
+<p><span class="math display">\[
+\begin{bmatrix} 0.02 \\ 0.01 \\ 0.10 \\ 0.05 \\ 0.01 \\ ... \end{bmatrix}
+\]</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>for every keypoint we have a descriptor - often using gradient information - but there are other methods.</p>
+</aside>
+</section>
+<section id="keypoints" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Keypoints</h2>
+<p>Finding locally distinct points.</p>
+<div>
+<ul>
+<li class="fragment">Harris Corner Detection</li>
+<li class="fragment">Shi-Tomasi Corner Detection</li>
+<li class="fragment">Förstner operator</li>
+<li class="fragment">Difference of Gaussians (DoG)</li>
+</ul>
+</div>
+<aside class="notes">
+<p>We can summarise as finding these distinct points in an image. Harris - early technique… Shi-Tomasi - later improvements…now standard… quick mention of Förstner operator… Förstner was the first, but Harris and Shi-Tomasi became more popular. DoG stack of blurred images - used in SIFT …later</p>
+</aside>
+</section></section>
+<section>
+<section id="corners" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Corners</h1>
+<p>Corners are often highly distinct points.</p>
+<aside class="notes">
+<p>corners are distinct because of gradients.</p>
+</aside>
+</section>
+<section id="corners-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Corners</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_kp.png" style="width:80.0%" alt="view 1" /><figcaption aria-hidden="true">view 1</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/nd2_kp.png" style="width:80.0%" alt="view 2" /><figcaption aria-hidden="true">view 2</figcaption>
+</figure>
+</div>
+</div>
+<aside class="notes">
+<p>particularly for corners… gradients in two directions… which allows them to be localised <strong>precisely</strong>.</p>
+</aside>
+</section>
+<section id="corners-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Corners</h2>
+<div>
+<ul>
+<li class="fragment">Corners are often highly <em>distinct</em> points.</li>
+<li class="fragment">Edges are a rapid change in pixel value.</li>
+<li class="fragment">Corners are formed from two <em>orthogonal</em> edges.</li>
+<li class="fragment">Corners are <em>invariant</em> to translation, rotation and illumination.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>For edges on their own they are only localised along the direction of brightness change (orthogonal to edge)… you could slide along the edge…</p>
+<p>These properties are why we choose corners.</p>
+</aside>
+</section>
+<section id="finding-corners" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Finding Corners</h2>
+<p>To find corners we need to <strong>search</strong> for <em>intensity changes</em> in two directions.</p>
+<aside class="notes">
+<p>we search with a sliding window…</p>
+</aside>
+</section>
+<section id="finding-corners-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Finding Corners</h2>
+<p>Compute the SSD of pixels in the neighbourhood <span class="math inline">\(W\)</span> around <span class="math inline">\((x, ~y)\)</span>.</p>
+<p><span class="math display">\[
+f(x, y) = \sum_{(u, v) \in W_{x,y} } (I(u, v) - I(u + \delta u , v + \delta v))^2
+\]</span></p>
+<aside class="notes">
+<p>first step is sum of squared differences… in some local area W, we look at the difference between a pixel and another at some small offset. In areas where the function is high, we have an area where there is a lot of gradient … things will probably stand out…</p>
+</aside>
+</section>
+<section id="finding-corners-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Finding Corners</h2>
+<p><span class="math display">\[
+f(x, y) = \sum_{(u, v) \in W_{x,y} } (I(u, v) - I(u + \delta u , v + \delta v))^2
+\]</span></p>
+<p>Using <strong>Taylor</strong> expansion, with <em>Jacobian</em> <span class="math inline">\(\left[J_x, J_y \right]\)</span>:</p>
+<p><span class="math display">\[
+I(u + \delta u , v + \delta v) \approx I(u, v) + \left[J_x, J_y \right]
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>the jacobian for an image is the x, y gradient, the partial derivatives. Now, notice if we substitute, the intensity value will disappear.</p>
+<p>Taylor series of a function is an infinite sum of terms that are expressed in terms of the function’s derivatives at a single point.</p>
+</aside>
+</section>
+<section id="finding-corners-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Finding Corners</h2>
+<p>Taylor approximation leads to:</p>
+<p><span class="math display">\[
+f(x, y) = \sum_{(u, v) \in W_{x,y} } \left( [J_x, J_y]
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}\right)^2
+\]</span></p>
+<p>Written in matrix form:</p>
+<p><span class="math display">\[
+f(x, y) = \sum_{(u, v) \in W_{x,y} }
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}^T
+\begin{bmatrix} J_x^2  &amp;J_xJ_y \\ J_xJ_y  &amp;J_y^2 \end{bmatrix}
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+\]</span></p>
+</section>
+<section id="finding-corners-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Finding Corners</h2>
+<p>Given:</p>
+<p><span class="math display">\[
+f(x, y) = \sum_{(u, v) \in W_{x,y} }
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}^T
+\begin{bmatrix} J_x^2  &amp;J_xJ_y \\ J_xJ_y  &amp;J_y^2 \end{bmatrix}
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+\]</span></p>
+<p>Move the summation inside the matrix:</p>
+<p><span class="math display">\[
+f(x, y) =
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}^T
+\begin{bmatrix}
+\sum_{W}J_x^2   &amp;\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &amp;\sum_{W}J_y^2
+\end{bmatrix}
+\begin{bmatrix} \delta u \\ \delta v \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>We are summing over the u and v of the local area W. We can move the summation to the matrix. When we move the summation inside the matrix, this matrix now contains all we need to know about the local patch. It contains the gradient information, with the shift matrix (u, v) on the outside… We get what is called the structure matrix M.</p>
+</aside>
+</section></section>
+<section>
+<section id="structure-matrix" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Structure Matrix</h1>
+<p><span class="math display">\[
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &amp;\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &amp;\sum_{W}J_y^2
+\end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>Summarises the first derivative of the image in a local area. And accumulates the gradients in the x and y directions, and xy. Given this information we can decide if a point is locally distinct or not.</p>
+</aside>
+</section>
+<section id="structure-matrix-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<ul>
+<li>The structure matrix is key to finding edges and corners.</li>
+<li>Encodes the image intensity changes in a local area.</li>
+<li>built from image gradients.</li>
+</ul>
+<p><span class="math display">\[
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &amp;\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &amp;\sum_{W}J_y^2
+\end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>we will look at the eigen decomposition of the structure matrix. if one eigen value is large and another is small, we have an edge. If both are large, we have a corner. if both are small, we have a flat area. so the structure matrix encodes the info in a local area.</p>
+</aside>
+</section>
+<section id="structure-matrix-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<p>Matrix built from image gradients.</p>
+<p><span class="math display">\[
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &amp;\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &amp;\sum_{W}J_y^2
+\end{bmatrix}
+\]</span></p>
+<p>Jacobians computed by <em>convolution</em> with gradient kernel, e.g. Sobel:</p>
+<p><span class="math display">\[
+\begin{aligned}
+J_x^2  &amp;= (D_x * I)^2 \\
+J_xJ_y &amp;= (D_x * I) (D_y * I) \\
+J_y^2  &amp;= (D_y * I)^2
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>We can compute these gradients using convolution using a small kernel (e.g. Sobel). In a standard way…we compute the whole image derivative. We end up with a feature image…</p>
+</aside>
+</section>
+<section id="structure-matrix-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<p>Matrix built from image gradients.</p>
+<p><span class="math display">\[
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &amp;\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &amp;\sum_{W}J_y^2
+\end{bmatrix}
+\]</span></p>
+<p>Jacobians using Sobel:</p>
+<p><span class="math display">\[
+D_x = \begin{bmatrix}
+       1  &amp;  2  &amp;  1 \\
+       0  &amp;  0  &amp;  0 \\
+    \llap{-}1 &amp; \llap{-}2 &amp; \llap{-}1
+    \end{bmatrix}~, ~
+D_y = \begin{bmatrix}
+        1  &amp; 0 &amp; \llap{-}1 \\
+        2  &amp; 0 &amp; \llap{-}2 \\
+        1  &amp; 0 &amp; \llap{-}1
+    \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>using these operators, moved over the image we can compute in a simple way all the gradients. We are just left to sum all the pixels in the local area.</p>
+</aside>
+</section>
+<section id="structure-matrix-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<p>Summarises the dominant gradient directions around a point.</p>
+<p><span class="math display">\[
+M =
+\begin{bmatrix}
+\sum_{W}J_x^2   &amp;\sum_{W}J_xJ_y \\
+\sum_{W}J_xJ_y  &amp;\sum_{W}J_y^2
+\end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>The actual values we end up with inside the SM gives us the summary of the gradient directions. let’s look at some actual values…</p>
+</aside>
+</section>
+<section id="structure-matrix-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<div class="columns">
+<div class="column" style="width:35%;">
+<figure>
+<img data-src="assets/png/patch_a.png" alt="corner" /><figcaption aria-hidden="true">corner</figcaption>
+</figure>
+</div><div class="column" style="font-size:1.5em;">
+<p><span class="math display">\[ M = \begin{bmatrix} \gg 1 &amp;\approx 0 \\ \approx 0 &amp;\gg 1 \end{bmatrix} \]</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>if the local area has this sort of structure, we will get these values…</p>
+</aside>
+</section>
+<section id="structure-matrix-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<div class="columns">
+<div class="column" style="width:35%;">
+<figure>
+<img data-src="assets/png/patch_b.png" alt="edge" /><figcaption aria-hidden="true">edge</figcaption>
+</figure>
+</div><div class="column" style="font-size:1.5em;">
+<p><span class="math display">\[ M = \begin{bmatrix} \gg 1 &amp;\approx 0 \\ \approx 0 &amp;\approx 0 \end{bmatrix} \]</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>if the local area has this sort of structure, we will get these values…</p>
+</aside>
+</section>
+<section id="structure-matrix-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Structure Matrix</h2>
+<div class="columns">
+<div class="column" style="width:35%;">
+<figure>
+<img data-src="assets/png/patch_c.png" alt="flat" /><figcaption aria-hidden="true">flat</figcaption>
+</figure>
+</div><div class="column" style="font-size:1.5em;">
+<p><span class="math display">\[ M = \begin{bmatrix} \approx 0 &amp;\approx 0 \\ \approx 0 &amp;\approx 0 \end{bmatrix} \]</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>if the local area has this sort of structure, we will get these values…</p>
+</aside>
+</section>
+<section id="corners-from-structure-matrix" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Corners from Structure Matrix</h2>
+<p>Consider points as corners if their structure matrix has <strong>two large</strong> Eigenvalues.</p>
+<div class="columns">
+<div class="column" style="width:35%;">
+<figure>
+<img data-src="assets/png/patch_a.png" alt="corner" /><figcaption aria-hidden="true">corner</figcaption>
+</figure>
+</div><div class="column" style="font-size:1.5em;">
+<p><span class="math display">\[ M = \begin{bmatrix} \gg 1 &amp;\approx 0 \\ \approx 0 &amp;\gg 1 \end{bmatrix} \]</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>have a think about the column vectors in the structure matrix….</p>
+</aside>
+</section></section>
+<section>
+<section id="corner-detection" class="title-slide slide level1">
+<h1>Corner Detection</h1>
+<p>Three similar approaches…</p>
+<aside class="notes">
+<p>We will look more closely at three methods for finding corners…</p>
+</aside>
+</section>
+<section id="harris-shi-tomasi-and-förstner" class="slide level2">
+<h2>Harris, Shi-Tomasi and Förstner</h2>
+<p>Three similar approaches:</p>
+<ul>
+<li>1987 Förstner</li>
+<li>1988 Harris</li>
+<li>1994 Shi-Tomasi</li>
+</ul>
+<p>All rely on the <em>structure</em> matrix.</p>
+<ul>
+<li>Use different criteria for deciding if a point is a corner</li>
+<li>Förstner offers subpixel estimation</li>
+</ul>
+<aside class="notes">
+<p>Forstner is earliest, but Harris became more popular. Shi-Tomasi is the most widely used now, but Harris still in many applications. They all follow the same idea and differ only in the way they decide what should be a corner… Forstner also offers sub-pixel estimation.</p>
+</aside>
+</section>
+<section id="harris-corner-criterion" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Harris Corner Criterion</h2>
+<p>Criterion:</p>
+<p><span class="math display">\[
+\begin{aligned}
+R &amp;= det(M) - k(trace(M))^2 \\
+  &amp;= \lambda_1 \lambda_2 - k(\lambda_1 + \lambda_2)^2
+\end{aligned}
+\]</span></p>
+<p>with <span class="math inline">\(k \in [0.04, 0.06]\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+|R| &amp;\approx 0 \Rightarrow \lambda_1 \approx \lambda_2 \approx 0 \\
+R &amp;&lt; 0 \Rightarrow \lambda_1 \gg \lambda_2~ or ~\lambda_2 \gg \lambda_1 \\
+R &amp;\gg 0 \Rightarrow \lambda_1 \approx \lambda_2 \gg 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>trace - sum on main diagonal all computed using the eigenvalues of the structure matrix. in the first case, the two eigenvalues are equal and equal to zero, so a flat region. 2nd case, the two eigenvalues are unequal, so an edge. 3rd case, the two eigenvalues are equally large, so a corner.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/harris-criterion.svg" alt="Harris Criterion" /><figcaption aria-hidden="true">Harris Criterion</figcaption>
+</figure>
+<aside class="notes">
+<p>we can show this graphically by plotting R according to different eigenvalues. We want to be in the central region where both eigenvalues are large.</p>
+</aside>
+</section>
+<section id="shi-tomasi-criterion" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Shi-Tomasi Criterion</h2>
+<p>Threshold smallest Eigenvalue:</p>
+<p><span class="math display">\[
+\lambda_{min}(M) = \frac{trace(M)}{2} - \frac{1}{2} \sqrt{trace(M)^2 - 4 det(M)}
+\]</span></p>
+<p>corner:</p>
+<p><span class="math display">\[
+\lambda_{min}(M) \geq T
+\]</span></p>
+<aside class="notes">
+<p>Shi-Tomasi uses a different criteria looking for the smallest eigenvalue of the structure matrix above a threshold.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/svg/shi-tomasi-criterion.svg" alt="Shi-Tomasi Criterion" /><figcaption aria-hidden="true">Shi-Tomasi Criterion</figcaption>
+</figure>
+<aside class="notes">
+<p>you can see the overall idea is quite similar to Harris…</p>
+</aside>
+</section>
+<section id="förstner-criterion" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Förstner Criterion</h2>
+<ul>
+<li>Similar to Harris corner detector.</li>
+<li>Criterion defined on the covariance matrix of possible shifts - inverse of <span class="math inline">\(M\)</span>.</li>
+<li>Similar criteria on error ellipse.</li>
+</ul>
+<aside class="notes">
+<p>Small difference for Forstner - but provides sub-pixel estimation. useful for 3D reconstruction.</p>
+</aside>
+</section>
+<section id="non-maxima-suppression" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Non-Maxima Suppression</h2>
+<p>Within a local region, look for position with maximum value <span class="math inline">\(R\)</span>.</p>
+<p>Which would be maximum here?</p>
+<figure>
+<img data-src="assets/svg/non-max-suppression.svg" alt="non-maxima suppression" /><figcaption aria-hidden="true">non-maxima suppression</figcaption>
+</figure>
+<aside class="notes">
+<p>the right hand example is the maximal value of the corner.</p>
+</aside>
+</section>
+<section id="harris-corner-example" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Harris Corner Example</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_kp.png" style="width:80.0%" alt="view 1" /><figcaption aria-hidden="true">view 1</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/nd2_kp.png" style="width:80.0%" alt="view 2" /><figcaption aria-hidden="true">view 2</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="corner-detection-in-practice" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Corner Detection in Practice</h2>
+<ul>
+<li>RGB to grey scale conversion.</li>
+<li>Real images are noisy, so smoothing is recommended.</li>
+</ul>
+<aside class="notes">
+<p>you can detect corners in greyscale images, and use the keypoints in the original. Often smooth with a gaussian filter, or a combined kernel.</p>
+</aside>
+</section>
+<section id="corner-detection-algorithm" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Corner Detection Algorithm</h2>
+<div>
+<ul>
+<li class="fragment">Convolution with Sobel to obtain <span class="math inline">\(x, y\)</span> derivatives.</li>
+<li class="fragment">Multiplication of <span class="math inline">\(x, y\)</span> derivatives to get <span class="math inline">\(J_xJ_x, J_yJ_y, J_xJ_y\)</span>.</li>
+<li class="fragment">Summation of region, using box filter convolution.</li>
+<li class="fragment">Apply criterion, e.g finding Eigenvalues.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>the first convolution could be combined with smoothing to remove noise. we end up with two gradient images</p>
+</aside>
+</section>
+<section id="corner-detectors-compared" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Corner Detectors Compared</h2>
+<ul>
+<li>All three detectors perform similarly.</li>
+<li>Förstner was first and also described subpixel estimation.</li>
+<li>Harris became the most popular corner detector.</li>
+<li>Shi-Tomasi seems to slightly outperform Harris.</li>
+<li>Many libraries use Shi-Tomasi as the default corner detector.</li>
+</ul>
+</section></section>
+<section>
+<section id="difference-of-gaussians" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Difference of Gaussians</h1>
+<p>Difference of Gaussians (DoG)</p>
+<p>Detecting edges, corners, and <em>blobs</em>…</p>
+<aside class="notes">
+<p>This is used in SIFT feature descriptor - one of the most popular features today. At least of the manually designed features…rather than learned. And because this is such an important feature, we need to discuss it here, before we move on to discuss SIFT later.</p>
+</aside>
+</section>
+<section id="dog-keypoints" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DoG Keypoints</h2>
+<p>A variant of corner detection.</p>
+<ul>
+<li>Provides responses at corners, edges, and <em>blobs</em>.</li>
+<li>Blob = mainly constant region but different to its surroundings.</li>
+</ul>
+<aside class="notes">
+<p>we can see this as a variant of corner detection. As well as some edges and corners, blobs are regions that are locally distinctive. For example a dark spot on a light background… You could pinpoint the centre of such a region, so this is something else that is interesting to us.</p>
+</aside>
+</section>
+<section id="dog-over-scale-space-pyramid" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DoG over Scale Space Pyramid</h2>
+<p>Over different image pyramid levels</p>
+<div>
+<ol type="1">
+<li class="fragment">Gaussian smoothing</li>
+<li class="fragment">Difference-of-Gaussians: find extrema (over smoothing scales).</li>
+<li class="fragment">maximal suppression at <em>edges</em>.</li>
+</ol>
+</div>
+<aside class="notes">
+<p>Key idea… Why is it a Dog over a scale space pyramid? First smoothing - different kernel sizes. We then compare each pair in the stack and compute the difference. Then, select the regions that locally stand out. We also do this over different scales of images…</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<figure>
+<img data-src="assets/png/dog-first-octave.png" alt="DoG - different image blurs" /><figcaption aria-hidden="true">DoG - different image blurs</figcaption>
+</figure>
+<aside class="notes">
+<p>here are images with different blurs - with different gaussian kernels. and for each successive pair, we compute the difference. this gives new images that show the difference of gaussians. which is a 3D structure…</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/dog-search.png" alt="DoG - search" /><figcaption aria-hidden="true">DoG - search</figcaption>
+</figure>
+</div><div class="column">
+<p>We search in <span class="math inline">\((x, y)\)</span> <em>and</em> in the third dimension.</p>
+</div>
+</div>
+<aside class="notes">
+<p>Then we are looking for points that stand out locally, either in the xy direction or in the 3rd dimension - the smoothing direction.</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<figure>
+<img data-src="assets/png/dog-next-octave.png" style="width:80.0%" alt="DoG - octaves" /><figcaption aria-hidden="true">DoG - octaves</figcaption>
+</figure>
+<aside class="notes">
+<p>and then we resample the images and perform the same process on the images of different scales. we do this to find points that stand out in the local region, and are invariant to scale.</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<figure>
+<img data-src="assets/png/dog-example.png" style="width:90.0%" alt="DoG - example" /><figcaption aria-hidden="true">DoG - example</figcaption>
+</figure>
+<aside class="notes">
+<p>difference of two blurred images increases visibility of points, edges, and other details. you can see that the local gradients become more apparent…</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<figure>
+<img data-src="assets/png/scale-space.png" style="width:90.0%" alt="Gaussian - smoothing scale" /><figcaption aria-hidden="true">Gaussian - smoothing scale</figcaption>
+</figure>
+<aside class="notes">
+<p>compute the difference between pairs of blurred images. larger blurs emphasise blobs… we look for extreme values in the xy direction and depth of the stack…</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<p>Blurring filters out high-frequencies (noise).</p>
+<p>Subtracting differently blurred images from each other only keeps the frequencies that lie between the blur level of both images</p>
+<p>DoG acts as a <strong>band-pass</strong> filter.</p>
+<aside class="notes">
+<p>so again, we are selecting points that are locally extreme…</p>
+</aside>
+</section>
+<section id="difference-of-gaussians-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<p><strong>keypoints</strong> are the local <em>extrema</em> in the DoG over different scales.</p>
+</section>
+<section id="difference-of-gaussians-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Difference of Gaussians</h2>
+<p>The DoG finds blob-like and corner-like image structures <em>but</em> also has strong responses along <em>edges</em>.</p>
+<div>
+<ul>
+<li class="fragment">Edges are <em>undesirable</em> for matching.</li>
+<li class="fragment">Eliminate edges via Eigenvalue test.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>(similar to Harris corners)</p>
+</aside>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<p>Two approaches for finding locally distinct points.</p>
+<ul>
+<li>Corners using the Structure Matrix.</li>
+<li>Difference of Gaussians</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed.</li>
+<li>A Combined Corner and Edge Detector, Harris, et al. 1988.</li>
+<li>Good Features to Track. Shi &amp; Tomasi. 1994.</li>
+</ul>
+<aside class="notes">
+<p>Harris, Shi-Tomasi, and Förstner are all corner detectors. DoG … search different scales and blur …find corners and blobs</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
