@@ -35,6 +35,12 @@ Lectures are available as online html or printable pdf.
 - Practical Deep Learning: [online](lectures/deep-learning-02.html)
   or printable [pdf](lectures/deep-learning-02.bmr.pdf).
 
+- Visual Features - Keypoints: [online](lectures/features-keypoints.html)
+  or printable [pdf](lectures/features-keypoints.bmr.pdf).
+
+- Visual Features - Descriptors: [online](lectures/features-descriptors.html)
+  or printable [pdf](lectures/features-descriptors.bmr.pdf).
+
 ## Labs
 
 Labs are usually a pdf file, or a zip file if additional resources are provided.
