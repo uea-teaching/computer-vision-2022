@@ -196,6 +196,10 @@ These properties are why we choose corners.
 
 To find corners we need to **search** for _intensity changes_ in two directions.
 
+::: notes
+we search with a sliding window...
+:::
+
 ## Finding Corners {data-auto-animate="true"}
 
 Compute the SSD of pixels in the neighbourhood $W$ around $(x, ~y)$.
@@ -205,7 +209,7 @@ f(x, y) = \sum_{(u, v) \in W_{x,y} } (I(u, v) - I(u + \delta u , v + \delta v))^
 $$
 
 ::: notes
-sum of squared differences...
+first step is sum of squared differences...
 in some local area W, we look at the difference between a pixel and another at some small offset.
 In areas where the function is high, we have an area where there is a lot of gradient ... things will probably stand out...
 :::
@@ -226,6 +230,9 @@ $$
 ::: notes
 the jacobian for an image is the x, y gradient, the partial derivatives.
 Now, notice if we substitute, the intensity value will disappear.
+
+Taylor series of a function is an infinite sum of terms that are
+expressed in terms of the function's derivatives at a single point.
 :::
 
 ## Finding Corners {data-auto-animate="true"}
@@ -271,8 +278,10 @@ $$
 
 ::: notes
 We are summing over the u and v of the local area W. We can move the summation to the matrix.
-When we move the summation inside the matrix, his matrix now contains all we need to know about the local patch. It contains the gradient information, with the shift matrix (u, v) on the outside...
-We get what is called the structure matrix.
+When we move the summation inside the matrix,
+this matrix now contains all we need to know about the local patch.
+It contains the gradient information, with the shift matrix (u, v) on the outside...
+We get what is called the structure matrix M.
 :::
 
 # Structure Matrix {data-auto-animate="true"}
@@ -338,6 +347,7 @@ $$
 ::: notes
 We can compute these gradients using convolution using a small kernel (e.g. Sobel).
 In a standard way...we compute the whole image derivative.
+We end up with a feature image...
 :::
 
 ## Structure Matrix {data-auto-animate="true"}
@@ -385,8 +395,9 @@ M =
 $$
 
 ::: notes
-The actual values we end up with inside the SM gives us the summary of the gradient directions.
-
+The actual values we end up with inside the SM gives
+us the summary of the gradient directions.
+let's look at some actual values...
 :::
 
 ## Structure Matrix {data-auto-animate="true"}
@@ -404,6 +415,10 @@ $$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\gg 1 \end{bmatrix} $$
 :::::
 :::
 
+::: notes
+if the local area has this sort of structure, we will get these values...
+:::
+
 ## Structure Matrix {data-auto-animate="true"}
 
 ::: columns
@@ -419,6 +434,10 @@ $$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\approx 0 \end{bmatrix} $$
 :::::
 :::
 
+::: notes
+if the local area has this sort of structure, we will get these values...
+:::
+
 ## Structure Matrix {data-auto-animate="true"}
 
 ::: columns
@@ -432,6 +451,10 @@ $$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\approx 0 \end{bmatrix} $$
 $$ M = \begin{bmatrix} \approx 0 &\approx 0 \\ \approx 0 &\approx 0 \end{bmatrix} $$
 
 :::::
+:::
+
+::: notes
+if the local area has this sort of structure, we will get these values...
 :::
 
 ## Corners from Structure Matrix {data-auto-animate="true"}
@@ -451,12 +474,16 @@ $$ M = \begin{bmatrix} \gg 1 &\approx 0 \\ \approx 0 &\gg 1 \end{bmatrix} $$
 :::::
 :::
 
+::: notes
+have a think about the column vectors in the structure matrix....
+:::
+
 # Corner Detection
 
 Three similar approaches...
 
 ::: notes
-We will look at three methods for finding corners...
+We will look more closely at three methods for finding corners...
 :::
 
 ## Harris, Shi-Tomasi and Förstner
@@ -469,7 +496,7 @@ Three similar approaches:
 
 All rely on the _structure_ matrix.
 
-- Use different criterion for deciding if a point is a corner
+- Use different criteria for deciding if a point is a corner
 - Förstner offers subpixel estimation
 
 ::: notes
@@ -490,7 +517,7 @@ R &= det(M) - k(trace(M))^2 \\
 \end{aligned}
 $$
 
-with $k \in [0.04, 0,06]$:
+with $k \in [0.04, 0.06]$:
 
 $$
 \begin{aligned}
@@ -583,7 +610,7 @@ the right hand example is the maximal value of the corner.
 - Real images are noisy, so smoothing is recommended.
 
 ::: notes
-you can detect cornersin greyscale images, and use the keypoints in the original.
+you can detect corners in greyscale images, and use the keypoints in the original.
 Often smooth with a gaussian filter, or a combined kernel.
 :::
 
@@ -689,7 +716,7 @@ Then we are looking for points that stand out locally, either in the xy directio
 
 ::: notes
 and then we resample the images and perform the same process on the images of different scales.
-we do this to find points that stand out in the locally, and are invariant to scale.
+we do this to find points that stand out in the local region, and are invariant to scale.
 :::
 
 ## Difference of Gaussians {data-auto-animate="true"}
