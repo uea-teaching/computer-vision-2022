@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Visual Features - Descriptors</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Visual Features - Descriptors</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="contents" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Contents</h1>
+<ul>
+<li>Motivation</li>
+<li>SIFT - Scale-Invariant Feature Transform</li>
+<li>BRIEF - Binary Robust Independent Elementary Features</li>
+<li>ORB - Oriented FAST Rotated BRIEF</li>
+</ul>
+<aside class="notes">
+<p>Now we are in the second part of talking about visual features… In the first part we talked about how to compute keypoints - locally distinct point in an image. Now we are talking about how to describe such a keypoint - or more precisely, how to describe the local area around a keypoint, that allows us to distinguish it from other keypoints. We will look at 3 approaches. SIFT - the modern standard traditional approach. We will also look at BRIEF and ORB, which are ‘binary’ features, which are popular for certain applications when we need to compute features very quickly, for example SLAM.</p>
+</aside>
+</section>
+
+<section>
+<section id="visual-features" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Visual Features</h1>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_kp.png" style="width:80.0%" alt="keypoints" /><figcaption aria-hidden="true">keypoints</figcaption>
+</figure>
+</div><div class="column">
+<p>Why do we want to find image features?</p>
+<div>
+<ul>
+<li class="fragment">Image summary.</li>
+<li class="fragment">Classification.</li>
+<li class="fragment">Image retrieval.</li>
+<li class="fragment">3D reconstruction.</li>
+</ul>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Look at the image… these red dots are distinct features… These are points from which I want to do certain tasks. Maybe a 3D reconstruction - I may not be able to do it for all pixels in an image (too many, no correspondence) - but for a subset.</p>
+</aside>
+</section>
+<section id="section" class="slide level2" data-transition="convex">
+<h2 data-transition="convex"></h2>
+<p>How do we <strong>describe</strong> keypoints in a way that similar points can be matched?</p>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_desc.png" style="width:80.0%" alt="view 1" /><figcaption aria-hidden="true">view 1</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/nd2_desc.png" style="width:80.0%" alt="view 2" /><figcaption aria-hidden="true">view 2</figcaption>
+</figure>
+</div>
+</div>
+<aside class="notes">
+<p>I might want to find where an image was taken with respect to another image. Here we have two different images - I want to compute, where was the camera?</p>
+<p>Now I need to find a certain number or correspondences between the two images, points I can recognise in both images.</p>
+<p>Now I want to discuss how to <strong>describe</strong> these points in a way that similar points will be able to be matched.</p>
+</aside>
+</section>
+<section id="keypoint-and-descriptor" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Keypoint and Descriptor</h2>
+<p>An important distinction:</p>
+<div>
+<ul>
+<li class="fragment">Keypoint is a distinct <strong>location</strong> in an image</li>
+<li class="fragment">Descriptor is a summary <strong>description</strong> of that neighbourhood.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Features have two parts - where is it, and how can we describe the feature - what distinguishes it from a possibly large number of other features? The keypoint is locally distinct, and we can find it under slightly changing conditions… The descriptor is a summary of the neighbourhood, a vector of values.</p>
+</aside>
+</section>
+<section id="keypoint-and-descriptor-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Keypoint and Descriptor</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_desc.png" style="width:90.0%" alt="keypoints and descriptors" /><figcaption aria-hidden="true">keypoints and descriptors</figcaption>
+</figure>
+</div><div class="column">
+<p>keypoint: <span class="math inline">\((x, ~y)\)</span></p>
+<p>descriptor <em>at</em> the keypoint:</p>
+<p><span class="math display">\[
+\begin{bmatrix} 0.02 \\ 0.01 \\ 0.10 \\ 0.05 \\ 0.01 \\ ... \end{bmatrix}
+\]</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>We have so far discussed how to compute the locations of keypoints, how to spot a good point. We are now going to compute this feature descriptor.</p>
+</aside>
+</section>
+<section id="descriptors" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Descriptors</h2>
+<ul>
+<li>HOG: Histogram of Oriented Gradients</li>
+<li>SIFT: Scale Invariant Feature Transform</li>
+<li>SURF: Speeded-Up Robust Features</li>
+<li>GLOH: Gradient Location and Orientation Histogram</li>
+<li>BRIEF: Binary Robust Independent Elementary Features</li>
+<li>ORB: Oriented FAST and rotated BRIEF</li>
+<li>BRISK: Binary Robust Invariant Scalable Keypoints</li>
+<li>FREAK: Fast REtinA Keypoint</li>
+</ul>
+<p>… and many more</p>
+<aside class="notes">
+<p>There are many popular descriptors, we have already seen HoG, but there is a huge range of research on visual descriptors and this is just a selection.</p>
+</aside>
+</section>
+<section id="descriptors-1" class="slide level2" data-transition="slide">
+<h2 data-transition="slide">Descriptors</h2>
+<p>Describing a keypoint.</p>
+<div>
+<ul>
+<li class="fragment">SIFT : Scale-Invariant Feature Transform</li>
+<li class="fragment">BRIEF : Binary Robust Independent Elementary Features</li>
+<li class="fragment">ORB : Oriented FAST and Rotated BRIEF</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="sift" class="title-slide slide level1" data-transition="slide">
+<h1 data-transition="slide">SIFT</h1>
+<p>Scale-Invariant Feature Transform</p>
+<aside class="notes">
+<p>SIFT is the gold standard of feature descriptor - it’s been around for about 20 years… there was some issue with patents - but they have now expired recently - you can find SIFT in many popular libraries. so let’s look at the SIFT descriptor, we can start with some of the properties of SIFT.</p>
+</aside>
+</section>
+<section id="sift-features" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<p>Image content is transformed into features that are <strong>invariant</strong> to:</p>
+<ul>
+<li>image translation</li>
+<li>image rotation</li>
+<li>image scale</li>
+</ul>
+<aside class="notes">
+<p>these are highly desirable properties of image features - it is unlikely that images are always taken from the same angle or position…</p>
+</aside>
+</section>
+<section id="sift-features-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<p>SIFT Features are <em>partially</em> invariant to:</p>
+<ul>
+<li>illumination changes</li>
+<li>affine transformations and 3D projections</li>
+</ul>
+<aside class="notes">
+<p>these are gradient based features, so absolute illumination level changes do not change gradient values. affine and projective transformations occur when we move camera position in our 3D world space.</p>
+</aside>
+</section>
+<section id="sift-features-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<p>SIFT Features are <em>suitable</em> for detecting visual landmarks:</p>
+<ul>
+<li>from different angles and distances.</li>
+<li>with a different illumination.</li>
+</ul>
+<aside class="notes">
+<p>Think about recognising a microwave oven in a kitchen… different angles of view, near and far… SIFT are a very good choice for this type of image data.</p>
+</aside>
+</section>
+<section id="dog-over-scale-space-pyramid" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DoG over Scale-Space Pyramid</h2>
+<p>Over different image pyramid levels:</p>
+<ol type="1">
+<li>Gaussian smoothing.</li>
+<li>Difference-of-Gaussians (DoG) and find <strong>extrema</strong>.</li>
+<li><em>Maxima</em> suppression for edges.</li>
+</ol>
+<aside class="notes">
+<p>SIFT keypoints start with the difference of Gaussians we discussed earlier. So quick recap… This is how we get the keypoints…</p>
+</aside>
+</section>
+<section id="sift-features-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<p>A SIFT feature is given by a vector computed at a local extreme point in the scale space.</p>
+<div style="font-size: 2em">
+<p><span class="math display">\[ \langle p, s, r, f \rangle\]</span></p>
+</div>
+<aside class="notes">
+<p>p : position, s : scale, r : rotation, f : feature</p>
+</aside>
+</section>
+<section id="sift-features-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<figure>
+<img data-src="assets/svg/sift1.svg" alt="SIFT vector" /><figcaption aria-hidden="true">SIFT vector</figcaption>
+</figure>
+<aside class="notes">
+
+</aside>
+</section>
+<section id="sift-features-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<figure>
+<img data-src="assets/svg/sift2.svg" alt="SIFT vector" /><figcaption aria-hidden="true">SIFT vector</figcaption>
+</figure>
+<aside class="notes">
+
+</aside>
+</section>
+<section id="sift-features-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/jpg/sift_basic_0.jpg" alt="Input Image - Vedaldi &amp; Fulkerson" /><figcaption aria-hidden="true">Input Image - Vedaldi &amp; Fulkerson</figcaption>
+</figure>
+</div><div class="column">
+<p>From an input image we convert to grey scale then compute the Difference of Gaussians (DoG) and find the extrema.</p>
+</div>
+</div>
+<aside class="notes">
+<p>image from VLFeat library.</p>
+</aside>
+</section>
+<section id="sift-features-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/jpg/sift_basic_2.jpg" alt="Keypoints, scale and orientation" /><figcaption aria-hidden="true">Keypoints, scale and orientation</figcaption>
+</figure>
+</div><div class="column">
+<p>We preserve the scale, and compute a peak of the histogram of orientations.</p>
+</div>
+</div>
+<aside class="notes">
+<p>image from VLFeat library.</p>
+</aside>
+</section>
+<section id="sift-features-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/jpg/sift_basic_3.jpg" alt="locally rotated patch" /><figcaption aria-hidden="true">locally rotated patch</figcaption>
+</figure>
+</div><div class="column">
+<p>We compute a local patch, based on the scale and orientation.</p>
+<p>It is from this patch we compute the 128D feature <em>descriptor</em> vector.</p>
+</div>
+</div>
+<aside class="notes">
+<p>image from VLFeat library.</p>
+</aside>
+</section>
+<section id="sift-descriptor" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<p>Compute image gradients in local 16x16 area at the selected scale.</p>
+<ul>
+<li>Create an array of orientation histograms</li>
+<li>8 orientations x 4x4 histogram array = 128 dimensions</li>
+</ul>
+</section>
+<section id="sift-descriptor-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<figure>
+<img data-src="assets/png/sift-descriptor.png" style="width:70.0%" alt="sift descriptor" /><figcaption aria-hidden="true">sift descriptor</figcaption>
+</figure>
+<aside class="notes">
+<p>this example uses 8x8 area…</p>
+</aside>
+</section>
+<section id="sift-descriptor-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<figure>
+<img data-src="assets/png/sift-mont.png" alt="rotate and scale to 16x16" /><figcaption aria-hidden="true">rotate and scale to 16x16</figcaption>
+</figure>
+</section>
+<section id="sift-descriptor-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<figure>
+<img data-src="assets/png/sift-16x16-grads.png" alt="gradients and segregate to 16 x 4x4 regions" /><figcaption aria-hidden="true">gradients and segregate to 16 x 4x4 regions</figcaption>
+</figure>
+</section>
+<section id="sift-descriptor-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<figure>
+<img data-src="assets/png/sift-8-bins.png" alt="4x4 region to 8 direction bins" /><figcaption aria-hidden="true">4x4 region to 8 direction bins</figcaption>
+</figure>
+</section>
+<section id="sift-descriptor-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<p>Concatenate all histograms to form a 128D vector.</p>
+<figure>
+<img data-src="assets/png/sift-concat.png" alt="concatenate histograms" /><figcaption aria-hidden="true">concatenate histograms</figcaption>
+</figure>
+<aside class="notes">
+<p>I have not illustrated all 16 histograms…</p>
+</aside>
+</section>
+<section id="sift-descriptor-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Descriptor</h2>
+<figure>
+<img data-src="assets/png/sift-summary.png" alt="Descriptor Summary" /><figcaption aria-hidden="true">Descriptor Summary</figcaption>
+</figure>
+</section>
+<section id="sift-features-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">SIFT Features</h2>
+<p><strong>Keypoints</strong> : Using DoG</p>
+<p><strong>Descriptor</strong> : Using Gradient Histogram</p>
+<aside class="notes">
+<p>we have arrived at the final SIFT descriptor.</p>
+</aside>
+</section>
+<section id="dense-sift" class="slide level2">
+<h2>Dense SIFT</h2>
+<p>Variation of the SIFT feature, where the keypoints are sampled over a uniform grid in the image domain, rather than using the sparse points from the DoG.</p>
+<aside class="notes">
+<p>particularly suited to your coursework and bag of words applications.</p>
+</aside>
+</section>
+<section id="dense-sift-1" class="slide level2">
+<h2>Dense SIFT</h2>
+<p>At each uniform grid point:</p>
+<ul>
+<li>Compute the SIFT descriptor.</li>
+<li>Cluster the descriptors into a vocabulary.</li>
+<li>K-means clustering.</li>
+</ul>
+<aside class="notes">
+<p>Beyond bags of features: Spatial pyramid matching for recognizing natural scene categories</p>
+</aside>
+</section></section>
+<section>
+<section id="matching" class="title-slide slide level1">
+<h1>Matching</h1>
+<p>How do we match features from two images?</p>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/nd1_desc.png" style="width:80.0%" alt="view 1" /><figcaption aria-hidden="true">view 1</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/nd2_desc.png" style="width:80.0%" alt="view 2" /><figcaption aria-hidden="true">view 2</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="distance-matching" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Distance Matching</h2>
+<figure>
+<img data-src="assets/png/sift-match1.png" style="width:90.0%" alt="descriptor distance" /><figcaption aria-hidden="true">descriptor distance</figcaption>
+</figure>
+</section>
+<section id="ratio-test" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Ratio Test</h2>
+<p>Eliminate ambiguous matches for a query feature <span class="math inline">\(q\)</span>.</p>
+<ol type="1">
+<li><p>Find closest descriptors, <span class="math inline">\(p_1\)</span> and <span class="math inline">\(p_2\)</span> using <strong>Euclidian</strong> distance.</p></li>
+<li><p>Test if distance to best match is smaller than a threshold:</p></li>
+</ol>
+<p><span class="math display">\[d(q, p_1) &lt; t\]</span></p>
+<ol start="3" type="1">
+<li>Accept only if the best match is substantially better than second:</li>
+</ol>
+<p><span class="math display">\[\frac{d(q, p_1)}{d(q, p_2)} &lt; \frac{1}{2}\]</span></p>
+</section>
+<section id="ratio-test-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Ratio Test</h2>
+<figure>
+<img data-src="assets/png/sift-match2.png" style="width:90.0%" alt="ratio test" /><figcaption aria-hidden="true">ratio test</figcaption>
+</figure>
+</section>
+<section id="ratio-test-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Ratio Test</h2>
+<p>Lowe’s Ratio test works well.</p>
+<ul>
+<li>There will still be a few outliers.</li>
+<li>Outliers require extra treatment.</li>
+</ul>
+</section></section>
+<section>
+<section id="binary-descriptors" class="title-slide slide level1">
+<h1>Binary Descriptors</h1>
+<p>Computing descriptors <em>fast</em></p>
+</section>
+<section id="why-binary-descriptors" class="slide level2">
+<h2>Why Binary Descriptors?</h2>
+<p>Complex features such as SIFT work well, but…</p>
+<div>
+<ul>
+<li class="fragment">SIFT is <em>expensive</em> to compute.</li>
+<li class="fragment">SIFT <del>has</del> <strong>had</strong> patenting issues.</li>
+<li class="fragment">Binary descriptors are easy to compute <em>and</em> compare.</li>
+</ul>
+</div>
+</section>
+<section id="key-idea-of-binary-descriptors" class="slide level2">
+<h2>Key Idea of Binary Descriptors</h2>
+<ul>
+<li>Select a region around a keypoint.</li>
+<li>Select a <em>set</em> of pixel <strong>pairs</strong> in that region</li>
+<li>For each pair, compare the intensities.</li>
+<li>concatenate all <span class="math inline">\(b\)</span> to a string.</li>
+</ul>
+<p><span class="math display">\[
+b=
+\begin{cases}
+    1, &amp; \text{if}\ I(s_1) &gt; I(s_2) \\
+    0, &amp; \text{otherwise}
+\end{cases}
+\]</span></p>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/png/binary-patch.png" style="width:60.0%" alt="image region" /><figcaption aria-hidden="true">image region</figcaption>
+</figure>
+</div><div class="column">
+<figure>
+<img data-src="assets/png/binary-index.png" style="width:60.0%" alt="region index" /><figcaption aria-hidden="true">region index</figcaption>
+</figure>
+</div>
+</div>
+<ul>
+<li>pairs: <span class="math inline">\(~\{(5, 1), (5, 9), (4, 6), (8, 2), (3, 7)\}\)</span></li>
+<li>test: <span class="math inline">\(~b=0, ~b=0, ~b=0, ~b=1, ~b=1\)</span></li>
+<li>result: <span class="math inline">\(~B=00011\)</span></li>
+</ul>
+</section>
+<section id="advantages-of-binary-descriptors" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Advantages of Binary Descriptors</h2>
+<p>Compact descriptor</p>
+<ul>
+<li>The number of pairs gives the length in bits</li>
+</ul>
+</section>
+<section id="advantages-of-binary-descriptors-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Advantages of Binary Descriptors</h2>
+<p>Fast to compute</p>
+<ul>
+<li>Simply intensity value comparisons</li>
+</ul>
+</section>
+<section id="advantages-of-binary-descriptors-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Advantages of Binary Descriptors</h2>
+<p>Trivial and fast to compare <em>Hamming</em> distance:</p>
+<p><span class="math display">\[
+d_{Hamming}(B_1, B_2) = sum(xor(B_1, B_2) )
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<p>Different binary descriptors differ mainly by the strategy of selecting the pairs.</p>
+</section>
+<section id="important" class="slide level2">
+<h2>Important</h2>
+<p>In order to compare descriptors we must:</p>
+<ul>
+<li>Use the same pairs</li>
+<li>Maintain the same order in which the pairs are tested.</li>
+</ul>
+</section></section>
+<section>
+<section id="brief" class="title-slide slide level1">
+<h1>BRIEF</h1>
+<p>Binary Robust Independent Elementary Features.</p>
+<ul>
+<li>BRIEF: Binary Robust Independent Elementary Features.</li>
+<li>Calonder, et al. 2010.</li>
+</ul>
+</section>
+<section id="brief-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">BRIEF</h2>
+<p>First binary image descriptor.</p>
+<ul>
+<li>Proposed in 2010</li>
+<li>256 bit descriptor</li>
+<li>Provides five different sampling strategies</li>
+<li>Operations performed on a smoothed image to deal with noise</li>
+</ul>
+<aside class="notes">
+
+</aside>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/brief-pairs.png" style="width:80.0%" alt="BRIEF sampling pairs" /><figcaption aria-hidden="true">BRIEF sampling pairs</figcaption>
+</figure>
+</section>
+<section id="brief-sampling-pairs" class="slide level2">
+<h2>BRIEF sampling pairs</h2>
+<ul>
+<li>G I: Uniform random sampling</li>
+<li>G II: Gaussian sampling</li>
+<li>G III: <span class="math inline">\(~s_1~\)</span> Gaussian; <span class="math inline">\(~s_2~\)</span> Gaussian centred around <span class="math inline">\(~s_1~\)</span>.</li>
+<li>G IV: Discrete location from a coarse polar grid.</li>
+<li>G V: <span class="math inline">\(s_1=(0,0)\)</span>, <span class="math inline">\(~s_2~\)</span> are all locations from a coarse polar grid.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<figure>
+<img data-src="assets/png/brief-performance.png" style="width:80.0%" alt="BRIEF sampling performance" /><figcaption aria-hidden="true">BRIEF sampling performance</figcaption>
+</figure>
+</section></section>
+<section>
+<section id="orb" class="title-slide slide level1">
+<h1>ORB</h1>
+<p>Oriented FAST Rotated BRIEF.</p>
+<ul>
+<li>ORB: an efficient alternative to SIFT or SURF</li>
+<li>Rublee, et al. 2011.</li>
+</ul>
+</section>
+<section id="orb-1" class="slide level2">
+<h2>ORB</h2>
+<p>An extension to BRIEF that:</p>
+<ul>
+<li>Adds rotation compensation.</li>
+<li>Learns the optimal sampling pairs.</li>
+</ul>
+</section>
+<section id="orb-rotation-compensation" class="slide level2">
+<h2>ORB: Rotation Compensation</h2>
+<p>Estimates the centre of mass and the main orientation of the local area.</p>
+<p>Image moment:</p>
+<p><span class="math display">\[
+m_{pq} = \sum_{x,y} x^p y^q I(x,y)
+\]</span></p>
+<p>Centre of Mass, Orientation:</p>
+<p><span class="math display">\[
+C = \left( \frac{m_{10}}{m_{00}} , \frac{m_{01}}{m_{00}} \right)~,
+~\theta = \arctan2(m_{01}, m_{10})
+\]</span></p>
+<aside class="notes">
+<p>section 3.2 in paper - moments a weighted average of the image values. C becomes the mean values of the x values and y values. and theta is from the rise, y, over run, x, of mean image intensities. and this is the trick to add rotation compensation.</p>
+</aside>
+</section>
+<section id="orb-rotation-compensation-1" class="slide level2">
+<h2>ORB: Rotation Compensation</h2>
+<p>Rotate the coordinates of all pairs by <span class="math inline">\(\theta\)</span> around <span class="math inline">\(C\)</span>:</p>
+<p><span class="math display">\[
+s&#39; = T(C, \theta) s
+\]</span></p>
+<ul>
+<li>Use the transformed pixel coordinates for performing the test.</li>
+<li>Rotation is invariant in the image plane.</li>
+</ul>
+<aside class="notes">
+<p>and so the we rotate the patch of pairs around the centre of mass, by theta to get rotation invariance around the image plane</p>
+</aside>
+</section>
+<section id="orb-learning-sampling-pairs" class="slide level2">
+<h2>ORB: Learning Sampling Pairs</h2>
+<p>Pairs should be <strong>uncorrelated</strong>.</p>
+<ul>
+<li>each new pair adds new information to the descriptor</li>
+</ul>
+<p>Pairs should have <strong>high variance</strong>.</p>
+<ul>
+<li>makes a feature more discriminative</li>
+</ul>
+<p>ORB defines a strategy for selecting 256 pairs, optimising for these properties using a training database.</p>
+<aside class="notes">
+<p>collect training data to select the pairs that are optimal for these properties.</p>
+</aside>
+</section>
+<section id="orb-versus-sift" class="slide level2">
+<h2>ORB versus SIFT</h2>
+<ul>
+<li>ORB is 100x faster than SIFT</li>
+<li>ORB: 256 bit vs. SIFT: 4096 bit</li>
+<li>ORB is not scale invariant (achievable via an image pyramid)</li>
+<li>ORB mainly in-plane rotation invariant</li>
+<li>ORB has a similar matching performance as SIFT (w/o scale)</li>
+<li>Several modern online systems (e.g. SLAM) use binary features</li>
+</ul>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>Keypoint and descriptor together define visual features</li>
+<li>Keypoint describes the appearance</li>
+<li>SIFT</li>
+<li>Binary descriptors</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>The papers mentioned in the lecture</li>
+<li>Forsyth, Ponce; Computer Vision: A modern approach, 2nd ed.</li>
+<li><a href="https://www.vlfeat.org">VLFeat.org</a> - nice tutorials.</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
