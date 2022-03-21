@@ -287,6 +287,10 @@ Compute image gradients in local 16x16 area at the selected scale.
 - Create an array of orientation histograms
 - 8 orientations x 4x4 histogram array = 128 dimensions
 
+::: notes
+so, how do we compute these histograms?
+:::
+
 ## SIFT Descriptor {data-auto-animate="true"}
 
 ![sift descriptor](assets/png/sift-descriptor.png){width="70%"}
@@ -299,13 +303,25 @@ this example uses 8x8 area...
 
 ![rotate and scale to 16x16](assets/png/sift-mont.png)
 
+::: notes
+at each patch, we rotate according to the angle we have, and scale to 16x16
+:::
+
 ## SIFT Descriptor {data-auto-animate="true"}
 
 ![gradients and segregate to 16 x 4x4 regions](assets/png/sift-16x16-grads.png)
 
+::: notes
+then, we segregate the patch into 16x4x4 regions and compute gradients.
+:::
+
 ## SIFT Descriptor {data-auto-animate="true"}
 
 ![4x4 region to 8 direction bins](assets/png/sift-8-bins.png)
+
+::: notes
+then, we compute the 8 direction bins N, S, E, W, NE, NW, SE, SW.
+:::
 
 ## SIFT Descriptor {data-auto-animate="true"}
 
@@ -315,11 +331,18 @@ Concatenate all histograms to form a 128D vector.
 
 ::: notes
 I have not illustrated all 16 histograms...
+This is the descriptor vector, we scale and normalise this vector, to form
+the final 128D floating point vector, which we use as a point in
+high dimensional space for classification, matching etc.
 :::
 
 ## SIFT Descriptor {data-auto-animate="true"}
 
 ![Descriptor Summary](assets/png/sift-summary.png)
+
+::: notes
+a visual round up of the SIFT descriptor.
+:::
 
 ## SIFT Features {data-auto-animate="true"}
 
@@ -329,11 +352,14 @@ I have not illustrated all 16 histograms...
 
 ::: notes
 we have arrived at the final SIFT descriptor.
+If you want to implement SIFT, there are a few other details for normalising the descriptor vector.
 :::
 
 ## Dense SIFT
 
-Variation of the SIFT feature, where the keypoints are sampled over a uniform grid in the image domain, rather than using the sparse points from the DoG.
+Variation of the SIFT feature,
+where the keypoints are sampled over a uniform grid in the image domain,
+rather than using the sparse points from the DoG.
 
 ::: notes
 particularly suited to your coursework and bag of words applications.
@@ -348,7 +374,8 @@ At each uniform grid point:
 - K-means clustering.
 
 ::: notes
-Beyond bags of features: Spatial pyramid matching for recognizing natural scene categories
+Beyond bags of features: Spatial pyramid matching for recognizing natural scene categories.
+S Lazebnik, C Schmid, J Ponce - 2006 , A very influential paper.
 :::
 
 # Matching
@@ -366,9 +393,19 @@ How do we match features from two images?
 :::::
 :::
 
+::: notes
+if we have two images - taken from different viewpoints, or at different times.
+we look at one descriptor, then search all the descriptors in the other image.
+:::
+
 ## Distance Matching {data-auto-animate="true"}
 
 ![descriptor distance](assets/png/sift-match1.png){width="90%"}
+
+::: notes
+based on a distance, we will find matches, but it is likely some will be ambiguous.
+look at the central balustrade in the image. Do you understand why this might be ambiguous?
+:::
 
 ## Ratio Test {data-auto-animate="true"}
 
@@ -384,9 +421,21 @@ $$d(q, p_1) < t$$
 
 $$\frac{d(q, p_1)}{d(q, p_2)} < \frac{1}{2}$$
 
+::: notes
+Lowe ratio test.
+Each keypoint of the first image is matched with a number of keypoints from the second image.
+keep the 2 best matches for each keypoint.
+Check that the two distances are sufficiently different.
+If not, the keypoint is eliminated and will not be used for further calculations.
+:::
+
 ## Ratio Test {data-auto-animate="true"}
 
 ![ratio test](assets/png/sift-match2.png){width="90%"}
+
+::: notes
+we have eliminated some ambiguous matches, but still have the one by the right hand doorway...
+:::
 
 ## Ratio Test {data-auto-animate="true"}
 
@@ -394,6 +443,10 @@ Lowe's Ratio test works well.
 
 - There will still be a few outliers.
 - Outliers require extra treatment.
+
+::: notes
+we will look at RanSac in a later lecture.
+:::
 
 # Binary Descriptors
 
@@ -421,7 +474,7 @@ Complex features such as SIFT work well, but...
 $$
 b=
 \begin{cases}
-    1, & \text{if}\ I(s_1) > I(s_2) \\
+    1, & \text{if}\ I(s_1) < I(s_2) \\
     0, & \text{otherwise}
 \end{cases}
 $$
@@ -473,6 +526,10 @@ In order to compare descriptors we must:
 - Use the same pairs
 - Maintain the same order in which the pairs are tested.
 
+::: notes
+this is vital - it is the only real difference between binary descriptors.
+:::
+
 # BRIEF
 
 Binary Robust Independent Elementary Features.
@@ -490,7 +547,7 @@ First binary image descriptor.
 - Operations performed on a smoothed image to deal with noise
 
 ::: notes
-
+made 256 comparisons
 :::
 
 ---
@@ -573,7 +630,8 @@ Pairs should have **high variance**.
 
 - makes a feature more discriminative
 
-ORB defines a strategy for selecting 256 pairs, optimising for these properties using a training database.
+ORB defines a strategy for selecting 256 pairs,
+optimising for these properties using a training database.
 
 ::: notes
 collect training data to select the pairs that are optimal for these properties.
@@ -591,7 +649,7 @@ collect training data to select the pairs that are optimal for these properties.
 # Summary
 
 - Keypoint and descriptor together define visual features
-- Keypoint describes the appearance
+- Descriptor describes the appearance
 - SIFT
 - Binary descriptors
 
