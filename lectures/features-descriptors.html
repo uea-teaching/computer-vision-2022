@@ -285,6 +285,9 @@
 <li>Create an array of orientation histograms</li>
 <li>8 orientations x 4x4 histogram array = 128 dimensions</li>
 </ul>
+<aside class="notes">
+<p>so, how do we compute these histograms?</p>
+</aside>
 </section>
 <section id="sift-descriptor-1" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">SIFT Descriptor</h2>
@@ -300,18 +303,27 @@
 <figure>
 <img data-src="assets/png/sift-mont.png" alt="rotate and scale to 16x16" /><figcaption aria-hidden="true">rotate and scale to 16x16</figcaption>
 </figure>
+<aside class="notes">
+<p>at each patch, we rotate according to the angle we have, and scale to 16x16</p>
+</aside>
 </section>
 <section id="sift-descriptor-3" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">SIFT Descriptor</h2>
 <figure>
 <img data-src="assets/png/sift-16x16-grads.png" alt="gradients and segregate to 16 x 4x4 regions" /><figcaption aria-hidden="true">gradients and segregate to 16 x 4x4 regions</figcaption>
 </figure>
+<aside class="notes">
+<p>then, we segregate the patch into 16x4x4 regions and compute gradients.</p>
+</aside>
 </section>
 <section id="sift-descriptor-4" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">SIFT Descriptor</h2>
 <figure>
 <img data-src="assets/png/sift-8-bins.png" alt="4x4 region to 8 direction bins" /><figcaption aria-hidden="true">4x4 region to 8 direction bins</figcaption>
 </figure>
+<aside class="notes">
+<p>then, we compute the 8 direction bins N, S, E, W, NE, NW, SE, SW.</p>
+</aside>
 </section>
 <section id="sift-descriptor-5" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">SIFT Descriptor</h2>
@@ -320,7 +332,7 @@
 <img data-src="assets/png/sift-concat.png" alt="concatenate histograms" /><figcaption aria-hidden="true">concatenate histograms</figcaption>
 </figure>
 <aside class="notes">
-<p>I have not illustrated all 16 histograms…</p>
+<p>I have not illustrated all 16 histograms… This is the descriptor vector, we scale and normalise this vector, to form the final 128D floating point vector, which we use as a point in high dimensional space for classification, matching etc.</p>
 </aside>
 </section>
 <section id="sift-descriptor-6" class="slide level2" data-auto-animate="true">
@@ -328,13 +340,16 @@
 <figure>
 <img data-src="assets/png/sift-summary.png" alt="Descriptor Summary" /><figcaption aria-hidden="true">Descriptor Summary</figcaption>
 </figure>
+<aside class="notes">
+<p>a visual round up of the SIFT descriptor.</p>
+</aside>
 </section>
 <section id="sift-features-9" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">SIFT Features</h2>
 <p><strong>Keypoints</strong> : Using DoG</p>
 <p><strong>Descriptor</strong> : Using Gradient Histogram</p>
 <aside class="notes">
-<p>we have arrived at the final SIFT descriptor.</p>
+<p>we have arrived at the final SIFT descriptor. If you want to implement SIFT, there are a few other details for normalising the descriptor vector.</p>
 </aside>
 </section>
 <section id="dense-sift" class="slide level2">
@@ -353,7 +368,7 @@
 <li>K-means clustering.</li>
 </ul>
 <aside class="notes">
-<p>Beyond bags of features: Spatial pyramid matching for recognizing natural scene categories</p>
+<p>Beyond bags of features: Spatial pyramid matching for recognizing natural scene categories. S Lazebnik, C Schmid, J Ponce - 2006 , A very influential paper.</p>
 </aside>
 </section></section>
 <section>
@@ -374,12 +389,18 @@
 </figure>
 </div>
 </div>
+<aside class="notes">
+<p>if we have two images - taken from different viewpoints, or at different times. we look at one descriptor, then search all the descriptors in the other image.</p>
+</aside>
 </section>
 <section id="distance-matching" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">Distance Matching</h2>
 <figure>
 <img data-src="assets/png/sift-match1.png" style="width:90.0%" alt="descriptor distance" /><figcaption aria-hidden="true">descriptor distance</figcaption>
 </figure>
+<aside class="notes">
+<p>based on a distance, we will find matches, but it is likely some will be ambiguous. look at the central balustrade in the image. Do you understand why this might be ambiguous?</p>
+</aside>
 </section>
 <section id="ratio-test" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">Ratio Test</h2>
@@ -393,12 +414,18 @@
 <li>Accept only if the best match is substantially better than second:</li>
 </ol>
 <p><span class="math display">\[\frac{d(q, p_1)}{d(q, p_2)} &lt; \frac{1}{2}\]</span></p>
+<aside class="notes">
+<p>Lowe ratio test. Each keypoint of the first image is matched with a number of keypoints from the second image. keep the 2 best matches for each keypoint. Check that the two distances are sufficiently different. If not, the keypoint is eliminated and will not be used for further calculations.</p>
+</aside>
 </section>
 <section id="ratio-test-1" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">Ratio Test</h2>
 <figure>
 <img data-src="assets/png/sift-match2.png" style="width:90.0%" alt="ratio test" /><figcaption aria-hidden="true">ratio test</figcaption>
 </figure>
+<aside class="notes">
+<p>we have eliminated some ambiguous matches, but still have the one by the right hand doorway…</p>
+</aside>
 </section>
 <section id="ratio-test-2" class="slide level2" data-auto-animate="true">
 <h2 data-auto-animate="true">Ratio Test</h2>
@@ -407,6 +434,9 @@
 <li>There will still be a few outliers.</li>
 <li>Outliers require extra treatment.</li>
 </ul>
+<aside class="notes">
+<p>we will look at RanSac in a later lecture.</p>
+</aside>
 </section></section>
 <section>
 <section id="binary-descriptors" class="title-slide slide level1">
@@ -435,7 +465,7 @@
 <p><span class="math display">\[
 b=
 \begin{cases}
-    1, &amp; \text{if}\ I(s_1) &gt; I(s_2) \\
+    1, &amp; \text{if}\ I(s_1) &lt; I(s_2) \\
     0, &amp; \text{otherwise}
 \end{cases}
 \]</span></p>
@@ -491,6 +521,9 @@ d_{Hamming}(B_1, B_2) = sum(xor(B_1, B_2) )
 <li>Use the same pairs</li>
 <li>Maintain the same order in which the pairs are tested.</li>
 </ul>
+<aside class="notes">
+<p>this is vital - it is the only real difference between binary descriptors.</p>
+</aside>
 </section></section>
 <section>
 <section id="brief" class="title-slide slide level1">
@@ -511,7 +544,7 @@ d_{Hamming}(B_1, B_2) = sum(xor(B_1, B_2) )
 <li>Operations performed on a smoothed image to deal with noise</li>
 </ul>
 <aside class="notes">
-
+<p>made 256 comparisons</p>
 </aside>
 </section>
 <section class="slide level2">
@@ -613,7 +646,7 @@ s&#39; = T(C, \theta) s
 <h1>Summary</h1>
 <ul>
 <li>Keypoint and descriptor together define visual features</li>
-<li>Keypoint describes the appearance</li>
+<li>Descriptor describes the appearance</li>
 <li>SIFT</li>
 <li>Binary descriptors</li>
 </ul>
