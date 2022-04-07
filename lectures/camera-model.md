@@ -67,7 +67,7 @@ Thes are locally distinct features...
 
 ## The Camera {data-auto-animate="true"}
 
-Features identify points mapped from the 3D world to the image.
+Features identify points mapped from the 3D world to the 2D image.
 
 ::: notes
 We assume this point has been mapped to the 2D image plane, and we want to reconstruct this point in the environment.
@@ -75,4 +75,15 @@ We assume this point has been mapped to the 2D image plane, and we want to recon
 We often use a small number of such keypoints - maybe a few hundred per image - much less than the number of pixels in the image.
 
 So the camera records intensities - but also directions - which we can use for geometric reconstruction.
+:::
+
+# Pinhole Camera Model
+
+![Light passing through a pinhole camera.](assets/svg/pinhole1.svg)
+
+::: notes
+I want to introduce the concept of the pinhole camera.
+Real pinhole cameras can be made - and work... but here we are describing a model,
+that helps us to understand the relationship between points in the world
+and points in the image.
 :::
