@@ -77,7 +77,7 @@ We often use a small number of such keypoints - maybe a few hundred per image - 
 So the camera records intensities - but also directions - which we can use for geometric reconstruction.
 :::
 
-# Pinhole Camera Model
+# Pinhole Camera Model {data-auto-animate="true"}
 
 ![Light passing through a pinhole camera.](assets/svg/pinhole1.svg)
 
@@ -86,4 +86,17 @@ I want to introduce the concept of the pinhole camera.
 Real pinhole cameras can be made - and work... but here we are describing a model,
 that helps us to understand the relationship between points in the world
 and points in the image.
+:::
+
+## {data-auto-animate="true"}
+
+- $f$ : focal length
+- $\bar{r}_{o} = (x_o, y_o, z_o)$
+- $\bar{r}_{i} = (x_i, y_i, f)$
+
+![Camera at the origin.](assets/svg/pinhole2.svg)
+
+::: notes
+Camera position is often called principal point.
+The distance from the principal point to the image plane is called the focal length.
 :::
