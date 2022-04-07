@@ -48,5 +48,31 @@ Cameras can also be seen as _direction_ measurement devices.
 
 ::: notes
 light falls on an object, is reflected back to the camera, and then to a pixel.
-which position on the sensor?
+which point in space maps to which position on the sensor?
+this is information used to perform geometric measurements.
+:::
+
+## The Camera {data-auto-animate="true"}
+
+How do we get the point observations?
+
+- _keypoints_ and _features_
+- SIFT, ORB, etc.
+- **locally** distinct features
+
+::: notes
+We get these observations by detecting features in an image, finding corners, blobs, etc.
+Thes are locally distinct features...
+:::
+
+## The Camera {data-auto-animate="true"}
+
+Features identify points mapped from the 3D world to the image.
+
+::: notes
+We assume this point has been mapped to the 2D image plane, and we want to reconstruct this point in the environment.
+
+We often use a small number of such keypoints - maybe a few hundred per image - much less than the number of pixels in the image.
+
+So the camera records intensities - but also directions - which we can use for geometric reconstruction.
 :::
