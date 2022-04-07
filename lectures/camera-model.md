@@ -90,13 +90,42 @@ and points in the image.
 
 ## {data-auto-animate="true"}
 
-- $f$ : focal length
-- $\bar{r}_{o} = (x_o, y_o, z_o)$
-- $\bar{r}_{i} = (x_i, y_i, f)$
+- $f$ : effective focal length
+- $\textbf{r}_{o} = (x_o, y_o, z_o)$
+- $\textbf{r}_{i} = (x_i, y_i, f)$
 
 ![Camera at the origin.](assets/svg/pinhole2.svg)
 
 ::: notes
 Camera position is often called principal point.
 The distance from the principal point to the image plane is called the focal length.
+We can look at a ray from an object to the principal point r_o,
+that then passes through the pinhole to the image plane r_i.
+
+NB. The pinhole diagram is often shown with the image plane in front of the camera.
+NB2. Different texts apply different labels.
+:::
+
+## Pinhole Camera Model {data-auto-animate="true"}
+
+Using similar triangles, we get the equations of perspective projection.
+
+$$
+\frac{\textbf{r}_{i}}{f} = \frac{\textbf{r}_{o}}{z_o} \quad \Rightarrow \quad
+\frac{x_i}{f} = \frac{x_o}{z_o}, ~\frac{y_i}{f} = \frac{y_o}{z_o}
+$$
+
+::: notes
+very simple equations - but can produce some very unintuitive effects.
+:::
+
+# Camera Parameters {data-auto-animate="true"}
+
+How do we work with these parameters?
+
+::: incremental
+
+- _intrinsic_ parameters: the properties of the camera
+- _extrinsic_ parameters: the pose of the camera in the world
+
 :::
