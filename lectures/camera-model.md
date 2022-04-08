@@ -121,6 +121,66 @@ very simple equations - but can produce some very unintuitive effects.
 
 # Camera Parameters {data-auto-animate="true"}
 
+Describe how a world point is mapped to a pixel coordinate.
+
+::: notes
+Our goal is to describe how a point in the world maps to a pixel in the image.
+:::
+
+## Camera Parameters {data-auto-animate="true"}
+
+Describe how a world point is mapped to a pixel coordinate.
+
+![point mapping](assets/svg/parameters1.svg)
+
+## Camera Parameters {data-auto-animate="true"}
+
+We will describe this mapping in **homogeneous** coordinates.
+
+::: {style="font-size:1.5em"}
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+P \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
+$$
+
+:::
+
+## Coordinate Systems {data-auto-animate="true"}
+
+We have to transform via a number of coordinate systems:
+
+::: incremental
+
+- The world coordinate system
+- The camera coordinate system
+- The image coordinate system
+- The pixel coordinate system
+
+:::
+
+## World to Pixels {data-auto-animate="true"}
+
+![World to Pixels](assets/svg/world-to-sensor1.svg)
+
+## World to Pixels {data-auto-animate="true"}
+
+![World to Pixels](assets/svg/world-to-sensor2.svg)
+
+## World to Pixels {data-auto-animate="true"}
+
+![World to Pixels](assets/svg/world-to-sensor3.svg)
+
+## World to Pixels {data-auto-animate="true"}
+
+![World to Pixels](assets/svg/world-to-sensor4.svg)
+
+## World to Pixels {data-auto-animate="true"}
+
+![World to Pixels](assets/svg/world-to-sensor5.svg)
+
+## Camera Parameters {data-auto-animate="true"}
+
 How do we work with these parameters?
 
 ::: incremental
@@ -128,4 +188,9 @@ How do we work with these parameters?
 - _intrinsic_ parameters: the properties of the camera
 - _extrinsic_ parameters: the pose of the camera in the world
 
+:::
+
+::: notes
+intrinsic - the ideal projection to 2D and then translation to pixel coordinates
+extrinsic - the pose of the camera in the world
 :::
