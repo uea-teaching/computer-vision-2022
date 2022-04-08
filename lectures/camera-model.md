@@ -116,6 +116,7 @@ $$
 $$
 
 ::: notes
+The 2d x, y on the image plane are derived by dividing the 3D by z, scaled by the focal length.
 very simple equations - but can produce some very unintuitive effects.
 :::
 
@@ -215,3 +216,45 @@ How many parameters do we need?
 ::: notes
 the only thing we can do is translate, and rotate the camera.
 :::
+
+## Extrinsic Parameters {data-auto-animate="true"}
+
+Point in world coordinates:
+
+$$
+\textbf{\textit{X}}_p = [ \textit{X}_p, \textit{Y}_p, \textit{Z}_p ]^T
+$$
+
+Origin of camera in world coordinates:
+
+$$
+\textbf{\textit{X}}_o = [ \textit{X}_o, \textit{Y}_o, \textit{Z}_o ]^T
+$$
+
+## Transformation {data-auto-animate="true"}
+
+**Translation** between origin of world and camera coordinates is:
+
+$$
+\textbf{\textit{X}}_o = [ \textit{X}_o, \textit{Y}_o, \textit{Z}_o ]^T
+$$
+
+**Rotation** $R$ from world to camera coordinates system is:
+
+$$
+{}^{k}\textbf{\textit{X}}_p = R(\textbf{\textit{X}}_p - \textbf{\textit{X}}_o)
+$$
+
+## Homogeneous Coordinates {data-auto-animate="true"}
+
+$$
+\begin{aligned}
+\begin{bmatrix} {}^{k}\textbf{\textit{X}}_p \\ 1 \end{bmatrix} &=
+\begin{bmatrix} R \hfill ~\textbf{0} \\  \textbf{0}^T \hfill ~1 \end{bmatrix}
+\begin{bmatrix} I_3 \quad -\textbf{\textit{X}}_o \\  \textbf{0}^T \hfill ~1 \end{bmatrix}
+\begin{bmatrix} \textbf{\textit{X}}_p \\ 1 \end{bmatrix} \\
+&= \begin{bmatrix} R \quad -R \textbf{\textit{X}}_o \\
+    \textbf{0}^T \hfill ~1 \end{bmatrix}
+\begin{bmatrix} \textbf{\textit{X}}_p \\ 1 \end{bmatrix}
+\end{aligned}
+$$
