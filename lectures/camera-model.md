@@ -185,12 +185,33 @@ How do we work with these parameters?
 
 ::: incremental
 
-- _intrinsic_ parameters: the properties of the camera
 - _extrinsic_ parameters: the pose of the camera in the world
+- _intrinsic_ parameters: the properties of the camera
 
 :::
 
 ::: notes
+we form two groups of parameters:
 intrinsic - the ideal projection to 2D and then translation to pixel coordinates
 extrinsic - the pose of the camera in the world
+you can imagine if you pick up your camera and move it - it does not effect the position of the sensor, the pixel shape, the focal length, etc.
+:::
+
+## Extrinsic Parameters {data-auto-animate="true"}
+
+- Describe the **pose**, the _position_ and _heading_, of the camera in the world.
+- Invertible transformation.
+
+How many parameters do we need?
+
+::: incremental
+
+- 3 parameters for the position
+- 3 parameters for the heading
+- There are **6** _extrinsic_ parameters.
+
+:::
+
+::: notes
+the only thing we can do is translate, and rotate the camera.
 :::
