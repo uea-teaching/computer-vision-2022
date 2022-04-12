@@ -164,21 +164,46 @@ We have to transform via a number of coordinate systems:
 
 ![World to Pixels](assets/svg/world-to-sensor1.svg)
 
-## World to Pixels {data-auto-animate="true"}
-
-![World to Pixels](assets/svg/world-to-sensor2.svg)
-
-## World to Pixels {data-auto-animate="true"}
-
-![World to Pixels](assets/svg/world-to-sensor3.svg)
+::: notes
+we start with a point in the world on the left of the image.
+and move to the right in the diagram giving us the final pixel coordinate.
+:::
 
 ## World to Pixels {data-auto-animate="true"}
 
-![World to Pixels](assets/svg/world-to-sensor4.svg)
+![World to Camera coordinates](assets/svg/world-to-sensor2.svg)
+
+::: notes
+Object to camera is in 3D and is invertible.
+We convert from one coordinate frame to another.
+:::
 
 ## World to Pixels {data-auto-animate="true"}
 
-![World to Pixels](assets/svg/world-to-sensor5.svg)
+![Projection to 2D](assets/svg/world-to-sensor3.svg)
+
+::: notes
+Then we project from 3D to 2D.
+This is not invertible - we lose some information here.
+:::
+
+## World to Pixels {data-auto-animate="true"}
+
+![Convert to Sensor coordinates](assets/svg/world-to-sensor4.svg)
+
+::: notes
+The sensor coordinates need to be transformed from the projected coordinates.
+Usually we have 0,0 in the top left of an image, whereas we have projected to the centre.
+:::
+
+## World to Pixels {data-auto-animate="true"}
+
+![Lens Distortions](assets/svg/world-to-sensor5.svg)
+
+::: notes
+In the real world, lenses have distortions and aberrations that distort the image.
+We can correct for these here.
+:::
 
 ## Camera Parameters {data-auto-animate="true"}
 
