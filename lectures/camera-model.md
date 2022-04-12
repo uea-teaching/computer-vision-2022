@@ -23,8 +23,10 @@ In the first part - we will then show the relationship between points in the wor
 !["Sallie Gardner," owned by Leland Stanford; ridden by G. Domm, running at a 1:40 gait over the Palo Alto track, 19th June 1878.](assets/jpg/horse.jpg){width="80%"}
 
 ::: notes
-who would disagree if I said the camera was one of the most important inventions in the history of science?
-Here Edweard Muybridge shows definitively that a horses feet al leave the ground when galloping.
+who would disagree if I said the camera was one of the most
+important inventions in the history of science?
+Here Edweard Muybridge shows definitively that a
+horses feet al leave the ground when galloping.
 :::
 
 ## The Camera {data-auto-animate="true"}
@@ -160,7 +162,7 @@ We have to transform via a number of coordinate systems:
 
 :::
 
-## World to Pixels {data-auto-animate="true"}
+## World to Pixels
 
 ![World to Pixels](assets/svg/world-to-sensor1.svg)
 
@@ -169,7 +171,7 @@ we start with a point in the world on the left of the image.
 and move to the right in the diagram giving us the final pixel coordinate.
 :::
 
-## World to Pixels {data-auto-animate="true"}
+## World to Pixels
 
 ![World to Camera coordinates](assets/svg/world-to-sensor2.svg)
 
@@ -178,7 +180,7 @@ Object to camera is in 3D and is invertible.
 We convert from one coordinate frame to another.
 :::
 
-## World to Pixels {data-auto-animate="true"}
+## World to Pixels
 
 ![Projection to 2D](assets/svg/world-to-sensor3.svg)
 
@@ -187,7 +189,7 @@ Then we project from 3D to 2D.
 This is not invertible - we lose some information here.
 :::
 
-## World to Pixels {data-auto-animate="true"}
+## World to Pixels
 
 ![Convert to Sensor coordinates](assets/svg/world-to-sensor4.svg)
 
@@ -196,7 +198,7 @@ The sensor coordinates need to be transformed from the projected coordinates.
 Usually we have 0,0 in the top left of an image, whereas we have projected to the centre.
 :::
 
-## World to Pixels {data-auto-animate="true"}
+## World to Pixels
 
 ![Lens Distortions](assets/svg/world-to-sensor5.svg)
 
@@ -216,12 +218,18 @@ How do we work with these parameters?
 
 :::
 
+![Camera Parameters](assets/svg/world-to-sensor-parameters.svg)
+
 ::: notes
 we form two groups of parameters:
 intrinsic - the ideal projection to 2D and then translation to pixel coordinates
 extrinsic - the pose of the camera in the world
 you can imagine if you pick up your camera and move it - it does not effect the position of the sensor, the pixel shape, the focal length, etc.
 :::
+
+# Extrinsic Parameters {data-auto-animate="true"}
+
+Describe the pose of the camera in the world.
 
 ## Extrinsic Parameters {data-auto-animate="true"}
 
