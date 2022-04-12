@@ -350,4 +350,57 @@ $$
 
 where $c$ is the focal length, or _camera constant_.
 
-## Intrinsic Parameters {data-auto-animate="true"}
+::: notes
+in a nutshell - we are dividing by the (Z) distance from the camera.
+:::
+
+## Homogeneous Coordinates {data-auto-animate="true"}
+
+$$
+\begin{bmatrix} U \\ V \\ W \\ T \end{bmatrix} =
+\begin{bmatrix} c \ 0 \ 0 \ 0 \\ 0 \ c \ 0 \ 0 \\ 0 \ 0 \ c \ 0 \\ 0 \ 0 \ 1 \ 0 \end{bmatrix}
+\begin{bmatrix} {}^{k}X_p \\ {}^{k}Y_p \\ {}^{k}Z_p \\ 1 \end{bmatrix}
+$$
+
+Drop the 3rd row:
+
+$$
+\begin{bmatrix} {}^{c}x_p \\ {}^{c}y_p \\ 1 \end{bmatrix} =
+\begin{bmatrix} {}^{c}u_p \\ {}^{c}v_p \\ {}^{c}w_p \end{bmatrix} =
+\begin{bmatrix} c \ 0 \ 0 \ 0 \\ 0 \ c \ 0 \ 0 \\ 0 \ 0 \ 1 \ 0 \end{bmatrix}
+\begin{bmatrix} {}^{k}X_p \\ {}^{k}Y_p \\ {}^{k}Z_p \\ 1 \end{bmatrix}
+$$
+
+::: notes
+we drop the third row to go from 3d homogeneous camera coords to
+2d homogeneous image plane coords.
+
+I recommend you do the matrix multiplication to confirm it is the same as our earlier projection equations. Don't forget to divide by the homogeneous coordinate.
+:::
+
+## Calibration Matrix {data-auto-animate="true"}
+
+We can now define the _calibration matrix_ for an **ideal** camera.
+
+$$
+{}^{c}K =
+\begin{bmatrix} c \ 0 \ 0 \\ 0 \ c \ 0 \\ 0 \ 0 \ 1 \end{bmatrix}
+$$
+
+::: notes
+We dropped the last column of zeros, so we have a 3x3 matrix.
+in a lot of the literature this is known as K
+:::
+
+# Linear Errors {data-auto-animate="true"}
+
+The next step is mapping from the image plane to the sensor.
+
+- Location of principal point in sensor coordinates.
+- Scale difference in x and y, according to chip design.
+- Shear compensation.
+
+::: notes
+not all cameras have the same number of pixels in x and y.
+Shear is not common in digital cameras - more a legacy of film cameras.
+:::
