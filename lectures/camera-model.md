@@ -233,7 +233,8 @@ Describe the pose of the camera in the world.
 
 ## Extrinsic Parameters {data-auto-animate="true"}
 
-- Describe the **pose**, the _position_ and _heading_, of the camera in the world.
+- Describe the **pose** of the camera in the world.
+- That is, the _position_ and _heading_ of the camera.
 - Invertible transformation.
 
 How many parameters do we need?
@@ -255,13 +256,13 @@ the only thing we can do is translate, and rotate the camera.
 Point in world coordinates:
 
 $$
-\textbf{\textit{X}}_p = [ \textit{X}_p, \textit{Y}_p, \textit{Z}_p ]^T
+\textbf{X}_p = [ X_p, Y_p, Z_p ]^T
 $$
 
 Origin of camera in world coordinates:
 
 $$
-\textbf{\textit{X}}_o = [ \textit{X}_o, \textit{Y}_o, \textit{Z}_o ]^T
+\textbf{X}_o = [ X_o, Y_o, Z_o ]^T
 $$
 
 ## Transformation {data-auto-animate="true"}
@@ -269,36 +270,35 @@ $$
 **Translation** between origin of world and camera coordinates is:
 
 $$
-\textbf{\textit{X}}_o = [ \textit{X}_o, \textit{Y}_o, \textit{Z}_o ]^T
+\textbf{X}_o = [ X_o, Y_o, Z_o ]^T
 $$
 
 **Rotation** $R$ from world to camera coordinates system is:
 
 $$
-{}^{k}\textbf{\textit{X}}_p = R(\textbf{\textit{X}}_p - \textbf{\textit{X}}_o)
+{}^{k}\textbf{X}_p = R(\textbf{X}_p - \textbf{X}_o)
 $$
 
 ## Homogeneous Coordinates {data-auto-animate="true"}
 
 $$
 \begin{aligned}
-\begin{bmatrix} {}^{k}\textbf{\textit{X}}_p \\ 1 \end{bmatrix} &=
-\begin{bmatrix} R \hfill ~\textbf{0} \\  \textbf{0}^T \hfill ~1 \end{bmatrix}
-\begin{bmatrix} I_3 \quad -\textbf{\textit{X}}_o \\  \textbf{0}^T \hfill ~1 \end{bmatrix}
-\begin{bmatrix} \textbf{\textit{X}}_p \\ 1 \end{bmatrix} \\
-&= \begin{bmatrix} R \quad -R \textbf{\textit{X}}_o \\
-    \textbf{0}^T \hfill ~1 \end{bmatrix}
-\begin{bmatrix} \textbf{\textit{X}}_p \\ 1 \end{bmatrix}
+\begin{bmatrix} {}^{k}\textbf{X}_p \\ 1 \end{bmatrix} &=
+\begin{bmatrix} R \quad \textbf{0} \\  \textbf{0}^T \quad 1 \end{bmatrix}
+\begin{bmatrix} I_3 \quad -\textbf{X}_o \\  \textbf{0}^T \quad 1 \end{bmatrix}
+\begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix} \\ &=
+\begin{bmatrix} R \quad -R \textbf{X}_o \\ \textbf{0}^T \quad 1 \end{bmatrix}
+\begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix}
 \end{aligned}
 $$
 
 or:
 
 $$
-{}^{k}\textbf{X}_p  = {}^{k}H \textbf{X}_p
+{}^{k}\textbf{X}_p  = {}^{k}H \textbf{X}_p,
 \quad \text{where} \quad
-{}^{k}H = \begin{bmatrix} R \quad -R \textbf{\textit{X}}_o \\
-    \textbf{0}^T \hfill ~1 \end{bmatrix}
+{}^{k}H = \begin{bmatrix} R \quad -R \textbf{X}_o \\
+    \textbf{0}^T \quad 1 \end{bmatrix}
 $$
 
 ::: notes
