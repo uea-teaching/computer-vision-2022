@@ -149,6 +149,15 @@ $$
 
 :::
 
+## Aside: Homogeneous Coordinates {data-auto-animate="true"}
+
+$$
+\begin{bmatrix} u \\ v \\ w \end{bmatrix} =
+\begin{bmatrix} u/w \\ v/w \\ 1 \end{bmatrix} \Rightarrow
+\begin{bmatrix} u/w \\ v/w \end{bmatrix} =
+\begin{bmatrix} x \\ y \end{bmatrix}
+$$
+
 ## Coordinate Systems {data-auto-animate="true"}
 
 We have to transform via a number of coordinate systems:
@@ -229,7 +238,7 @@ you can imagine if you pick up your camera and move it - it does not effect the 
 
 # Extrinsic Parameters {data-auto-animate="true"}
 
-Describe the pose of the camera in the world.
+The pose of the camera.
 
 ## Extrinsic Parameters {data-auto-animate="true"}
 
@@ -309,3 +318,36 @@ and we can premultiply the rotation and translation because we are in homogeneou
 So finally, we have H is the extrinsic parameters.
 NB Homogeneous coordinates are shown in non-italic font.
 :::
+
+# Intrinsic Parameters {data-auto-animate="true"}
+
+Projecting points from the camera to the sensor.
+
+::: notes
+if we have applied our extrinsic parameters, points in the world are now in camera coordinates.
+How do we project these points to the sensor?
+:::
+
+## Intrinsic Parameters {data-auto-animate="true"}
+
+- projection from camera coordinates to sensor coordinates
+- central projection is **not** invertible
+- image plane to sensor is invertible
+- linear deviations are invertible
+
+![Camera Intrinsics](assets/svg/world-to-sensor-intrinsics.svg)
+
+## {data-auto-animate="true"}
+
+Recall for our pinhole model:
+
+$$
+\begin{aligned}
+{}^{c}x_p &= c \frac{{}^{k}X_p}{{}^{k}Z_p} \\
+{}^{c}y_p &= c \frac{{}^{k}Y_p}{{}^{k}Z_p}
+\end{aligned}
+$$
+
+where $c$ is the focal length, or _camera constant_.
+
+## Intrinsic Parameters {data-auto-animate="true"}
