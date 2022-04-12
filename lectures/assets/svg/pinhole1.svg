@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="1000" height="400" viewBox="0, 0, 1000, 400">
+  <g id="pinhole">
+    <path d="M786.978,255.08 L780,280 L900,279.554 L893.478,255.048 L887.47,255.048 L887.47,152.247 L899.207,152.247 L899.207,116.442 L890.334,116.442 L840.757,80 L790.239,116.442 L781.131,116.442 L781.131,152.247 L792.134,152.247 L792.134,255.048 L786.978,255.048 z M830.533,152.247 L849.056,152.247 L849.056,255.016 L830.533,255.016 L830.533,152.247 z M859.941,152.247 L876.599,152.247 L876.599,255.016 L859.941,255.016 L859.941,152.247 z M819.633,255.08 L803.004,255.08 L803.004,152.311 L819.633,152.311 L819.633,255.08 z" fill="#BFBFBF"/>
+    <path d="M840.5,80.5 L100.5,280.5" fill-opacity="0" stroke="#FF862B" stroke-width="4"/>
+    <path d="M40.5,200.5 L960.5,200.5" fill-opacity="0" stroke="#959595" stroke-width="4" stroke-dasharray="12,8"/>
+    <g>
+      <path d="M100.5,200.5 L100.5,264.1" fill-opacity="0" stroke="#959595" stroke-width="4"/>
+      <path d="M95.7,264.1 L100.5,276.9 L105.3,264.1 z" fill="#959595" fill-opacity="1" stroke="#959595" stroke-width="4" stroke-opacity="1"/>
+    </g>
+    <g>
+      <path d="M840.5,200.5 L840.5,96.9" fill-opacity="0" stroke="#959595" stroke-width="4"/>
+      <path d="M845.3,96.9 L840.5,84.1 L835.7,96.9 z" fill="#959595" fill-opacity="1" stroke="#959595" stroke-width="4" stroke-opacity="1"/>
+    </g>
+    <text transform="matrix(1, 0, 0, 1, 666.854, 198)">
+      <tspan x="-28.179" y="-5" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">optical </tspan>
+      <tspan x="-16.173" y="18" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">axis</tspan>
+    </text>
+    <path d="M100.5,119.779 L100.5,337.779" fill-opacity="0" stroke="#FF8080" stroke-width="2" stroke-dasharray="12,10"/>
+    <text transform="matrix(1, 0, 0, 1, 401.864, 224.946)">
+      <tspan x="-30.51" y="6.5" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">pinhole</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 100, 83)">
+      <tspan x="-25.515" y="-5" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">image</tspan>
+      <tspan x="-22.842" y="18" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">plane</tspan>
+    </text>
+    <path d="M400.124,206.007 C396.844,206.007 394.186,203.349 394.186,200.07 C394.186,196.791 396.844,194.132 400.124,194.132 C403.403,194.132 406.061,196.791 406.061,200.07 C406.061,203.349 403.403,206.007 400.124,206.007 z" fill="#959595"/>
+    <text transform="matrix(1, 0, 0, 1, 846.01, 311.5)">
+      <tspan x="-26.01" y="6.5" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">object</tspan>
+    </text>
+  </g>
+  <g id="labels" display="none">
+    <g>
+      <path d="M400.5,200.5 L400.5,156.9" fill-opacity="0" stroke="#38C400" stroke-width="4"/>
+      <path d="M405.3,156.9 L400.5,144.1 L395.7,156.9 z" fill="#38C400" fill-opacity="1" stroke="#38C400" stroke-width="4" stroke-opacity="1"/>
+    </g>
+    <g>
+      <path d="M400.5,200.5 L356.9,200.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="4"/>
+      <path d="M356.9,195.7 L344.1,200.5 L356.9,205.3 z" fill="#2BA4FF" fill-opacity="1" stroke="#2BA4FF" stroke-width="4" stroke-opacity="1"/>
+    </g>
+    <text transform="matrix(1, 0, 0, 1, 413.597, 238)">
+      <tspan x="-31.347" y="-5" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">camera</tspan>
+      <tspan x="-23.508" y="18" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#959595">origin</tspan>
+    </text>
+  </g>
+</svg>
