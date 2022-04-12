@@ -258,3 +258,21 @@ $$
 \begin{bmatrix} \textbf{\textit{X}}_p \\ 1 \end{bmatrix}
 \end{aligned}
 $$
+
+or:
+
+$$
+\begin{bmatrix} {}^{k}\textbf{\textit{X}}_p \\ 1 \end{bmatrix} =
+{}^{k}H \begin{bmatrix} \textbf{\textit{X}}_p \\ 1 \end{bmatrix}
+\quad \text{where} \quad
+{}^{k}H = \begin{bmatrix} R \quad -R \textbf{\textit{X}}_o \\
+    \textbf{0}^T \hfill ~1 \end{bmatrix}
+$$
+
+::: notes
+here, the bold zero is the zero vector.
+R is a 3x3 rotation matrix.
+I_3 is the 3x3 identity matrix.
+and we can premultiply the rotation and translation because we are in homogeneous coordinates.
+So finally, we have H is the extrinsic parameters.
+:::
