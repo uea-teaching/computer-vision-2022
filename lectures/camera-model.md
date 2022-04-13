@@ -545,3 +545,16 @@ There are **5** intrinsic parameters:
 important - different literature may talk about 2 different camera constants, cx, cy or fx fy.
 also important - we have not talked about non-linear distortions, from lenses etc.
 :::
+
+## Projection Matrix {data-auto-animate="true"}
+
+Finally, we have the $3 \times 4$ homogeneous projection matrix:
+
+$$
+P = K R [I_3 | - \textbf{X}_o]
+$$
+
+It contains **11 parameters**:
+
+- 6 extrinsic parameters
+- 5 intrinsic parameters
