@@ -426,15 +426,47 @@ in a lot of the literature this is labelled as K.
 Our last matrix here is a 3x4 matrix - identity concatenated with the camera offset.
 :::
 
-# Linear Errors {data-auto-animate="true"}
+## Linear Errors {data-auto-animate="true"}
 
 The next step is mapping from the image plane to the sensor.
+
+::: incremental
 
 - Location of principal point in sensor coordinates.
 - Scale difference in x and y, according to chip design.
 - Shear compensation.
 
+:::
+
 ::: notes
 not all cameras have the same number of pixels in x and y.
 Shear is not common in digital cameras - more a legacy of film cameras.
+:::
+
+## Location of Principal Point {data-auto-animate="true"}
+
+::: columns
+::::: column
+![Principal Point](assets/svg/principal-point.svg)
+:::::
+::::: column
+Origin of sensor is not at the principal point:
+
+$$
+{}^{s}H_{c} =
+\begin{bmatrix}
+1 \quad& 0 \quad& x_H \\
+0 \quad& 1 \quad& y_H \\
+0 \quad& 0 \quad& 1
+\end{bmatrix}
+$$
+
+Compensation is a _translation_.
+
+:::::
+:::
+
+::: notes
+The optical axis passes through the image plane at the principal point.
+We need to translate to the pixel or sensor coordinate origin.
 :::
