@@ -99,9 +99,8 @@ and points in the image.
 ![Camera at the origin.](assets/svg/pinhole2.svg)
 
 ::: notes
-Camera position is often called principal point.
-The distance from the principal point to the image plane is called the focal length.
-We can look at a ray from an object to the principal point r_o,
+The distance from the camera origin to the image plane is called the focal length.
+We can look at a ray from an object to the origin r_o,
 that then passes through the pinhole to the image plane r_i.
 
 NB. The pinhole diagram is often shown with the image plane in front of the camera.
