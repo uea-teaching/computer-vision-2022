@@ -450,7 +450,7 @@ Shear is not common in digital cameras - more a legacy of film cameras.
 ![Principal Point](assets/svg/principal-point.svg)
 :::::
 ::::: column
-Origin of sensor is not at the principal point:
+Origin of sensor space is not at the principal point:
 
 $$
 {}^{s}H_{c} =
@@ -469,4 +469,79 @@ Compensation is a _translation_.
 ::: notes
 The optical axis passes through the image plane at the principal point.
 We need to translate to the pixel or sensor coordinate origin.
+:::
+
+## Scale and Shear {data-auto-animate="true"}
+
+- Scale difference $m$ in x and y.
+- Sheer compensation $s$.
+
+We need to add 4 additional parameters to our calibration matrix:
+
+$$
+{}^{s}H_{c} =
+\begin{bmatrix}
+1 \quad& s \quad &x_H \\
+0 \quad& 1 + m   &y_H \\
+0 \quad& 0 \quad &1
+\end{bmatrix}
+$$
+
+::: notes
+why do we need scale difference? not all camera sensors have 'square' pixels.
+sheer is unusual in digital cameras - expect it to be zero in most cases.
+m, s, xh and yh.
+:::
+
+## Calibration Matrix {data-auto-animate="true"}
+
+Normally, we combine these compensations with the ideal calibration matrix:
+
+$$
+\begin{aligned}
+K &=
+\begin{bmatrix}
+1 \quad& s \quad &x_H \\
+0 \quad& 1 + m   &y_H \\
+0 \quad& 0 \quad &1
+\end{bmatrix}
+\begin{bmatrix}
+c \quad 0 \quad 0 \\
+0 \quad c \quad 0 \\
+0 \quad 0 \quad 1
+\end{bmatrix} \\
+&=
+\begin{bmatrix}
+c \quad& s \quad    &x_H \\
+0 \quad& c(1 + m)   &y_H \\
+0 \quad& 0 \quad    &1
+\end{bmatrix}
+\end{aligned}
+$$
+
+::: notes
+we pre multiply the ideal calibration matrix by the scale and shear matrix.
+:::
+
+## Calibration Matrix {data-auto-animate="true"}
+
+$$
+K =
+\begin{bmatrix}
+c \quad& s \quad    &x_H \\
+0 \quad& c(1 + m)   &y_H \\
+0 \quad& 0 \quad    &1
+\end{bmatrix}
+$$
+
+There are **5** intrinsic parameters:
+
+- camera constant $c$
+- scale difference $m$
+- principal point offset $x_H$ and $y_H$
+- shear compensation $s$
+
+::: notes
+important - different literature may talk about 2 different camera constants, cx, cy or fx fy.
+also important - we have not talked about non-linear distortions, from lenses etc.
 :::
