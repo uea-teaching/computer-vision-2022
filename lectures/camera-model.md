@@ -293,10 +293,10 @@ $$
 $$
 \begin{aligned}
 \begin{bmatrix} {}^{k}\textbf{X}_p \\ 1 \end{bmatrix} &=
-\begin{bmatrix} R \quad \textbf{0} \\  \textbf{0}^T \quad 1 \end{bmatrix}
-\begin{bmatrix} I_3 \quad -\textbf{X}_o \\  \textbf{0}^T \quad 1 \end{bmatrix}
+\begin{bmatrix} R &\quad \textbf{0} \\  \textbf{0}^T &\quad 1 \end{bmatrix}
+\begin{bmatrix} I_3 &\quad -\textbf{X}_o \\  \textbf{0}^T &\quad 1 \end{bmatrix}
 \begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix} \\ &=
-\begin{bmatrix} R \quad -R \textbf{X}_o \\ \textbf{0}^T \quad 1 \end{bmatrix}
+\begin{bmatrix} R &\quad -R \textbf{X}_o \\ \textbf{0}^T &\quad 1 \end{bmatrix}
 \begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix}
 \end{aligned}
 $$
@@ -357,7 +357,11 @@ in a nutshell - we are dividing by the (Z) distance from the camera.
 
 $$
 \begin{bmatrix} U \\ V \\ W \\ T \end{bmatrix} =
-\begin{bmatrix} c \ 0 \ 0 \ 0 \\ 0 \ c \ 0 \ 0 \\ 0 \ 0 \ c \ 0 \\ 0 \ 0 \ 1 \ 0 \end{bmatrix}
+\begin{bmatrix} c \quad 0 \quad 0 \quad 0 \\
+                0 \quad c \quad 0 \quad 0 \\
+                0 \quad 0 \quad c \quad 0 \\
+                0 \quad 0 \quad 1 \quad 0
+\end{bmatrix}
 \begin{bmatrix} {}^{k}X_p \\ {}^{k}Y_p \\ {}^{k}Z_p \\ 1 \end{bmatrix}
 $$
 
@@ -366,7 +370,10 @@ Drop the 3rd row:
 $$
 \begin{bmatrix} {}^{c}x_p \\ {}^{c}y_p \\ 1 \end{bmatrix} =
 \begin{bmatrix} {}^{c}u_p \\ {}^{c}v_p \\ {}^{c}w_p \end{bmatrix} =
-\begin{bmatrix} c \ 0 \ 0 \ 0 \\ 0 \ c \ 0 \ 0 \\ 0 \ 0 \ 1 \ 0 \end{bmatrix}
+\begin{bmatrix} c \quad 0 \quad 0 \quad 0 \\
+                0 \quad c \quad 0 \quad 0 \\
+                0 \quad 0 \quad 1 \quad 0
+\end{bmatrix}
 \begin{bmatrix} {}^{k}X_p \\ {}^{k}Y_p \\ {}^{k}Z_p \\ 1 \end{bmatrix}
 $$
 
