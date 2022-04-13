@@ -306,8 +306,7 @@ or:
 $$
 {}^{k}\textbf{X}_p  = {}^{k}H \textbf{X}_p,
 \quad \text{where} \quad
-{}^{k}H = \begin{bmatrix} R \quad -R \textbf{X}_o \\
-    \textbf{0}^T \quad 1 \end{bmatrix}
+{}^{k}H = \begin{bmatrix} R \quad& -R \textbf{X}_o \\ \textbf{0}^T \quad& 1 \end{bmatrix}
 $$
 
 ::: notes
@@ -378,13 +377,34 @@ we drop the third row to go from 3d homogeneous camera coords to
 I recommend you do the matrix multiplication to confirm it is the same as our earlier projection equations. Don't forget to divide by the homogeneous coordinate.
 :::
 
+## Ideal Camera {data-auto-animate="true"}
+
+The mapping for an ideal camera is:
+
+$$
+{}^{c}x = {}^{c}P X
+$$
+
+with:
+
+$$
+{}^{c}P =
+\begin{bmatrix} c \quad 0 \quad 0 \quad 0 \\ 0 \quad c \quad 0 \quad 0 \\ 0 \quad 0 \quad 1 \quad 0 \end{bmatrix}
+\begin{bmatrix} R \quad& -R \textbf{X}_o \\ \textbf{0}^T \quad& 1 \end{bmatrix}
+$$
+
+::: notes
+This is our equation from earlier. Mapping a point in the world to the image plane.
+The projection matrix P is formed by multiplying the extrinsic parameters by the intrinsic parameters.
+:::
+
 ## Calibration Matrix {data-auto-animate="true"}
 
 We can now define the _calibration matrix_ for an **ideal** camera.
 
 $$
 {}^{c}K =
-\begin{bmatrix} c \ 0 \ 0 \\ 0 \ c \ 0 \\ 0 \ 0 \ 1 \end{bmatrix}
+\begin{bmatrix} c \quad 0 \quad 0 \\ 0 \quad c \quad 0 \\ 0 \quad 0 \quad 1 \end{bmatrix}
 $$
 
 ::: notes
