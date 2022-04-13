@@ -403,6 +403,7 @@ $$
 ::: notes
 This is our equation from earlier. Mapping a point in the world to the image plane.
 The projection matrix P is formed by multiplying the extrinsic parameters by the intrinsic parameters.
+We now want to carry on with the intrinsic parameters and we will want to premultiply with another 3x 3 matrix.
 :::
 
 ## Calibration Matrix {data-auto-animate="true"}
@@ -414,9 +415,16 @@ $$
 \begin{bmatrix} c \quad 0 \quad 0 \\ 0 \quad c \quad 0 \\ 0 \quad 0 \quad 1 \end{bmatrix}
 $$
 
+The mapping of a point in the world to the image plane is:
+
+$$
+{}^{c}P = {}^{c}K R [I_3 | - \textbf{X}_o]
+$$
+
 ::: notes
 We dropped the last column of zeros, so we have a 3x3 matrix.
-in a lot of the literature this is known as K
+in a lot of the literature this is labelled as K.
+Our last matrix here is a 3x4 matrix - identity concatenated with the camera offset.
 :::
 
 # Linear Errors {data-auto-animate="true"}
