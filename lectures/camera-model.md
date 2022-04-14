@@ -935,7 +935,9 @@ Where $M$ is a $2n \times 12$ matrix.
 Solving a system of linear equations of the form $Ax = 0$ is equivalent to finding the null space of $A$.
 
 - Apply the Singular Value Decomposition (SVD) to solve $M\textbf{p} = 0$.
+- SVD returns a matrix $U$, $S$, and $V$ such that $M = U S V^T$.
 - Choose $\textbf{p}$ as the singular _vector_ belonging to the singular _value_ of $0$.
+- Solution is the last column of $V$.
 
 ::: notes
 with all our assumptions holding we are done! We have found the parameters of P
@@ -962,4 +964,33 @@ No solution if all points $X_i$ are on a **plane**.
 
 ::: notes
 this is actually quite common - think of the texture in walls and floors
+:::
+
+## Decomposing the Matrix {data-auto-animate="true"}
+
+If we need to separate the intrinsic and extrinsic parameters, we can use **QR** decomposition.
+
+## DLT recap {data-auto-animate="true"}
+
+1. Build the matrix $M$.
+2. Solve using _SVD_; $M = U \ S \ V^T$, solution is last column of $V$.
+
+# Summary
+
+- Camera Model
+- Intrinsic and Extrinsic Parameters
+- Direct Linear Transformation
+
+reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach. Section 1.3
+- Hartley, Zisserman; Multiple View Geometry in Computer Vision
+
+::: notes
+we started by introducing the camera model - and how it
+measures not just intensity but also position and direction.
+
+we looked at intrinsic and extrinsic parameters for the pinhole camera model.
+
+and, we worked through the direct linear transformation.
 :::
