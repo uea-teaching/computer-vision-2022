@@ -636,12 +636,14 @@ there are 6 extrinsic parameters, R, t, and the projection matrix P.
 so recall, P is a 3x4 matrix.
 :::
 
-## Direct Linear Transformation (DLT) {data-auto-animate="true"}
+# Direct Linear Transformation {data-auto-animate="true"}
 
 Compute the **11** _intrinsic_ and _extrinsic_ parameters.
 
 ::: notes
 so the task is to compute 11 parameters.
+NB - the term DLT is used both to refer to the equation above,
+and to the process of solving for the parameters.
 :::
 
 ## How many points are needed? {data-auto-animate="true"}
@@ -658,7 +660,7 @@ Here is the projection in homogeneous coordinates.
 Each point gives how many observation equations?
 :::
 
-## How many points are needed? {data-auto-animate="true"}
+## {data-auto-animate="true"}
 
 Normalised homogeneous projection:
 
@@ -672,7 +674,7 @@ Ultimately, we want Euclidean coordinates so we
 need to normalise the homogeneous coordinates.
 :::
 
-## How many points are needed? {data-auto-animate="true"}
+## {data-auto-animate="true"}
 
 Euclidean coordinates:
 
@@ -681,8 +683,127 @@ $$
 \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
 $$
 
+::: notes
+Now we are back in Euclidean coordinates - we can see that one point in space gives two observation equations.
+:::
+
+## {data-auto-animate="true"}
+
+We can expand the multiplication by $P$ to get the following:
+
+$$
+\begin{aligned}
+x &= \frac{p_{11}X + p_{12}Y + p_{13}Z + p_{14}}
+    {p_{31}X + p_{32}Y + p_{33}Z + p_{34}} \\[10pt]
+y &= \frac{p_{21}X + p_{22}Y + p_{23}Z + p_{24}}
+    {p_{31}X + p_{32}Y + p_{33}Z + p_{34}}
+\end{aligned}
+$$
+
 Each point gives **two** observation equations, one for each image coordinate.
 
 ::: notes
-Now we are back in Euclidean coordinates - we can see that one point in space gives two observation equations.
+Here are the expanded observation equations.
+:::
+
+## How many points are needed? {data-auto-animate="true"}
+
+Each point gives **two** observation equations, one for each image coordinate.
+
+We need at least **6 points** to estimate _11 parameters_.
+
+::: notes
+we are also assuming that we have an affine camera without non-linear distortions.
+:::
+
+## Rearrange the DLT Equation {data-auto-animate="true"}
+
+$$
+x_i = P \textbf{X}_i
+$$
+
+$$
+x_i =
+\begin{bmatrix}
+    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
+    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
+    p_{31} \quad p_{32} \quad p_{33} \quad p_{34} \\
+    p_{41} \quad p_{42} \quad p_{43} \quad p_{44}
+\end{bmatrix} \textbf{X}_i
+$$
+
+::: notes
+to solve for the parameters, we need to rearrange the equation.
+if we look at all the elements of P... we make a vector of each row...
+:::
+
+## {data-auto-animate="true"}
+
+$$
+x_i = P \textbf{X}_i =
+\begin{bmatrix}
+    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
+    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
+    p_{31} \quad p_{32} \quad p_{33} \quad p_{34}
+\end{bmatrix} \textbf{X}_i
+$$
+
+Define three vectors:
+
+$$
+A = \begin{bmatrix} p_{11} \\ p_{12} \\ p_{13} \\ p_{14} \end{bmatrix}, \quad
+B = \begin{bmatrix} p_{21} \\ p_{22} \\ p_{23} \\ p_{24} \end{bmatrix}, \quad
+C = \begin{bmatrix} p_{31} \\ p_{32} \\ p_{33} \\ p_{34} \end{bmatrix}
+$$
+
+::: notes
+so here we have just taken the rows of P and formed separate vectors, A, B, C.
+:::
+
+## {data-auto-animate="true"}
+
+$$
+x_i = P \textbf{X}_i =
+\begin{bmatrix}
+    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
+    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
+    p_{31} \quad p_{32} \quad p_{33} \quad p_{34}
+\end{bmatrix} \textbf{X}_i
+$$
+
+Rewrite the equation as:
+
+$$
+x_i = P \textbf{X}_i =
+\begin{bmatrix} A^T \\ B^T \\ C^T \end{bmatrix} \textbf{X}_i
+$$
+
+::: notes
+so, nothing unusual yet - we have just rearranged the equation, and labelled the rows.
+Now, if we multiply out this matrix, we get AX, BX, and CX.
+:::
+
+## {data-auto-animate="true"}
+
+$$
+x_i = P \textbf{X}_i =
+\begin{bmatrix}
+    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
+    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
+    p_{31} \quad p_{32} \quad p_{33} \quad p_{34}
+\end{bmatrix} \textbf{X}_i
+$$
+
+Rewrite the equation as:
+
+$$
+\begin{bmatrix} u \\ v \\ w \end{bmatrix} \quad = \quad
+x_i \quad = \quad
+P \textbf{X}_i \quad = \quad
+\begin{bmatrix} A^T \\ B^T \\ C^T \end{bmatrix} \textbf{X}_i \quad = \quad
+\begin{bmatrix} A^T X_i \\ B^T X_i \\ C^T X_i \end{bmatrix}
+$$
+
+::: notes
+so now to get each of u, v, w, we just need to compute the product of 3 vectors.
 :::
