@@ -641,6 +641,7 @@ so recall, P is a 3x4 matrix.
 Compute the **11** _intrinsic_ and _extrinsic_ parameters.
 
 ::: notes
+what should these values be??
 so the task is to compute 11 parameters.
 NB - the term DLT is used both to refer to the equation above,
 and to the process of solving for the parameters.
@@ -719,11 +720,11 @@ we are also assuming that we have an affine camera without non-linear distortion
 ## Rearrange the DLT Equation {data-auto-animate="true"}
 
 $$
-x_i = P \textbf{X}_i
+\textbf{x}_i = P \textbf{X}_i
 $$
 
 $$
-x_i =
+\textbf{x}_i =
 \begin{bmatrix}
     p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
     p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
@@ -740,7 +741,7 @@ if we look at all the elements of P... we make a vector of each row...
 ## {data-auto-animate="true"}
 
 $$
-x_i = P \textbf{X}_i =
+\textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix}
     p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
     p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
@@ -763,7 +764,7 @@ so here we have just taken the rows of P and formed separate vectors, A, B, C.
 ## {data-auto-animate="true"}
 
 $$
-x_i = P \textbf{X}_i =
+\textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix}
     p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
     p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
@@ -774,7 +775,7 @@ $$
 Rewrite the equation as:
 
 $$
-x_i = P \textbf{X}_i =
+\textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix} A^T \\ B^T \\ C^T \end{bmatrix} \textbf{X}_i
 $$
 
@@ -786,7 +787,7 @@ Now, if we multiply out this matrix, we get AX, BX, and CX.
 ## {data-auto-animate="true"}
 
 $$
-x_i = P \textbf{X}_i =
+\textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix}
     p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
     p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
@@ -797,13 +798,59 @@ $$
 Rewrite the equation as:
 
 $$
-\begin{bmatrix} u \\ v \\ w \end{bmatrix} \quad = \quad
-x_i \quad = \quad
+\begin{bmatrix} u_i \\ v_i \\ w_i \end{bmatrix} \quad = \quad
+\textbf{x}_i \quad = \quad
 P \textbf{X}_i \quad = \quad
 \begin{bmatrix} A^T \\ B^T \\ C^T \end{bmatrix} \textbf{X}_i \quad = \quad
 \begin{bmatrix} A^T X_i \\ B^T X_i \\ C^T X_i \end{bmatrix}
 $$
 
 ::: notes
-so now to get each of u, v, w, we just need to compute the product of 3 vectors.
+So now to get each of u, v, w, (our homogenous coordinates) we just need to compute the product of 3 vectors.
+and, recall, we want the end result to be in euclidean coordinates - just the x,y pixel coordinates, so we will need to divide by the last element of the vector.
+Let's write that out...
+:::
+
+## {data-auto-animate="true"}
+
+$$
+\textbf{x}_i =
+\begin{bmatrix} x_i \\ y_i \\ 1 \end{bmatrix}, \quad
+\begin{bmatrix} u_i \\ v_i \\ w_i \end{bmatrix} =
+\begin{bmatrix} A^T X_i \\ B^T X_i \\ C^T X_i \end{bmatrix}
+$$
+
+$$
+x_i = \frac{u_i}{w_i} = \frac{A^T X_i}{C^T X_i},
+\quad y_i = \frac{v_i}{w_i} = \frac{B^T X_i}{C^T X_i}
+$$
+
+::: notes
+so now my x coordinate is A/C, and my y coordinate is B/C.
+we can now use this result to define a system of equations.
+:::
+
+## System of equations {data-auto-animate="true"}
+
+$$
+x_i = \frac{A^T X_i}{C^T X_i} \quad \Rightarrow \quad
+x_i C^T X_i - A^T X_i = 0
+$$
+
+$$
+y_i = \frac{B^T X_i}{C^T X_i} \quad \Rightarrow \quad
+y_i C^T X_i - B^T X_i = 0
+$$
+
+Leading to a system of equations, linear in $A$, $B$, and $C$:
+
+$$
+\begin{aligned}
+- X_{i}^{T} A +  x_i X_{i}^{T} C &= 0 \\
+- X_{i}^{T} B +  x_i X_{i}^{T} C &= 0
+\end{aligned}
+$$
+
+::: notes
+why write this way? because A, B, C are the unknowns so we take the transpose out of them.
 :::
