@@ -558,3 +558,90 @@ It contains **11 parameters**:
 
 - 6 extrinsic parameters
 - 5 intrinsic parameters
+
+# Direct Linear Transformation {data-auto-animate="true"}
+
+![point mapping](assets/svg/parameters1.svg)
+
+::: notes
+Direct Linear transform refers to the projection - but also
+the process of solving the parameters.
+we know what P is now, but how do we find the values of the parameters?
+we want to estimate these parameters - given we know some points in the world.
+So, the big X are given, we can observe the small x in the image, we want to estimate P.
+:::
+
+## Control Points {data-auto-animate="true"}
+
+::: columns
+::::: column
+![known points in the world](assets/jpg/norwich_cathedral_DLT.jpg){width="80%"}
+:::::
+::::: column
+
+We have _control points_ of known coordinates in the world.
+
+We want to estimate the camera parameters, given these points.
+
+:::::
+:::
+
+::: notes
+we need to know a number of control points - shown here in our scene.
+:::
+
+## Parameter Estimation {data-auto-animate="true"}
+
+- **Goal**: camera parameters, $P$.
+- **Given**: control points in the world, $X$.
+- **Observed**: coordinates $(x, y)$ in the image.
+
+::: notes
+
+Assume: correspondence between the control points is known.
+we need to know which point is mapped to which pixel.
+Based on this information, we want to estimate the
+parameters of P - the intrinsic and extrinsic parameters.
+:::
+
+## Mapping {data-auto-animate="true"}
+
+Direct Linear Transformation (DLT) maps a point in the world to a point in the image.
+
+$$
+\begin{aligned}
+x &= K R [I_3 | - \textbf{X}_o] \textbf{X} \\
+  &= P \textbf{X}
+\end{aligned}
+$$
+
+::: notes
+We have in P, the intrinsic and extrinsic parameters.
+R, offset, and K
+:::
+
+## Camera Parameters {data-auto-animate="true"}
+
+$$
+x = K R [I_3 | - \textbf{X}_o] \textbf{X} = P \textbf{X}
+$$
+
+- Intrinsic parameters $K$
+- Extrinsic parameters $\textbf{X}_o$ and $R$.
+- Projection matrix $P$ contains intrinsic **and** extrinsic parameters.
+
+::: notes
+K contains 5 parameters, c, m, xh, yh, s.
+there are 6 extrinsic parameters, R, t, and the projection matrix P.
+so recall, P is a 3x4 matrix.
+:::
+
+## Direct Linear Transformation (DLT) {data-auto-animate="true"}
+
+Compute the 11 intrinsic and extrinsic parameters.
+
+::: notes
+so the task is to compute 11 parameters.
+:::
+
+## How many points are needed? {data-auto-animate="true"}
