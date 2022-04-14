@@ -904,3 +904,62 @@ we should just pause on this slide...
 I need to point out that ax and ay contain all the knowns we are dealing with...
 I hope you can see how you would implement this in code... just pulling all the values out and some simple products...
 :::
+
+## {data-auto-animate="true"}
+
+for each point we have:
+
+$$
+a_{x_i}^T \textbf{p} = 0, \quad a_{y_i}^T \textbf{p} = 0
+$$
+
+stacking all the points vertically:
+
+$$
+\begin{bmatrix}
+    a_{x_1}^T \\
+    a_{y_1}^T \\
+    a_{x_2}^T \\
+    a_{y_2}^T \\
+    \dots \\
+    a_{x_n}^T \\
+    a_{y_n}^T \\
+\end{bmatrix} \textbf{p} =
+M \textbf{p} \overset{!}{=} 0
+$$
+
+Where $M$ is a $2n \times 12$ matrix.
+
+## Solving the Linear System {data-auto-animate="true"}
+
+Solving a system of linear equations of the form $Ax = 0$ is equivalent to finding the null space of $A$.
+
+- Apply the Singular Value Decomposition (SVD) to solve $M\textbf{p} = 0$.
+- Choose $\textbf{p}$ as the singular _vector_ belonging to the singular _value_ of $0$.
+
+::: notes
+with all our assumptions holding we are done! We have found the parameters of P
+But - does it always work?
+:::
+
+## Direct Linear Transformation {data-auto-animate="true"}
+
+Does it always work?
+
+::: notes
+let's consider a few more different cases...
+:::
+
+## Redundant observations {data-auto-animate="true"}
+
+If we have more than 6 points, we will have contradictions and $M\textbf{p} \neq 0$.
+
+We must choose a $\textbf{p}$ that corresponds to the _smallest_ singular value.
+
+## Critical Surfaces {data-auto-animate="true"}
+
+No solution if all points $X_i$ are on a **plane**.
+
+::: notes
+this is actually quite common - think of the texture in walls and floors
+:::
