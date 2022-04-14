@@ -638,10 +638,51 @@ so recall, P is a 3x4 matrix.
 
 ## Direct Linear Transformation (DLT) {data-auto-animate="true"}
 
-Compute the 11 intrinsic and extrinsic parameters.
+Compute the **11** _intrinsic_ and _extrinsic_ parameters.
 
 ::: notes
 so the task is to compute 11 parameters.
 :::
 
 ## How many points are needed? {data-auto-animate="true"}
+
+Homogeneous projection:
+
+$$
+\begin{bmatrix} u \\ v \\ w \end{bmatrix} = P
+\begin{bmatrix} U \\ V \\ W \\ T \end{bmatrix}
+$$
+
+::: notes
+Here is the projection in homogeneous coordinates.
+Each point gives how many observation equations?
+:::
+
+## How many points are needed? {data-auto-animate="true"}
+
+Normalised homogeneous projection:
+
+$$
+\begin{bmatrix} u/w \\ v/w \\ 1 \end{bmatrix} = P
+\begin{bmatrix} U/T \\ V/T \\ W/T \\ 1 \end{bmatrix}
+$$
+
+::: notes
+Ultimately, we want Euclidean coordinates so we
+need to normalise the homogeneous coordinates.
+:::
+
+## How many points are needed? {data-auto-animate="true"}
+
+Euclidean coordinates:
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = P
+\begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
+$$
+
+Each point gives **two** observation equations, one for each image coordinate.
+
+::: notes
+Now we are back in Euclidean coordinates - we can see that one point in space gives two observation equations.
+:::
