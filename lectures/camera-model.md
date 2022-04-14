@@ -842,15 +842,65 @@ y_i = \frac{B^T X_i}{C^T X_i} \quad \Rightarrow \quad
 y_i C^T X_i - B^T X_i = 0
 $$
 
-Leading to a system of equations, linear in $A$, $B$, and $C$:
+Leading to a system of linear equations in $A$, $B$, and $C$:
 
 $$
 \begin{aligned}
 - X_{i}^{T} A +  x_i X_{i}^{T} C &= 0 \\
-- X_{i}^{T} B +  x_i X_{i}^{T} C &= 0
+- X_{i}^{T} B +  y_i X_{i}^{T} C &= 0
 \end{aligned}
 $$
 
 ::: notes
 why write this way? because A, B, C are the unknowns so we take the transpose out of them.
+:::
+
+## {data-auto-animate="true"}
+
+let:
+
+$$
+\textbf{p} = \begin{bmatrix} A \\ B \\ C \end{bmatrix} = vec(P^T) =
+\begin{bmatrix}
+    p_{11} \\ p_{12} \\ p_{13} \\ p_{14} \\
+    p_{21} \\ p_{22} \\ p_{23} \\ p_{24} \\
+    p_{31} \\ p_{32} \\ p_{33} \\ p_{34}
+\end{bmatrix}
+$$
+
+::: notes
+before we step to the next slide... p is a long vector of all the 12 parameters in P
+:::
+
+## {data-auto-animate="true"}
+
+Rewrite:
+
+$$
+\begin{aligned}
+- X_{i}^{T} A &\quad            &+x_i X_{i}^{T} C &= 0 \\
+        \quad &- X_{i}^{T} B    &+y_i X_{i}^{T} C &= 0
+\end{aligned}
+$$
+
+as:
+
+$$
+a_{x_i}^T \textbf{p} = 0, \quad a_{y_i}^T \textbf{p} = 0
+$$
+
+with:
+
+$$
+\begin{aligned}
+\textbf{p}           &= vec(P^T) \\
+a_{x_i}^T &= (-X_i, -Y_i -Z_i, -1, 0, 0, 0, 0, x_i X_i, x_i Y_i, x_i Z_i, x_i) \\
+a_{y_i}^T &= (0, 0, 0, 0, -X_i, -Y_i -Z_i, -1, y_i X_i, y_i Y_i, y_i Z_i, y_i)
+\end{aligned}
+$$
+
+::: notes
+we should just pause on this slide...
+I need to point out that ax and ay contain all the knowns we are dealing with...
+I hope you can see how you would implement this in code... just pulling all the values out and some simple products...
 :::
