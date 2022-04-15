@@ -203,3 +203,41 @@ $$
 it is important to note that the intrinsics are the same for all images,
 and the extrinsics are the same for one image, but all points.
 :::
+
+## Setting up the equations {data-auto-animate="true"}
+
+Define a matrix $H$:
+
+$$
+H  = \begin{bmatrix} \textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3 \end{bmatrix} =
+\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} & r_{12} & t_1 \\
+    r_{21} & r_{22} & t_2 \\
+    r_{31} & r_{32} & t_3
+\end{bmatrix}
+$$
+
+One point generates this equation:
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = H \begin{bmatrix} X \\ Y \\ 1 \end{bmatrix}
+$$
+
+::: notes
+we can define a matrix H, the product of each 3x3 matrix, and we can also think of this as 3 column vectors h1, h2, h3.
+:::
+
+## Setting up the equations {data-auto-animate="true"}
+
+For multiple point observations:
+
+$$
+\begin{bmatrix} x_i \\ y_i \\ 1 \end{bmatrix} =
+\underset{3 \times 3}{H} \begin{bmatrix} X_i \\ Y_i \\ 1 \end{bmatrix},
+\quad i = 1 ..., n
+$$
+
+::: notes
+and a reminder, the points are known, H is unknown.
+:::
