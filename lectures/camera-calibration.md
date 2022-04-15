@@ -238,6 +238,73 @@ $$
 \quad i = 1 ..., n
 $$
 
+Analogous to the _DLT_.
+
 ::: notes
 and a reminder, the points are known, H is unknown.
+now we do the same as we did with the DLT...
 :::
+
+## Parameter Estimation {data-auto-animate="true"}
+
+We estimate a $3 \times 3$ homography instead of $3 \times 4$ projection.
+
+$$
+a_{x_i}^T \textbf{h} = 0, \quad a_{y_i}^T \textbf{h} = 0
+$$
+
+with:
+
+$$
+\begin{aligned}
+\textbf{h}           &= vec(H^T) \\
+a_{x_i}^T &= (-X_i, -Y_i, -1, 0, 0, 0, x_i X_i, x_i Y_i, x_i) \\
+a_{y_i}^T &= (0, 0, 0, -X_i, -Y_i, -1, y_i X_i, y_i Y_i, y_i)
+\end{aligned}
+$$
+
+::: notes
+now very similar to the DLT - but we have 9 coefficients instead of 12.
+we have these coefficient vectors ax ay, and the unknown matrix H.
+we stack h to one long column vector...
+:::
+
+## Parameter Estimation {data-auto-animate="true"}
+
+Solving the system of linear equations leads to an estimate of the parameters of $H$.
+
+- We need to identify **at least** 4 points.
+- $H$ has 8 Dof (degrees of freedom)
+- each point provides 2 observations
+
+We now have the parameters of $H$, how do we find $K$?
+
+## Decompose Intrinsic Parameters {data-auto-animate="true"}
+
+For the DLT, we could use QR decomposition to find the rotation matrix of the extrinsic parameters.
+
+- We can not do this for Zhang's method.
+- We eliminated part of $R$ earlier.
+
+## Decompose Intrinsic Parameters {data-auto-animate="true"}
+
+$$
+H  = \begin{bmatrix} \textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3 \end{bmatrix} =
+\underbrace
+{\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}}_{K}
+\underbrace
+{\begin{bmatrix}
+    r_{11} & r_{12} & t_1 \\
+    r_{21} & r_{22} & t_2 \\
+    r_{31} & r_{32} & t_3
+\end{bmatrix}}_{[\textbf{r}_1, \textbf{r}_2, \textbf{t}]}
+$$
+
+::: notes
+as a reminder, we have removed a column of R, so we can't use QR decomposition.
+We are not interested in the right half - but how do we get K?
+:::
+
+## Decompose Intrinsic Parameters {data-auto-animate="true"}
+
+We need to extract $K$ from the matrix $H = K[\textbf{r}_1, \textbf{r}_2, \textbf{t}]$ we computed using SVD.
