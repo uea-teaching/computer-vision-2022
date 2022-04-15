@@ -308,3 +308,92 @@ We are not interested in the right half - but how do we get K?
 ## Decompose Intrinsic Parameters {data-auto-animate="true"}
 
 We need to extract $K$ from the matrix $H = K[\textbf{r}_1, \textbf{r}_2, \textbf{t}]$ we computed using SVD.
+
+::: notes
+so this is our task - there is no standard decomposition technique to do this.
+:::
+
+## Decompose Intrinsic Parameters {data-auto-animate="true"}
+
+We need to extract $K$ from the matrix $H = K[\textbf{r}_1, \textbf{r}_2, \textbf{t}]$ we computed using SVD.
+
+Four step process:
+
+::: incremental
+
+1. Exploit constraints of $K, \textbf{r}_1, \textbf{r}_2$
+2. Define a matrix $B = K^{-T}K^{-1}$
+3. Solve $B$ using another homogeneous linear system.
+4. Decompose $B$.
+
+:::
+
+::: notes
+first exploit properties we know - r1 r2 are columns of a rotation matrix - and have useful properties.
+
+define B so the maths is consistent
+
+we will then define a system of equations that will lead to B, based on the constraints we know from 1.
+
+Once we have B, we need to decompose to get K.
+:::
+
+# Exploiting Constraints {data-auto-animate="true"}
+
+What constraints do we have?
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+$$
+K = \begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}
+$$
+
+$K$ is **invertible**.
+
+::: notes
+k is upper triangular, all the elements on the diagonal are non zero - it is invertible.
+we can take advantage of this...
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+$$
+H  = \begin{bmatrix} \textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3 \end{bmatrix} =
+\underbrace
+{\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}}_{K}
+\underbrace
+{\begin{bmatrix}
+    r_{11} & r_{12} & t_1 \\
+    r_{21} & r_{22} & t_2 \\
+    r_{31} & r_{32} & t_3
+\end{bmatrix}}_{[\textbf{r}_1, \textbf{r}_2, \textbf{t}]}
+$$
+
+$$
+[\textbf{r}_1, \textbf{r}_2, \textbf{t}] =
+K^{-1} [\textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3]
+$$
+
+$$
+\Rightarrow \textbf{r}_1 = K^{-1} \textbf{h}_1, \quad \textbf{r}_2 = K^{-1} \textbf{h}_2
+$$
+
+::: notes
+so, multiply both sides by K-inverse gives us identity on the right...
+swap over giving r1, r2, t = k-inverse h1 h2 h3
+
+reminder - h is known - we dont know K or r1, r2
+but we do know r1 r2 are columns of a rotation matrix.
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+As $[\textbf{r}_1 , \textbf{r}_2 , \textbf{r}_3]$ are the columns of a rotation matrix, they form an orthonormal basis.
+
+$$
+\textbf{r}_1^T \textbf{r}_2 = 0, \quad ||\textbf{r}_1|| = ||\textbf{r}_2|| = 1
+$$
+
+::: notes
+so the dot product of r1 and r2 is zero - and the length of r1 and r2 are equal and are unit.
+:::
