@@ -874,8 +874,6 @@ before we step to the next slide... p is a long vector of all the 12 parameters 
 
 ## {data-auto-animate="true"}
 
-Rewrite:
-
 $$
 \begin{aligned}
 - X_{i}^{T} A &\quad            &+x_i X_{i}^{T} C &= 0 \\
@@ -883,7 +881,7 @@ $$
 \end{aligned}
 $$
 
-as:
+rewrite as:
 
 $$
 a_{x_i}^T \textbf{p} = 0, \quad a_{y_i}^T \textbf{p} = 0
