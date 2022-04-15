@@ -116,4 +116,90 @@ using a corner detector, we find points on the checkerboard.
 we use a 'trick' setting the xy plane to be parallel to the checkerboard,
 with z pointing outward.
 This means all the z coordinates are zero. We know how big the squares are in our printed pattern.
+Knowing that z=0 changes the maths - let's see how!
+:::
+
+## Simplification {data-auto-animate="true"}
+
+The $Z$ coordinate of each point is **zero**.
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} & r_{12} & r_{13} & t_1 \\
+    r_{21} & r_{22} & r_{23} & t_2 \\
+    r_{31} & r_{32} & r_{33} & t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y \\ \color{red}{Z} \\ 1 \end{bmatrix}
+$$
+
+::: notes
+This is our DLT equation.
+The left matrix is the intrinsic matrix, and the right matrix is the extrinsic matrix.
+so the Z (in red) is zero all the time.
+:::
+
+## Simplification {data-auto-animate="true"}
+
+The last column of the rotation matrix has no effect on the system.
+
+- we can delete these components from the system
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} & r_{12} & \color{red}{r_{13}} & t_1 \\
+    r_{21} & r_{22} & \color{red}{r_{23}} & t_2 \\
+    r_{31} & r_{32} & \color{red}{r_{33}} & t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y \\ \color{red}{Z} \\ 1 \end{bmatrix}
+$$
+
+::: notes
+because Z is always zero, the last column of the rotation matrix is not used.
+it's something we don't need to estimate.
+:::
+
+## Simplification {data-auto-animate="true"}
+
+- The $Z$ coordinate of each point is **zero**.
+- Deleting the third column of $R$ gives us:
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} & r_{12} & t_1 \\
+    r_{21} & r_{22} & t_2 \\
+    r_{31} & r_{32} & t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y  \\ 1 \end{bmatrix}
+$$
+
+::: notes
+every observed point leads to one of these equations.
+:::
+
+## Simplification {data-auto-animate="true"}
+
+- Each observed point gives this equation.
+- The _intrinsics_ persist for **all** images.
+- The _extrinsics_ persist for **each** image.
+
+$$
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c & s & x_H \\ 0 & c(1 + m) & y_H \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} & r_{12} & t_1 \\
+    r_{21} & r_{22} & t_2 \\
+    r_{31} & r_{32} & t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y  \\ 1 \end{bmatrix}
+$$
+
+::: notes
+it is important to note that the intrinsics are the same for all images,
+and the extrinsics are the same for one image, but all points.
 :::
