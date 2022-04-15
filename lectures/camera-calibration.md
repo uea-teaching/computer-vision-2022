@@ -447,3 +447,123 @@ $$
 $$
 \textbf{h}_1^T B \textbf{h}_1 - \textbf{h}_2^T B \textbf{h}_2 = 0
 $$
+
+::: notes
+so now we have all our unknowns in B.
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+From $B$ the calibration matrix can be recovered using _Cholesky_ decomposition.
+
+$$
+B = \begin{bmatrix}
+b_{11} & b_{12} & b_{13} \\
+b_{21} & b_{22} & b_{23} \\
+b_{31} & b_{32} & b_{33}
+\end{bmatrix}
+$$
+
+$$
+chol(B) = AA^T \Rightarrow A = K^{-T}
+$$
+
+If we know $B$, we can recover the calibration matrix $K$.
+
+::: notes
+There is a known method for $B$ - Cholesky decomposition.
+We can decompose a matrix times its transpose. So if we know $B$, we can recover $K$.
+How can we find B?
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+What do we have so far?
+
+$$
+\textbf{h}_1^T B \textbf{h}_2 = 0
+$$
+
+$$
+\textbf{h}_1^T B \textbf{h}_1 - \textbf{h}_2^T B \textbf{h}_2 = 0
+$$
+
+- Matrix $B$, which is symmetric positive, so 6 unknowns.
+- $\textbf{h}$ are known.
+- Two equations that relate $B$ and $\textbf{h}$.
+
+::: notes
+B is symmetric so has 6 unknowns not 9.
+2 equations that relate B and h and sets them to zero.
+These 2 equations are similar to the DLT equations - we can reform it to a coefficient vector, times an unknown vector. We have that here too, so we will do the same trick.
+Let's set up the equations...
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+Define a vector $\textbf{b} = (b_{11}, b_{12}, b_{13}, b_{22}, b_{23}, b_{33})$
+
+$$
+B = \begin{bmatrix}
+    \color{red}{b_{11}} & \color{red}{b_{12}} & \color{red}{b_{13}} \\
+    b_{12} & \color{red}{b_{22}} & \color{red}{b_{23}} \\
+    b_{13} & b_{23} & \color{red}{b_{33}}
+    \end{bmatrix}
+$$
+
+There are 6 unknowns in $B$, because it is symmetric.
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+Construct a system of equations $Vb=0$ exploiting our constraints.
+
+$$
+v^{T}_{12}\textbf{b} = 0,  \quad v^{T}_{11}\textbf{b} - v^{T}_{22}\textbf{b} = 0
+$$
+
+::: notes
+This is similar to earlier, with the coefficients in v constructed from the knowns in H.
+:::
+
+## Matrix $V$ {data-auto-animate="true"}
+
+The matrix $V$ is given by:
+
+$$
+V = \begin{bmatrix} v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22} \end{bmatrix}, \quad
+with \quad v_{ij} =
+\begin{bmatrix}
+h_{1i}h_{1j} \\ h_{1i}h_{2j}+h_{2i}h_{1j} \\
+h_{3i}h_{1j}+h_{1i}h_{3j} \\ h_{2i}h_{2j} \\
+h_{3i}h_{2j}+h_{2i}h_{3j} \\ h_{3i}h_{3j}
+\end{bmatrix}
+$$
+
+::: notes
+so we use the elements of h to construct the matrix v.
+:::
+
+## Matrix $V$ {data-auto-animate="true"}
+
+For **each** image we get:
+
+$$
+\begin{bmatrix} v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22} \end{bmatrix} \textbf{b} = 0
+$$
+
+::: notes
+v is a 2x6 matrix. b is a 6x1 vector.
+For every image we get this equation.
+recall: we needed 4 points in each image to get H.
+:::
+
+## Matrix $V$ {data-auto-animate="true"}
+
+For multiple images we stack the matrices to a $2n \times 6$ matrix:
+
+$$
+\begin{bmatrix} v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22} \\
+\dots \\
+v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22}
+\end{bmatrix} \textbf{b} = 0
+$$
