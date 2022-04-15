@@ -41,3 +41,79 @@ image plane in the imaginary position in front of the camera.
 This is very common in the literature, and is valid due to the similar triangles
 of the pinhole camera model.
 :::
+
+## Direct Linear Transformation {data-auto-animate="true"}
+
+Compute the 11 _intrinsic_ **and** _extrinsic_ parameters of a camera.
+
+::: {style="font-size:1.5em"}
+
+$$
+\textbf{x} = K R [ I_3 | - \textbf{X}_o ] \textbf{X}
+$$
+
+:::
+
+::: notes
+and here we have the five intrinsic parameters on K
+and 3 rotation values in R, and the 3 translation -Xo
+:::
+
+## Zhang's Method {data-auto-animate="true"}
+
+Compute the 5 _intrinsic_ parameters in $K$.
+
+::: {style="font-size:1.5em"}
+
+$$
+\textbf{x} = K R [ I_3 | - \textbf{X}_o ] \textbf{X}
+$$
+
+:::
+
+::: notes
+Why do this? surely we are better computing all the parameters?
+answer - DLT requires knowledge of the scene we may ot have.
+:::
+
+## Zhang's Method {data-auto-animate="true"}
+
+Camera calibration using images of a **checkerboard**.
+
+![calibration target](assets/png/chk_orig_1.png){width="60%"}
+
+::: notes
+this time we don't need to know 3D points in the scene - we use a checkerboard of known dimensions.
+:::
+
+## Checkerboard {data-auto-animate="true"}
+
+- Board is of **known** size and structure.
+- The board must be **flat**.
+
+![Calibration targets](assets/png/chk_orig.png)
+
+::: notes
+we know how big the squares are, and we know how many squares there are.
+it must be flat - this is an important property that we will exploit.
+:::
+
+## Checkerboard Method {data-auto-animate="true"}
+
+Set the **world** coordinate system to the **corner** of the checkerboard.
+
+::: incremental
+
+- do this for _each_ image captured.
+- all points lie on x/y plane with z=0
+
+:::
+
+![Detected corners](assets/png/chk_crn.png)
+
+::: notes
+using a corner detector, we find points on the checkerboard.
+we use a 'trick' setting the xy plane to be parallel to the checkerboard,
+with z pointing outward.
+This means all the z coordinates are zero. We know how big the squares are in our printed pattern.
+:::
