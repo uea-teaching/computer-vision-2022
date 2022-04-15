@@ -894,7 +894,7 @@ with:
 $$
 \begin{aligned}
 \textbf{p}           &= vec(P^T) \\
-a_{x_i}^T &= (-X_i, -Y_i -Z_i, -1, 0, 0, 0, 0, x_i X_i, x_i Y_i, x_i Z_i, x_i) \\
+a_{x_i}^T &= (-X_i, -Y_i, -Z_i, -1, 0, 0, 0, 0, x_i X_i, x_i Y_i, x_i Z_i, x_i) \\
 a_{y_i}^T &= (0, 0, 0, 0, -X_i, -Y_i, -Z_i, -1, y_i X_i, y_i Y_i, y_i Z_i, y_i)
 \end{aligned}
 $$
