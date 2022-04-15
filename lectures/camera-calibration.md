@@ -397,3 +397,53 @@ $$
 ::: notes
 so the dot product of r1 and r2 is zero - and the length of r1 and r2 are equal and are unit.
 :::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+$$
+\textbf{r}_1 = K^{-1} \textbf{h}_1, \quad \textbf{r}_2 = K^{-1} \textbf{h}_2, \quad
+\textbf{r}_1^T \textbf{r}_2 = 0, \quad ||\textbf{r}_1|| = ||\textbf{r}_2|| = 1
+$$
+
+$$
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_2 = 0
+$$
+
+$$
+\begin{aligned}
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_1 = \textbf{h}_2^T K^{-T} K^{-1} \textbf{h}_2 \\[10pt]
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_1 - \textbf{h}_2^T K^{-T} K^{-1} \textbf{h}_2 = 0
+\end{aligned}
+$$
+
+::: notes
+inverse transpose means the transpose of the inverse.
+here we substitute all the terms for r1, r2 and set the equations to zero.
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+$$
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_2 = 0
+$$
+
+$$
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_1 - \textbf{h}_2^T K^{-T} K^{-1} \textbf{h}_2 = 0
+$$
+
+::: notes
+so these are our two equations that relate our knowns in the h vectors, and our unknowns in K.
+now, lets define a matrix B and do a simple variable substitution.
+:::
+
+## Exploiting Constraints {data-auto-animate="true"}
+
+Define a matrix $B := K^{-T}K^{-1}$
+
+$$
+\textbf{h}_1^T B \textbf{h}_2 = 0
+$$
+
+$$
+\textbf{h}_1^T B \textbf{h}_1 - \textbf{h}_2^T B \textbf{h}_2 = 0
+$$
