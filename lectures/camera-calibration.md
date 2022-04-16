@@ -607,3 +607,7 @@ Once we have b, we can rebuild the matrix B, and use Cholesky decomposition to r
 ::: notes
 SVD gives us the solution directly of Vb=0, then we use cholesky to get K.
 :::
+
+# Non-Linear Distortion {data-auto-animate="true"}
+
+How to deal with non-linear distortion?
