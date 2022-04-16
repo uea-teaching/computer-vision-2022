@@ -555,6 +555,7 @@ $$
 v is a 2x6 matrix. b is a 6x1 vector.
 For every image we get this equation.
 recall: we needed 4 points in each image to get H.
+If you are working with the original paper we are at the end of section 3.
 :::
 
 ## Matrix $V$ {data-auto-animate="true"}
@@ -567,3 +568,42 @@ $$
 v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22}
 \end{bmatrix} \textbf{b} = 0
 $$
+
+We need to solve the linear system of $V\textbf{b}=0$ to find $b$ and hence $K$.
+
+::: notes
+for the third time today, we are at the point when we need to solve this system, using SVD.
+:::
+
+## Solving the Linear System {data-auto-animate="true"}
+
+The system $V\textbf{b}=0$ has a trivial solution when $\textbf{b}=0$ which will not provide a valid matrix $B$.
+
+- Apply additional constraint $||\textbf{b}|| = 1$ .
+
+## Solving the Linear System {data-auto-animate="true"}
+
+Real world measurements are noisy.
+
+- Find the solution that minimises the least squares error:
+
+$$
+b^* = arg\underset{b}{min}||V \textbf{b}|| \quad \text{with} \quad ||\textbf{b}|| = 1
+$$
+
+Use SVD and choose the singular vector corresponding to the smallest singular value.
+
+::: notes
+Once we have b, we can rebuild the matrix B, and use Cholesky decomposition to recover K directly.
+:::
+
+## Minimum Requirements {data-auto-animate="true"}
+
+- At least 4 points in each target image.
+- Each target image gives two equations.
+- $B$ has 6 DoF so we need 3 _different_ views of the target.
+- Solve $V\textbf{b}=0$ to compute $K$.
+
+::: notes
+SVD gives us the solution directly of Vb=0, then we use cholesky to get K.
+:::
