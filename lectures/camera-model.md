@@ -940,6 +940,8 @@ Solving a system of linear equations of the form $Ax = 0$ is equivalent to findi
 ::: notes
 with all our assumptions holding we are done! We have found the parameters of P
 But - does it always work?
+The properties of SVD give us a least squares solution, that is the last column of V.
+noise means the solution will not be zero - only close to zero.
 :::
 
 ## Direct Linear Transformation {data-auto-animate="true"}
