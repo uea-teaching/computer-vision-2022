@@ -9,7 +9,6 @@ date: Spring 2022
 
 - Zhang's Method
 - Non-linear Distortion
-- Three Point Algorithm
 
 # Zhang's Method
 
@@ -616,3 +615,71 @@ So we started similar to the DLT - but needed to do extra work because we did no
 # Non-Linear Distortion {data-auto-animate="true"}
 
 How to deal with non-linear distortion?
+
+::: notes
+earlier, I briefly mentioned non-linear distortion, usually from lens artifacts.
+How do we account for this in the camera model?
+:::
+
+## Non-Linear Distortion {data-auto-animate="true"}
+
+A general calibration matrix is obtained by multiplying the affine camera with a general mapping.
+
+$$
+{}^{a}H(\textbf{x}, q)K =
+\begin{bmatrix}
+1 & 0 & x \Delta(\textbf{x}, q) \\
+0 & 1 & y \Delta(\textbf{x}, q) \\
+0 & 0 & 1 \end{bmatrix}
+$$
+
+::: notes
+A general mapping takes the pixel in the image plane and maps a shift at every position to a new position, based on some unknown parameters q.
+:::
+
+## Lens Distortion {data-auto-animate="true"}
+
+![barrel and pincushion distortion](assets/svg/barrel_and_pin.svg)
+
+::: notes
+barrel and pincushion are both examples of radial distortion.
+This sort of distortion is very common in cheaper cameras, and is often a combination of barrel and pincushion distortion.
+:::
+
+## Radial Distortion {data-auto-animate="true"}
+
+A standard approach for radial distortion:
+
+$$
+\begin{aligned}
+{}^{a}x &= x(1 + q_1r^2 + q_2r^4) \\
+{}^{a}y &= y(1 + q_1r^2 + q_2r^4)
+\end{aligned}
+$$
+
+- with $[x, y]^{T}$ a point projected by the ideal camera.
+- with $r$ the distance from the camera principal point to the pixel.
+- $q_1$ and $q_2$ are the radial distortion parameters.
+
+::: notes
+there can be many non-linear models, radial and tangential are the most important.
+:::
+
+## Lens Distortion {data-auto-animate="true"}
+
+Lens distortion can be calculated by minimising a non-linear function.
+
+- Make an initial guess for the distortion parameters.
+- Calculate $K$ using Zhang's method.
+- Measure the reprojection error.
+- Refine the distortion parameters.
+
+## {data-auto-animate="true"}
+
+![before calibration](assets/png/chk_orig.png){width=80%}
+
+![after calibration](assets/png/chk_correct.png){width=80%}
+
+::: notes
+this is the sort of thing you can expect to see if you do this.
+:::
