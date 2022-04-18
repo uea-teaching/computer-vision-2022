@@ -456,9 +456,9 @@ Origin of sensor space is not at the principal point:
 $$
 {}^{s}H_{c} =
 \begin{bmatrix}
-1 \quad& 0 \quad& x_H \\
-0 \quad& 1 \quad& y_H \\
-0 \quad& 0 \quad& 1
+1 & 0 & x_H \\
+0 & 1 & y_H \\
+0 & 0 & 1
 \end{bmatrix}
 $$
 
@@ -482,9 +482,9 @@ We need to add 4 additional parameters to our calibration matrix:
 $$
 {}^{s}H_{c} =
 \begin{bmatrix}
-1 \quad& s \quad &x_H \\
-0 \quad& 1 + m   &y_H \\
-0 \quad& 0 \quad &1
+1 & s & x_H \\
+0 & 1 + m  & y_H \\
+0 & 0 & 1
 \end{bmatrix}
 $$
 
@@ -502,20 +502,20 @@ $$
 \begin{aligned}
 K &=
 \begin{bmatrix}
-1 \quad& s \quad &x_H \\
-0 \quad& 1 + m   &y_H \\
-0 \quad& 0 \quad &1
+1  & s       &   x_H \\
+0  & 1 + m   &   y_H \\
+0  & 0   & 1
 \end{bmatrix}
 \begin{bmatrix}
-c \quad 0 \quad 0 \\
-0 \quad c \quad 0 \\
-0 \quad 0 \quad 1
+c & 0 & 0 \\
+0 & c & 0 \\
+0 & 0 & 1
 \end{bmatrix} \\
 &=
 \begin{bmatrix}
-c \quad& s \quad    &x_H \\
-0 \quad& c(1 + m)   &y_H \\
-0 \quad& 0 \quad    &1
+c  & s & x_H \\
+0  & c(1 + m) & y_H \\
+0  & 0 & 1
 \end{bmatrix}
 \end{aligned}
 $$
@@ -529,9 +529,9 @@ we pre multiply the ideal calibration matrix by the scale and shear matrix.
 $$
 K =
 \begin{bmatrix}
-c \quad& s \quad    &x_H \\
-0 \quad& c(1 + m)   &y_H \\
-0 \quad& 0 \quad    &1
+c & s & x_H \\
+0 & c(1 + m) & y_H \\
+0 & 0 & 1
 \end{bmatrix}
 $$
 
