@@ -950,14 +950,8 @@ noise means the solution will not be zero - only close to zero.
 Does it always work?
 
 ::: notes
-let's consider a few more different cases...
+not always...
 :::
-
-## Redundant observations {data-auto-animate="true"}
-
-If we have more than 6 points, we will have contradictions and $M\textbf{p} \neq 0$.
-
-We must choose a $\textbf{p}$ that corresponds to the _smallest_ singular value.
 
 ## Critical Surfaces {data-auto-animate="true"}
 
