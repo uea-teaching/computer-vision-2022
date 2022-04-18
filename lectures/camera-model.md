@@ -996,6 +996,24 @@ $$
 ::: notes
 H is a 3x3 matrix, h is a 3x1 vector - we can define this directly from the structure of P.
 I know H is K R, and h is the part on the right.
+Getting Xo is straightforward - if we take the inverse of H, we get the inverse of K R...
+then we can pre multiply h and directly get Xo.
+:::
+
+## Decomposing the Projection Matrix {data-auto-animate="true"}
+
+$$
+H = K R, \quad \textbf{h} = -KR\textbf{X}_o
+$$
+
+We can obtain the projection centre by:
+
+$$
+\textbf{X}_o = -H^{-1} \textbf{h}
+$$
+
+::: notes
+This part is very simple - but the next part - getting R out is more complicated.
 :::
 
 ## DLT recap {data-auto-animate="true"}
