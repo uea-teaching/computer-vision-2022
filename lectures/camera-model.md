@@ -966,9 +966,37 @@ No solution if all points $X_i$ are on a **plane**.
 this is actually quite common - think of the texture in walls and floors
 :::
 
-## Decomposing the Matrix {data-auto-animate="true"}
+# Decomposing the Projection Matrix {data-auto-animate="true"}
 
-If we need to separate the intrinsic and extrinsic parameters, we can use **QR** decomposition.
+From $P$ to $K$, $R$, $\textbf{X}_o$
+
+::: notes
+If we have P - we still do not have K or know where the camera is located in space.
+How can we turn P into K, and R and Xo?
+The other way is easy - just a multiplication - but how do I find these individual matrices?
+Usefully - there is a standard way to do this.
+:::
+
+## Decomposing the Projection Matrix {data-auto-animate="true"}
+
+We have $P$, how do we obtain $K, R, \textbf{X}_o$?
+
+Structure of $P$:
+
+$$
+P = [K R | -K R\textbf{X}_o] = [H | \textbf{h}]
+$$
+
+with:
+
+$$
+H = K R, \quad \textbf{h} = -KR\textbf{X}_o
+$$
+
+::: notes
+H is a 3x3 matrix, h is a 3x1 vector - we can define this directly from the structure of P.
+I know H is K R, and h is the part on the right.
+:::
 
 ## DLT recap {data-auto-animate="true"}
 
