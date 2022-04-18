@@ -727,10 +727,10 @@ $$
 $$
 \textbf{x}_i =
 \begin{bmatrix}
-    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
-    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
-    p_{31} \quad p_{32} \quad p_{33} \quad p_{34} \\
-    p_{41} \quad p_{42} \quad p_{43} \quad p_{44}
+    p_{11} & p_{12} & p_{13} & p_{14} \\
+    p_{21} & p_{22} & p_{23} & p_{24} \\
+    p_{31} & p_{32} & p_{33} & p_{34} \\
+    p_{41} & p_{42} & p_{43} & p_{44}
 \end{bmatrix} \textbf{X}_i
 $$
 
@@ -744,9 +744,9 @@ if we look at all the elements of P... we make a vector of each row...
 $$
 \textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix}
-    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
-    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
-    p_{31} \quad p_{32} \quad p_{33} \quad p_{34}
+    p_{11} & p_{12} & p_{13} & p_{14} \\
+    p_{21} & p_{22} & p_{23} & p_{24} \\
+    p_{31} & p_{32} & p_{33} & p_{34}
 \end{bmatrix} \textbf{X}_i
 $$
 
@@ -767,9 +767,9 @@ so here we have just taken the rows of P and formed separate vectors, A, B, C.
 $$
 \textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix}
-    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
-    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
-    p_{31} \quad p_{32} \quad p_{33} \quad p_{34}
+    p_{11} & p_{12} & p_{13} & p_{14} \\
+    p_{21} & p_{22} & p_{23} & p_{24} \\
+    p_{31} & p_{32} & p_{33} & p_{34}
 \end{bmatrix} \textbf{X}_i
 $$
 
@@ -790,9 +790,9 @@ Now, if we multiply out this matrix, we get AX, BX, and CX.
 $$
 \textbf{x}_i = P \textbf{X}_i =
 \begin{bmatrix}
-    p_{11} \quad p_{12} \quad p_{13} \quad p_{14} \\
-    p_{21} \quad p_{22} \quad p_{23} \quad p_{24} \\
-    p_{31} \quad p_{32} \quad p_{33} \quad p_{34}
+    p_{11} & p_{12} & p_{13} & p_{14} \\
+    p_{21} & p_{22} & p_{23} & p_{24} \\
+    p_{31} & p_{32} & p_{33} & p_{34}
 \end{bmatrix} \textbf{X}_i
 $$
 
