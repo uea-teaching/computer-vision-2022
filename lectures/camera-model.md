@@ -293,10 +293,10 @@ $$
 $$
 \begin{aligned}
 \begin{bmatrix} {}^{k}\textbf{X}_p \\ 1 \end{bmatrix} &=
-\begin{bmatrix} R &\quad \textbf{0} \\  \textbf{0}^T &\quad 1 \end{bmatrix}
-\begin{bmatrix} I_3 &\quad -\textbf{X}_o \\  \textbf{0}^T &\quad 1 \end{bmatrix}
+\begin{bmatrix} R &  \textbf{0} \\  \textbf{0}^T &  1 \end{bmatrix}
+\begin{bmatrix} I_3 &  -\textbf{X}_o \\  \textbf{0}^T &  1 \end{bmatrix}
 \begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix} \\ &=
-\begin{bmatrix} R &\quad -R \textbf{X}_o \\ \textbf{0}^T &\quad 1 \end{bmatrix}
+\begin{bmatrix} R &  -R \textbf{X}_o \\ \textbf{0}^T &  1 \end{bmatrix}
 \begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix}
 \end{aligned}
 $$
@@ -306,7 +306,7 @@ or:
 $$
 {}^{k}\textbf{X}_p  = {}^{k}H \textbf{X}_p,
 \quad \text{where} \quad
-{}^{k}H = \begin{bmatrix} R \quad& -R \textbf{X}_o \\ \textbf{0}^T \quad& 1 \end{bmatrix}
+{}^{k}H = \begin{bmatrix} R  & -R \textbf{X}_o \\ \textbf{0}^T  & 1 \end{bmatrix}
 $$
 
 ::: notes
