@@ -412,7 +412,7 @@ We can now define the _calibration matrix_ for an **ideal** camera.
 
 $$
 {}^{c}K =
-\begin{bmatrix} c \quad 0 \quad 0 \\ 0 \quad c \quad 0 \\ 0 \quad 0 \quad 1 \end{bmatrix}
+\begin{bmatrix} c & 0 & 0 \\ 0 & c & 0 \\ 0 & 0 & 1 \end{bmatrix}
 $$
 
 The mapping of a point in the world to the image plane is:
