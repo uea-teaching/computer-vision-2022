@@ -396,8 +396,8 @@ with:
 
 $$
 {}^{c}P =
-\begin{bmatrix} c \quad 0 \quad 0 \quad 0 \\ 0 \quad c \quad 0 \quad 0 \\ 0 \quad 0 \quad 1 \quad 0 \end{bmatrix}
-\begin{bmatrix} R \quad& -R \textbf{X}_o \\ \textbf{0}^T \quad& 1 \end{bmatrix}
+\begin{bmatrix} c & 0 & 0 & 0 \\ 0 & c & 0 & 0 \\ 0 & 0 & 1 & 0 \end{bmatrix}
+\begin{bmatrix} R & -R \textbf{X}_o \\ \textbf{0}^T & 1 \end{bmatrix}
 $$
 
 ::: notes
