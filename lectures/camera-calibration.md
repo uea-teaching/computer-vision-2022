@@ -610,6 +610,7 @@ We know the size, and that the target is flat.
 From 4 points we compute a matrix H for each image.
 We construct a B matrix for all images.
 SVD gives us the solution directly of Vb=0, then we use cholesky to get K.
+So we started similar to the DLT - but needed to do extra work because we did not have a proper rotation matrix to decompose with QR.
 :::
 
 # Non-Linear Distortion {data-auto-animate="true"}
