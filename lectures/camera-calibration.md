@@ -683,3 +683,33 @@ Lens distortion can be calculated by minimising a non-linear function.
 ::: notes
 this is the sort of thing you can expect to see if you do this.
 :::
+
+# Packages {data-auto-animate="true"}
+
+These, and many other methods for calibration, are available in popular image processing packages.
+
+- [OpenCV](https://opencv.org/releases/) for python and C++.
+- [Camera Calibration Toolkit](http://robots.stanford.edu/cs223b04/JeanYvesCalib/htmls/example.html) for Matlab.
+
+::: notes
+It is not necessary to implement these methods yourself - you can find them in a number of packages.
+:::
+
+# Summary
+
+- Pinhole camera model.
+- Non-linear model for distortion.
+- Calibration using images of a target.
+
+Reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach.
+- Hartley, Zisserman; Multiple View Geometry in Computer Vision
+- Zhang, Z., A flexible new technique for camera calibration.
+
+::: notes
+In practice, we take lot's of images of a target - maybe 20 or more.
+It's important to cover the full area of the lens - you might need different targets for different applications.
+We use an iterative approach to solve the non-linear distortion problem.
+Zhang's method for the camera parameters.
+:::
