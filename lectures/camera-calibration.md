@@ -600,11 +600,15 @@ Once we have b, we can rebuild the matrix B, and use Cholesky decomposition to r
 ## Minimum Requirements {data-auto-animate="true"}
 
 - At least 4 points in each target image.
-- Each target image gives two equations.
+- Each target image gives _two_ equations.
 - $B$ has 6 DoF so we need 3 _different_ views of the target.
-- Solve $V\textbf{b}=0$ to compute $K$.
+- Solve $V\textbf{b}=0$ using SVD to compute $K$.
 
 ::: notes
+we take photos of our targets and we need at least 4 points in each image.
+We know the size, and that the target is flat.
+From 4 points we compute a matrix H for each image.
+We construct a B matrix for all images.
 SVD gives us the solution directly of Vb=0, then we use cholesky to get K.
 :::
 
