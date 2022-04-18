@@ -515,7 +515,7 @@ There are 6 unknowns in $B$, because it is symmetric.
 
 ## Exploiting Constraints {data-auto-animate="true"}
 
-Construct a system of equations $Vb=0$ exploiting our constraints.
+Construct a system of equations $V\textbf{b}=0$ exploiting our constraints.
 
 $$
 v^{T}_{12}\textbf{b} = 0,  \quad v^{T}_{11}\textbf{b} - v^{T}_{22}\textbf{b} = 0
