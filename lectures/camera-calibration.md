@@ -382,7 +382,7 @@ $$
 so, multiply both sides by K-inverse gives us identity on the right...
 swap over giving r1, r2, t = k-inverse h1 h2 h3
 
-reminder - h is known - we dont know K or r1, r2
+reminder - h is known - we don't know K or r1, r2
 but we do know r1 r2 are columns of a rotation matrix.
 :::
 
