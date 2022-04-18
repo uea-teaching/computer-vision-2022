@@ -63,8 +63,9 @@ How do we get the point observations?
 - **locally** distinct features
 
 ::: notes
-We get these observations by detecting features in an image, finding corners, blobs, etc.
-Thes are locally distinct features...
+We get these observations by detecting features in an image,
+finding corners, blobs, etc.
+These are locally distinct features...
 :::
 
 ## The Camera {data-auto-animate="true"}
@@ -1016,10 +1017,72 @@ $$
 This part is very simple - but the next part - getting R out is more complicated.
 :::
 
+## Decomposing the Projection Matrix {data-auto-animate="true"}
+
+$$
+H = K R
+$$
+
+What do we know about these matrices?
+
+::: notes
+H is K times R - how can we break it down to the calibration matrix and the rotation matrix?
+Is there something about the structure of these matrices we can exploit?
+:::
+
+## Decomposing the Projection Matrix {data-auto-animate="true"}
+
+Exploit the structure of $H=K R$
+
+- $K$ is a triangular matrix
+- $R$ is a rotation matrix
+
+There is a standard method to decompose a matrix to a rotation and triangular matrix.
+
+::: incremental
+
+- **QR** decomposition
+
+:::
+
+::: notes
+there is one small detail left to thwart us - K and R are in the wrong order - so we need to do QR on the inverse of H.
+:::
+
+## Decomposing the Projection Matrix {data-auto-animate="true"}
+
+We perform a QR decomposition on $H^{-1}$, given the order of rotation and triangular matrices.
+
+$$
+H^{-1} = (K R)^{-1} = R^{-1}K^{-1} = R^{T}K^{-1}
+$$
+
+::: notes
+so now QR decomposition gives R-transpose and K-inverse.
+:::
+
+## Decomposing the Projection Matrix {data-auto-animate="true"}
+
+The Matrix $H = K R$ is homogeneous, therefore so is $K$, so we must normalise.
+
+$$
+K  \leftarrow \frac{1}{K_{33}} K
+$$
+
+::: notes
+one further detail - we need to normalise the homogeneous matrix K.
+:::
+
 ## DLT recap {data-auto-animate="true"}
 
 1. Build the matrix $M$.
 2. Solve using _SVD_; $M = U \ S \ V^T$, solution is last column of $V$.
+3. If individual matrices are required, we can use _QR_ decomposition.
+
+::: notes
+SVD finds the null space - or the nearest approximation to the null space.
+which solves our system of linear equations.
+:::
 
 # Summary
 
