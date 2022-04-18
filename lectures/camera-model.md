@@ -152,9 +152,9 @@ $$
 ## Aside: Homogeneous Coordinates {data-auto-animate="true"}
 
 $$
-\begin{bmatrix} u \\ v \\ w \end{bmatrix} =
+\begin{bmatrix} u \\ v \\ w \end{bmatrix} \Rightarrow
 \begin{bmatrix} u/w \\ v/w \\ 1 \end{bmatrix} \Rightarrow
-\begin{bmatrix} u/w \\ v/w \end{bmatrix} =
+\begin{bmatrix} u/w \\ v/w \end{bmatrix} \Rightarrow
 \begin{bmatrix} x \\ y \end{bmatrix}
 $$
 
