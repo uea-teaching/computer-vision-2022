@@ -27,6 +27,8 @@ There is also a Makefile in the root of this repo if you already have Docker ins
 - Practical Deep Learning
 - Visual Features : Keypoints
 - Visual Features : Descriptors
+- The Camera Model
+- Camera Calibration
 
 ## Labs
 
