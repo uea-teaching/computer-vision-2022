@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Camera Calibration</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Camera Calibration</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="contents" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Contents</h1>
+<ul>
+<li>Zhang’s Method</li>
+<li>Non-linear Distortion</li>
+</ul>
+</section>
+
+<section>
+<section id="zhangs-method" class="title-slide slide level1">
+<h1>Zhang’s Method</h1>
+<p>A method of finding the <strong>intrinsic</strong> parameters of a camera.</p>
+<ul>
+<li>Zhang, Z., 2000. A flexible new technique for camera calibration. IEEE Transactions on pattern analysis and machine intelligence, 22(11), pp.1330-1334.</li>
+</ul>
+<aside class="notes">
+<p>the intrinsics are the parameters that belong to the camera - they remain the same as we move the camera around.</p>
+</aside>
+</section>
+<section id="point-mapping" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Point mapping</h2>
+<figure>
+<img data-src="assets/svg/parameters1.svg" alt="point mapping" /><figcaption aria-hidden="true">point mapping</figcaption>
+</figure>
+<aside class="notes">
+<p>in the previous lecture we worked on the projection of points onto the image plane, and calculated the <strong>projection matrix</strong>.</p>
+</aside>
+</section>
+<section id="point-mapping-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Point mapping</h2>
+<figure>
+<img data-src="assets/svg/pinhole-camera-world.svg" alt="Point to pixel" /><figcaption aria-hidden="true">Point to pixel</figcaption>
+</figure>
+<aside class="notes">
+<p>we can illustrate this graphically - and please note - I have positioned the image plane in the imaginary position in front of the camera. This is very common in the literature, and is valid due to the similar triangles of the pinhole camera model.</p>
+</aside>
+</section>
+<section id="direct-linear-transformation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Direct Linear Transformation</h2>
+<p>Compute the 11 <em>intrinsic</em> <strong>and</strong> <em>extrinsic</em> parameters of a camera.</p>
+<div style="font-size:1.5em">
+<p><span class="math display">\[
+\textbf{x} = K R [ I_3 | - \textbf{X}_o ] \textbf{X}
+\]</span></p>
+</div>
+<aside class="notes">
+<p>and here we have the five intrinsic parameters on K and 3 rotation values in R, and the 3 translation -Xo</p>
+</aside>
+</section>
+<section id="zhangs-method-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Zhang’s Method</h2>
+<p>Compute the 5 <em>intrinsic</em> parameters in <span class="math inline">\(K\)</span>.</p>
+<div style="font-size:1.5em">
+<p><span class="math display">\[
+\textbf{x} = K R [ I_3 | - \textbf{X}_o ] \textbf{X}
+\]</span></p>
+</div>
+<aside class="notes">
+<p>Why do this? surely we are better computing all the parameters? answer - DLT requires knowledge of the scene we may ot have.</p>
+</aside>
+</section>
+<section id="zhangs-method-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Zhang’s Method</h2>
+<p>Camera calibration using images of a <strong>checkerboard</strong>.</p>
+<figure>
+<img data-src="assets/png/chk_orig_1.png" style="width:60.0%" alt="calibration target" /><figcaption aria-hidden="true">calibration target</figcaption>
+</figure>
+<aside class="notes">
+<p>this time we don’t need to know 3D points in the scene - we use a checkerboard of known dimensions.</p>
+</aside>
+</section>
+<section id="checkerboard" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Checkerboard</h2>
+<ul>
+<li>Board is of <strong>known</strong> size and structure.</li>
+<li>The board must be <strong>flat</strong>.</li>
+</ul>
+<figure>
+<img data-src="assets/png/chk_orig.png" alt="Calibration targets" /><figcaption aria-hidden="true">Calibration targets</figcaption>
+</figure>
+<aside class="notes">
+<p>we know how big the squares are, and we know how many squares there are. it must be flat - this is an important property that we will exploit.</p>
+</aside>
+</section>
+<section id="checkerboard-method" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Checkerboard Method</h2>
+<p>Set the <strong>world</strong> coordinate system to the <strong>corner</strong> of the checkerboard.</p>
+<div>
+<ul>
+<li class="fragment">do this for <em>each</em> image captured.</li>
+<li class="fragment">all points lie on x/y plane with z=0</li>
+</ul>
+</div>
+<figure>
+<img data-src="assets/png/chk_crn.png" alt="Detected corners" /><figcaption aria-hidden="true">Detected corners</figcaption>
+</figure>
+<aside class="notes">
+<p>using a corner detector, we find points on the checkerboard. we use a ‘trick’ setting the xy plane to be parallel to the checkerboard, with z pointing outward. This means all the z coordinates are zero. We know how big the squares are in our printed pattern. Knowing that z=0 changes the maths - let’s see how!</p>
+</aside>
+</section>
+<section id="simplification" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Simplification</h2>
+<p>The <span class="math inline">\(Z\)</span> coordinate of each point is <strong>zero</strong>.</p>
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; r_{13} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; r_{23} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; r_{33} &amp; t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y \\ \color{red}{Z} \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>This is our DLT equation. The left matrix is the intrinsic matrix, and the right matrix is the extrinsic matrix. so the Z (in red) is zero all the time.</p>
+</aside>
+</section>
+<section id="simplification-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Simplification</h2>
+<p>The last column of the rotation matrix has no effect on the system.</p>
+<ul>
+<li>we can delete these components from the system</li>
+</ul>
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; \color{red}{r_{13}} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; \color{red}{r_{23}} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; \color{red}{r_{33}} &amp; t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y \\ \color{red}{Z} \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>because Z is always zero, the last column of the rotation matrix is not used. it’s something we don’t need to estimate.</p>
+</aside>
+</section>
+<section id="simplification-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Simplification</h2>
+<ul>
+<li>The <span class="math inline">\(Z\)</span> coordinate of each point is <strong>zero</strong>.</li>
+<li>Deleting the third column of <span class="math inline">\(R\)</span> gives us:</li>
+</ul>
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y  \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>every observed point leads to one of these equations.</p>
+</aside>
+</section>
+<section id="simplification-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Simplification</h2>
+<ul>
+<li>Each observed point gives this equation.</li>
+<li>The <em>intrinsics</em> persist for <strong>all</strong> images.</li>
+<li>The <em>extrinsics</em> persist for <strong>each</strong> image.</li>
+</ul>
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; t_3
+\end{bmatrix}
+\begin{bmatrix} X \\ Y  \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>it is important to note that the intrinsics are the same for all images, and the extrinsics are the same for one image, but all points.</p>
+</aside>
+</section>
+<section id="setting-up-the-equations" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Setting up the equations</h2>
+<p>Define a matrix <span class="math inline">\(H\)</span>:</p>
+<p><span class="math display">\[
+H  = \begin{bmatrix} \textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3 \end{bmatrix} =
+\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; t_3
+\end{bmatrix}
+\]</span></p>
+<p>One point generates this equation:</p>
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = H \begin{bmatrix} X \\ Y \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>we can define a matrix H, the product of each 3x3 matrix, and we can also think of this as 3 column vectors h1, h2, h3.</p>
+</aside>
+</section>
+<section id="setting-up-the-equations-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Setting up the equations</h2>
+<p>For multiple point observations:</p>
+<p><span class="math display">\[
+\begin{bmatrix} x_i \\ y_i \\ 1 \end{bmatrix} =
+\underset{3 \times 3}{H} \begin{bmatrix} X_i \\ Y_i \\ 1 \end{bmatrix},
+\quad i = 1 ..., n
+\]</span></p>
+<p>Analogous to the <em>DLT</em>.</p>
+<aside class="notes">
+<p>and a reminder, the points are known, H is unknown. now we do the same as we did with the DLT…</p>
+</aside>
+</section>
+<section id="parameter-estimation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Parameter Estimation</h2>
+<p>We estimate a <span class="math inline">\(3 \times 3\)</span> homography instead of <span class="math inline">\(3 \times 4\)</span> projection.</p>
+<p><span class="math display">\[
+a_{x_i}^T \textbf{h} = 0, \quad a_{y_i}^T \textbf{h} = 0
+\]</span></p>
+<p>with:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\textbf{h}           &amp;= vec(H^T) \\
+a_{x_i}^T &amp;= (-X_i, -Y_i, -1, 0, 0, 0, x_i X_i, x_i Y_i, x_i) \\
+a_{y_i}^T &amp;= (0, 0, 0, -X_i, -Y_i, -1, y_i X_i, y_i Y_i, y_i)
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>now very similar to the DLT - but we have 9 coefficients instead of 12. we have these coefficient vectors ax ay, and the unknown matrix H. we stack h to one long column vector…</p>
+</aside>
+</section>
+<section id="parameter-estimation-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Parameter Estimation</h2>
+<p>Solving the system of linear equations leads to an estimate of the parameters of <span class="math inline">\(H\)</span>.</p>
+<ul>
+<li>We need to identify <strong>at least</strong> 4 points.</li>
+<li><span class="math inline">\(H\)</span> has 8 Dof (degrees of freedom)</li>
+<li>each point provides 2 observations</li>
+</ul>
+<p>We now have the parameters of <span class="math inline">\(H\)</span>, how do we find <span class="math inline">\(K\)</span>?</p>
+</section>
+<section id="decompose-intrinsic-parameters" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decompose Intrinsic Parameters</h2>
+<p>For the DLT, we could use QR decomposition to find the rotation matrix of the extrinsic parameters.</p>
+<ul>
+<li>We can not do this for Zhang’s method.</li>
+<li>We eliminated part of <span class="math inline">\(R\)</span> earlier.</li>
+</ul>
+</section>
+<section id="decompose-intrinsic-parameters-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decompose Intrinsic Parameters</h2>
+<p><span class="math display">\[
+H  = \begin{bmatrix} \textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3 \end{bmatrix} =
+\underbrace
+{\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}}_{K}
+\underbrace
+{\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; t_3
+\end{bmatrix}}_{[\textbf{r}_1, \textbf{r}_2, \textbf{t}]}
+\]</span></p>
+<aside class="notes">
+<p>as a reminder, we have removed a column of R, so we can’t use QR decomposition. We are not interested in the right half - but how do we get K?</p>
+</aside>
+</section>
+<section id="decompose-intrinsic-parameters-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decompose Intrinsic Parameters</h2>
+<p>We need to extract <span class="math inline">\(K\)</span> from the matrix <span class="math inline">\(H = K[\textbf{r}_1, \textbf{r}_2, \textbf{t}]\)</span> we computed using SVD.</p>
+<aside class="notes">
+<p>so this is our task - there is no standard decomposition technique to do this.</p>
+</aside>
+</section>
+<section id="decompose-intrinsic-parameters-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decompose Intrinsic Parameters</h2>
+<p>We need to extract <span class="math inline">\(K\)</span> from the matrix <span class="math inline">\(H = K[\textbf{r}_1, \textbf{r}_2, \textbf{t}]\)</span> we computed using SVD.</p>
+<p>Four step process:</p>
+<div>
+<ol type="1">
+<li class="fragment">Exploit constraints of <span class="math inline">\(K, \textbf{r}_1, \textbf{r}_2\)</span></li>
+<li class="fragment">Define a matrix <span class="math inline">\(B = K^{-T}K^{-1}\)</span></li>
+<li class="fragment">Solve <span class="math inline">\(B\)</span> using another homogeneous linear system.</li>
+<li class="fragment">Decompose <span class="math inline">\(B\)</span>.</li>
+</ol>
+</div>
+<aside class="notes">
+<p>first exploit properties we know - r1 r2 are columns of a rotation matrix - and have useful properties.</p>
+<p>define B so the maths is consistent</p>
+<p>we will then define a system of equations that will lead to B, based on the constraints we know from 1.</p>
+<p>Once we have B, we need to decompose to get K.</p>
+</aside>
+</section></section>
+<section>
+<section id="exploiting-constraints" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Exploiting Constraints</h1>
+<p>What constraints do we have?</p>
+</section>
+<section id="exploiting-constraints-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p><span class="math display">\[
+K = \begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\]</span></p>
+<p><span class="math inline">\(K\)</span> is <strong>invertible</strong>.</p>
+<aside class="notes">
+<p>k is upper triangular, all the elements on the diagonal are non zero - it is invertible. we can take advantage of this…</p>
+</aside>
+</section>
+<section id="exploiting-constraints-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p><span class="math display">\[
+H  = \begin{bmatrix} \textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3 \end{bmatrix} =
+\underbrace
+{\begin{bmatrix} c &amp; s &amp; x_H \\ 0 &amp; c(1 + m) &amp; y_H \\ 0 &amp; 0 &amp; 1 \end{bmatrix}}_{K}
+\underbrace
+{\begin{bmatrix}
+    r_{11} &amp; r_{12} &amp; t_1 \\
+    r_{21} &amp; r_{22} &amp; t_2 \\
+    r_{31} &amp; r_{32} &amp; t_3
+\end{bmatrix}}_{[\textbf{r}_1, \textbf{r}_2, \textbf{t}]}
+\]</span></p>
+<p><span class="math display">\[
+[\textbf{r}_1, \textbf{r}_2, \textbf{t}] =
+K^{-1} [\textbf{h}_1 , \textbf{h}_2 , \textbf{h}_3]
+\]</span></p>
+<p><span class="math display">\[
+\Rightarrow \textbf{r}_1 = K^{-1} \textbf{h}_1, \quad \textbf{r}_2 = K^{-1} \textbf{h}_2
+\]</span></p>
+<aside class="notes">
+<p>so, multiply both sides by K-inverse gives us identity on the right… swap over giving r1, r2, t = k-inverse h1 h2 h3</p>
+<p>reminder - h is known - we don’t know K or r1, r2 but we do know r1 r2 are columns of a rotation matrix.</p>
+</aside>
+</section>
+<section id="exploiting-constraints-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p>As <span class="math inline">\([\textbf{r}_1 , \textbf{r}_2 , \textbf{r}_3]\)</span> are the columns of a rotation matrix, they form an orthonormal basis.</p>
+<p><span class="math display">\[
+\textbf{r}_1^T \textbf{r}_2 = 0, \quad ||\textbf{r}_1|| = ||\textbf{r}_2|| = 1
+\]</span></p>
+<aside class="notes">
+<p>so the dot product of r1 and r2 is zero - and the length of r1 and r2 are equal and are unit.</p>
+</aside>
+</section>
+<section id="exploiting-constraints-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p><span class="math display">\[
+\textbf{r}_1 = K^{-1} \textbf{h}_1, \quad \textbf{r}_2 = K^{-1} \textbf{h}_2, \quad
+\textbf{r}_1^T \textbf{r}_2 = 0, \quad ||\textbf{r}_1|| = ||\textbf{r}_2|| = 1
+\]</span></p>
+<p><span class="math display">\[
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_2 = 0
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_1 = \textbf{h}_2^T K^{-T} K^{-1} \textbf{h}_2 \\[10pt]
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_1 - \textbf{h}_2^T K^{-T} K^{-1} \textbf{h}_2 = 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>inverse transpose means the transpose of the inverse. here we substitute all the terms for r1, r2 and set the equations to zero.</p>
+</aside>
+</section>
+<section id="exploiting-constraints-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p><span class="math display">\[
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_2 = 0
+\]</span></p>
+<p><span class="math display">\[
+\textbf{h}_1^T K^{-T} K^{-1} \textbf{h}_1 - \textbf{h}_2^T K^{-T} K^{-1} \textbf{h}_2 = 0
+\]</span></p>
+<aside class="notes">
+<p>so these are our two equations that relate our knowns in the h vectors, and our unknowns in K. now, lets define a matrix B and do a simple variable substitution.</p>
+</aside>
+</section>
+<section id="exploiting-constraints-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p>Define a matrix <span class="math inline">\(B := K^{-T}K^{-1}\)</span></p>
+<p><span class="math display">\[
+\textbf{h}_1^T B \textbf{h}_2 = 0
+\]</span></p>
+<p><span class="math display">\[
+\textbf{h}_1^T B \textbf{h}_1 - \textbf{h}_2^T B \textbf{h}_2 = 0
+\]</span></p>
+<aside class="notes">
+<p>so now we have all our unknowns in B.</p>
+</aside>
+</section>
+<section id="exploiting-constraints-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p>From <span class="math inline">\(B\)</span> the calibration matrix can be recovered using <em>Cholesky</em> decomposition.</p>
+<p><span class="math display">\[
+B = \begin{bmatrix}
+b_{11} &amp; b_{12} &amp; b_{13} \\
+b_{21} &amp; b_{22} &amp; b_{23} \\
+b_{31} &amp; b_{32} &amp; b_{33}
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+chol(B) = AA^T \Rightarrow A = K^{-T}
+\]</span></p>
+<p>If we know <span class="math inline">\(B\)</span>, we can recover the calibration matrix <span class="math inline">\(K\)</span>.</p>
+<aside class="notes">
+<p>There is a known method for <span class="math inline">\(B\)</span> - Cholesky decomposition. We can decompose a matrix times its transpose. So if we know <span class="math inline">\(B\)</span>, we can recover <span class="math inline">\(K\)</span>. How can we find B?</p>
+</aside>
+</section>
+<section id="exploiting-constraints-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p>What do we have so far?</p>
+<p><span class="math display">\[
+\textbf{h}_1^T B \textbf{h}_2 = 0
+\]</span></p>
+<p><span class="math display">\[
+\textbf{h}_1^T B \textbf{h}_1 - \textbf{h}_2^T B \textbf{h}_2 = 0
+\]</span></p>
+<ul>
+<li>Matrix <span class="math inline">\(B\)</span>, which is symmetric positive, so 6 unknowns.</li>
+<li><span class="math inline">\(\textbf{h}\)</span> are known.</li>
+<li>Two equations that relate <span class="math inline">\(B\)</span> and <span class="math inline">\(\textbf{h}\)</span>.</li>
+</ul>
+<aside class="notes">
+<p>B is symmetric so has 6 unknowns not 9. 2 equations that relate B and h and sets them to zero. These 2 equations are similar to the DLT equations - we can reform it to a coefficient vector, times an unknown vector. We have that here too, so we will do the same trick. Let’s set up the equations…</p>
+</aside>
+</section>
+<section id="exploiting-constraints-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p>Define a vector <span class="math inline">\(\textbf{b} = (b_{11}, b_{12}, b_{13}, b_{22}, b_{23}, b_{33})\)</span></p>
+<p><span class="math display">\[
+B = \begin{bmatrix}
+    \color{red}{b_{11}} &amp; \color{red}{b_{12}} &amp; \color{red}{b_{13}} \\
+    b_{12} &amp; \color{red}{b_{22}} &amp; \color{red}{b_{23}} \\
+    b_{13} &amp; b_{23} &amp; \color{red}{b_{33}}
+    \end{bmatrix}
+\]</span></p>
+<p>There are 6 unknowns in <span class="math inline">\(B\)</span>, because it is symmetric.</p>
+</section>
+<section id="exploiting-constraints-10" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Exploiting Constraints</h2>
+<p>Construct a system of equations <span class="math inline">\(V\textbf{b}=0\)</span> exploiting our constraints.</p>
+<p><span class="math display">\[
+v^{T}_{12}\textbf{b} = 0,  \quad v^{T}_{11}\textbf{b} - v^{T}_{22}\textbf{b} = 0
+\]</span></p>
+<aside class="notes">
+<p>This is similar to earlier, with the coefficients in v constructed from the knowns in H.</p>
+</aside>
+</section>
+<section id="matrix-v" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Matrix <span class="math inline">\(V\)</span></h2>
+<p>The matrix <span class="math inline">\(V\)</span> is given by:</p>
+<p><span class="math display">\[
+V = \begin{bmatrix} v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22} \end{bmatrix}, \quad
+with \quad v_{ij} =
+\begin{bmatrix}
+h_{1i}h_{1j} \\ h_{1i}h_{2j}+h_{2i}h_{1j} \\
+h_{3i}h_{1j}+h_{1i}h_{3j} \\ h_{2i}h_{2j} \\
+h_{3i}h_{2j}+h_{2i}h_{3j} \\ h_{3i}h_{3j}
+\end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>so we use the elements of h to construct the matrix v.</p>
+</aside>
+</section>
+<section id="matrix-v-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Matrix <span class="math inline">\(V\)</span></h2>
+<p>For <strong>each</strong> image we get:</p>
+<p><span class="math display">\[
+\begin{bmatrix} v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22} \end{bmatrix} \textbf{b} = 0
+\]</span></p>
+<aside class="notes">
+<p>v is a 2x6 matrix. b is a 6x1 vector. For every image we get this equation. recall: we needed 4 points in each image to get H. If you are working with the original paper we are at the end of section 3.</p>
+</aside>
+</section>
+<section id="matrix-v-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Matrix <span class="math inline">\(V\)</span></h2>
+<p>For multiple images we stack the matrices to a <span class="math inline">\(2n \times 6\)</span> matrix:</p>
+<p><span class="math display">\[
+\begin{bmatrix} v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22} \\
+\dots \\
+v^{T}_{12} \\ v^{T}_{11} - v^{T}_{22}
+\end{bmatrix} \textbf{b} = 0
+\]</span></p>
+<p>We need to solve the linear system of <span class="math inline">\(V\textbf{b}=0\)</span> to find <span class="math inline">\(b\)</span> and hence <span class="math inline">\(K\)</span>.</p>
+<aside class="notes">
+<p>for the third time today, we are at the point when we need to solve this system, using SVD.</p>
+</aside>
+</section>
+<section id="solving-the-linear-system" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Solving the Linear System</h2>
+<p>The system <span class="math inline">\(V\textbf{b}=0\)</span> has a trivial solution when <span class="math inline">\(\textbf{b}=0\)</span> which will not provide a valid matrix <span class="math inline">\(B\)</span>.</p>
+<ul>
+<li>Apply additional constraint <span class="math inline">\(||\textbf{b}|| = 1\)</span> .</li>
+</ul>
+</section>
+<section id="solving-the-linear-system-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Solving the Linear System</h2>
+<p>Real world measurements are noisy.</p>
+<ul>
+<li>Find the solution that minimises the least squares error:</li>
+</ul>
+<p><span class="math display">\[
+b^* = arg\underset{b}{min}||V \textbf{b}|| \quad \text{with} \quad ||\textbf{b}|| = 1
+\]</span></p>
+<p>Use SVD and choose the singular vector corresponding to the smallest singular value.</p>
+<aside class="notes">
+<p>Once we have b, we can rebuild the matrix B, and use Cholesky decomposition to recover K directly.</p>
+</aside>
+</section>
+<section id="minimum-requirements" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Minimum Requirements</h2>
+<ul>
+<li>At least 4 points in each target image.</li>
+<li>Each target image gives <em>two</em> equations.</li>
+<li><span class="math inline">\(B\)</span> has 6 DoF so we need 3 <em>different</em> views of the target.</li>
+<li>Solve <span class="math inline">\(V\textbf{b}=0\)</span> using SVD to compute <span class="math inline">\(K\)</span>.</li>
+</ul>
+<aside class="notes">
+<p>we take photos of our targets and we need at least 4 points in each image. We know the size, and that the target is flat. From 4 points we compute a matrix H for each image. We construct a B matrix for all images. SVD gives us the solution directly of Vb=0, then we use cholesky to get K. So we started similar to the DLT - but needed to do extra work because we did not have a proper rotation matrix to decompose with QR.</p>
+</aside>
+</section></section>
+<section>
+<section id="non-linear-distortion" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Non-Linear Distortion</h1>
+<p>How to deal with non-linear distortion?</p>
+<aside class="notes">
+<p>earlier, I briefly mentioned non-linear distortion, usually from lens artifacts. How do we account for this in the camera model?</p>
+</aside>
+</section>
+<section id="non-linear-distortion-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Non-Linear Distortion</h2>
+<p>A general calibration matrix is obtained by multiplying the affine camera with a general mapping.</p>
+<p><span class="math display">\[
+{}^{a}H(\textbf{x}, q)K =
+\begin{bmatrix}
+1 &amp; 0 &amp; x \Delta(\textbf{x}, q) \\
+0 &amp; 1 &amp; y \Delta(\textbf{x}, q) \\
+0 &amp; 0 &amp; 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>A general mapping takes the pixel in the image plane and maps a shift at every position to a new position, based on some unknown parameters q.</p>
+</aside>
+</section>
+<section id="lens-distortion" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Lens Distortion</h2>
+<figure>
+<img data-src="assets/svg/barrel_and_pin.svg" alt="barrel and pincushion distortion" /><figcaption aria-hidden="true">barrel and pincushion distortion</figcaption>
+</figure>
+<aside class="notes">
+<p>barrel and pincushion are both examples of radial distortion. This sort of distortion is very common in cheaper cameras, and is often a combination of barrel and pincushion distortion.</p>
+</aside>
+</section>
+<section id="radial-distortion" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Radial Distortion</h2>
+<p>A standard approach for radial distortion:</p>
+<p><span class="math display">\[
+\begin{aligned}
+{}^{a}x &amp;= x(1 + q_1r^2 + q_2r^4) \\
+{}^{a}y &amp;= y(1 + q_1r^2 + q_2r^4)
+\end{aligned}
+\]</span></p>
+<ul>
+<li>with <span class="math inline">\([x, y]^{T}\)</span> a point projected by the ideal camera.</li>
+<li>with <span class="math inline">\(r\)</span> the distance from the camera principal point to the pixel.</li>
+<li><span class="math inline">\(q_1\)</span> and <span class="math inline">\(q_2\)</span> are the radial distortion parameters.</li>
+</ul>
+<aside class="notes">
+<p>there can be many non-linear models, radial and tangential are the most important.</p>
+</aside>
+</section>
+<section id="lens-distortion-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Lens Distortion</h2>
+<p>Lens distortion can be calculated by minimising a non-linear function.</p>
+<ul>
+<li>Make an initial guess for the distortion parameters.</li>
+<li>Calculate <span class="math inline">\(K\)</span> using Zhang’s method.</li>
+<li>Measure the reprojection error.</li>
+<li>Refine the distortion parameters.</li>
+</ul>
+</section>
+<section id="section" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<figure>
+<img data-src="assets/png/chk_orig.png" style="width:80.0%" alt="before calibration" /><figcaption aria-hidden="true">before calibration</figcaption>
+</figure>
+<figure>
+<img data-src="assets/png/chk_correct.png" style="width:80.0%" alt="after calibration" /><figcaption aria-hidden="true">after calibration</figcaption>
+</figure>
+<aside class="notes">
+<p>this is the sort of thing you can expect to see if you do this.</p>
+</aside>
+</section></section>
+<section id="packages" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Packages</h1>
+<p>These, and many other methods for calibration, are available in popular image processing packages.</p>
+<ul>
+<li><a href="https://opencv.org/releases/">OpenCV</a> for python and C++.</li>
+<li><a href="http://robots.stanford.edu/cs223b04/JeanYvesCalib/htmls/example.html">Camera Calibration Toolkit</a> for Matlab.</li>
+</ul>
+<aside class="notes">
+<p>It is not necessary to implement these methods yourself - you can find them in a number of packages.</p>
+</aside>
+</section>
+
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>Pinhole camera model.</li>
+<li>Non-linear model for distortion.</li>
+<li>Calibration using images of a target.</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach.</li>
+<li>Hartley, Zisserman; Multiple View Geometry in Computer Vision</li>
+<li>Zhang, Z., A flexible new technique for camera calibration.</li>
+</ul>
+<aside class="notes">
+<p>In practice, we take lot’s of images of a target - maybe 20 or more. It’s important to cover the full area of the lens - you might need different targets for different applications. We use an iterative approach to solve the non-linear distortion problem. Zhang’s method for the camera parameters.</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
