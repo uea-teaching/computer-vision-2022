@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0"
+  width="1000" height="700" viewBox="0, 0, 1000, 700">
+  <g id="mapping">
+    <path d="M50,100 L150,100 L150,200 L50,200 L50,100 z" fill="#00C470" />
+    <text transform="matrix(1, 0, 0, 1, 100, 150)">
+      <tspan x="-7.511" y="5.25" font-family="HelveticaNeue-MediumItalic" font-size="36" fill="#FFFFFF">o</tspan>
+    </text>
+    <path d="M250,100 L350,100 L350,200 L250,200 L250,100 z" fill="#00C470" />
+    <text transform="matrix(1, 0, 0, 1, 300, 150.25)">
+      <tspan x="-6.574" y="5.25" font-family="HelveticaNeue-MediumItalic" font-size="36" fill="#FFFFFF">k</tspan>
+    </text>
+    <path d="M450,100 L550,100 L550,200 L450,200 L450,100 z" fill="#00C470" />
+    <text transform="matrix(1, 0, 0, 1, 500, 150.25)">
+      <tspan x="-7.043" y="5.25" font-family="HelveticaNeue-MediumItalic" font-size="36" fill="#FFFFFF">c</tspan>
+    </text>
+    <path d="M650,100 L750,100 L750,200 L650,200 L650,100 z" fill="#00C470" />
+    <text transform="matrix(1, 0, 0, 1, 700, 150.25)">
+      <tspan x="-6.333" y="5.25" font-family="HelveticaNeue-MediumItalic" font-size="36" fill="#FFFFFF">s</tspan>
+    </text>
+    <path d="M850,100 L950,100 L950,200 L850,200 L850,100 z" fill="#00C470" />
+    <text transform="matrix(1, 0, 0, 1, 900, 150.25)">
+      <tspan x="-6.333" y="5.25" font-family="HelveticaNeue-MediumItalic" font-size="36" fill="#FFFFFF">s</tspan>
+    </text>
+    <g>
+      <path d="M153.011,120.5 L232.3,120.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="5" />
+      <path d="M232.3,125.9 L246.7,120.5 L232.3,115.1 z" fill="#2BA4FF" fill-opacity="1" stroke="#2BA4FF"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+    <g>
+      <path d="M550.5,120.5 L629.789,120.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="5" />
+      <path d="M629.789,125.9 L644.189,120.5 L629.789,115.1 z" fill="#2BA4FF" fill-opacity="1" stroke="#2BA4FF"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+    <g>
+      <path d="M750.5,120.5 L829.789,120.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="5" />
+      <path d="M829.789,125.9 L844.189,120.5 L829.789,115.1 z" fill="#2BA4FF" fill-opacity="1" stroke="#2BA4FF"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+    <g>
+      <path d="M350.5,150.5 L429.789,150.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="5" />
+      <path d="M429.789,155.9 L444.189,150.5 L429.789,145.1 z" fill="#2BA4FF" fill-opacity="1" stroke="#2BA4FF"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+    <g>
+      <path d="M250.5,180.5 L171.211,180.5" fill-opacity="0" stroke="#FF862B" stroke-width="5" />
+      <path d="M171.211,175.1 L156.811,180.5 L171.211,185.9 z" fill="#FF862B" fill-opacity="1" stroke="#FF862B"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+    <g>
+      <path d="M647.989,180.5 L568.7,180.5" fill-opacity="0" stroke="#FF862B" stroke-width="5" />
+      <path d="M568.7,175.1 L554.3,180.5 L568.7,185.9 z" fill="#FF862B" fill-opacity="1" stroke="#FF862B"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+    <g>
+      <path d="M847.989,180.5 L768.7,180.5" fill-opacity="0" stroke="#FF862B" stroke-width="5" />
+      <path d="M768.7,175.1 L754.3,180.5 L768.7,185.9 z" fill="#FF862B" fill-opacity="1" stroke="#FF862B"
+        stroke-width="5" stroke-opacity="1" />
+    </g>
+  </g>
+  <g id="label1">
+    <text transform="matrix(1, 0, 0, 1, 200, 310)">
+      <tspan x="-94.26" y="-7" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">object to camera
+      </tspan>
+      <tspan x="-15.336" y="22" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">3D</tspan>
+    </text>
+    <g>
+      <path d="M201.287,260.5 L201.287,226.1" fill-opacity="0" stroke="#EE0000" stroke-width="8" />
+      <path d="M208.487,226.1 L201.287,206.9 L194.087,226.1 z" fill="#EE0000" fill-opacity="1" stroke="#EE0000"
+        stroke-width="8" stroke-opacity="1" />
+    </g>
+  </g>
+  <g id="label2">
+    <text transform="matrix(1, 0, 0, 1, 400, 389.5)">
+      <tspan x="-85.812" y="-6.5" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">ideal
+        projection</tspan>
+      <tspan x="-48.456" y="22.5" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">3D to 2D
+      </tspan>
+    </text>
+    <g>
+      <path d="M400.5,340.5 L400.5,226.1" fill-opacity="0" stroke="#EE0000" stroke-width="8" />
+      <path d="M407.7,226.1 L400.5,206.9 L393.3,226.1 z" fill="#EE0000" fill-opacity="1" stroke="#EE0000"
+        stroke-width="8" stroke-opacity="1" />
+    </g>
+  </g>
+  <g id="label3">
+    <text transform="matrix(1, 0, 0, 1, 600, 489.5)">
+      <tspan x="-88.92" y="-6.5" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">image to sensor
+      </tspan>
+      <tspan x="-15.336" y="22.5" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">2D</tspan>
+    </text>
+    <g>
+      <path d="M600.5,440.5 L600.5,226.1" fill-opacity="0" stroke="#EE0000" stroke-width="8" />
+      <path d="M607.7,226.1 L600.5,206.9 L593.3,226.1 z" fill="#EE0000" fill-opacity="1" stroke="#EE0000"
+        stroke-width="8" stroke-opacity="1" />
+    </g>
+  </g>
+  <g id="label4" display="none">
+    <g>
+      <path d="M800.5,540.5 L800.5,226.1" fill-opacity="0" stroke="#EE0000" stroke-width="8" />
+      <path d="M807.7,226.1 L800.5,206.9 L793.3,226.1 z" fill="#EE0000" fill-opacity="1" stroke="#EE0000"
+        stroke-width="8" stroke-opacity="1" />
+    </g>
+    <text transform="matrix(1, 0, 0, 1, 800, 590)">
+      <tspan x="-112.02" y="-7" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">non-linear
+        distortion</tspan>
+      <tspan x="-15.336" y="22" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">2D</tspan>
+    </text>
+  </g>
+</svg>
