@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>The Camera</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">The Camera</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="contents" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Contents</h1>
+<ul>
+<li>Camera Model</li>
+<li>Intrinsic and Extrinsic Parameters</li>
+<li>Direct Linear Transformation</li>
+</ul>
+<aside class="notes">
+<p>We have talked a lot about images, but not much on how we obtain images using a camera. We will discuss the parameters of a pinhole camera model, that serves well for computer vision tasks. In the first part - we will then show the relationship between points in the world and points in the image.</p>
+</aside>
+</section>
+
+<section>
+<section id="the-camera" class="title-slide slide level1">
+<h1>The Camera</h1>
+<figure>
+<img data-src="assets/jpg/horse.jpg" style="width:80.0%" alt="“Sallie Gardner,” owned by Leland Stanford; ridden by G. Domm, running at a 1:40 gait over the Palo Alto track, 19th June 1878." /><figcaption aria-hidden="true">“Sallie Gardner,” owned by Leland Stanford; ridden by G. Domm, running at a 1:40 gait over the Palo Alto track, 19th June 1878.</figcaption>
+</figure>
+<aside class="notes">
+<p>who would disagree if I said the camera was one of the most important inventions in the history of science? Here Edweard Muybridge shows definitively that a horses feet al leave the ground when galloping.</p>
+</aside>
+</section>
+<section id="the-camera-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">The Camera</h2>
+<p>Cameras measure light <strong>intensities</strong>.</p>
+<ul>
+<li>the sensor counts photons arriving at the pixel</li>
+<li>each pixel corresponds to a direction in world space</li>
+</ul>
+<aside class="notes">
+<p>What do cameras measure?</p>
+</aside>
+</section>
+<section id="the-camera-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">The Camera</h2>
+<p>Cameras can also be seen as <em>direction</em> measurement devices.</p>
+<ul>
+<li>we are often interested in geometric properties of a scene</li>
+<li>an object reflects light to a specific location on the sensor</li>
+<li>Which 3D point is mapped to which pixel?</li>
+</ul>
+<aside class="notes">
+<p>light falls on an object, is reflected back to the camera, and then to a pixel. which point in space maps to which position on the sensor? this is information used to perform geometric measurements.</p>
+</aside>
+</section>
+<section id="the-camera-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">The Camera</h2>
+<p>How do we get the point observations?</p>
+<ul>
+<li><em>keypoints</em> and <em>features</em></li>
+<li>SIFT, ORB, etc.</li>
+<li><strong>locally</strong> distinct features</li>
+</ul>
+<aside class="notes">
+<p>We get these observations by detecting features in an image, finding corners, blobs, etc. These are locally distinct features…</p>
+</aside>
+</section>
+<section id="the-camera-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">The Camera</h2>
+<p>Features identify points mapped from the 3D world to the 2D image.</p>
+<aside class="notes">
+<p>We assume this point has been mapped to the 2D image plane, and we want to reconstruct this point in the environment.</p>
+<p>We often use a small number of such keypoints - maybe a few hundred per image - much less than the number of pixels in the image.</p>
+<p>So the camera records intensities - but also directions - which we can use for geometric reconstruction.</p>
+</aside>
+</section></section>
+<section>
+<section id="pinhole-camera-model" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Pinhole Camera Model</h1>
+<figure>
+<img data-src="assets/svg/pinhole1.svg" alt="Light passing through a pinhole camera." /><figcaption aria-hidden="true">Light passing through a pinhole camera.</figcaption>
+</figure>
+<aside class="notes">
+<p>I want to introduce the concept of the pinhole camera. Real pinhole cameras can be made - and work… but here we are describing a model, that helps us to understand the relationship between points in the world and points in the image.</p>
+</aside>
+</section>
+<section id="section" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<ul>
+<li><span class="math inline">\(f\)</span> : effective focal length</li>
+<li><span class="math inline">\(\textbf{r}_{o} = (x_o, y_o, z_o)\)</span></li>
+<li><span class="math inline">\(\textbf{r}_{i} = (x_i, y_i, f)\)</span></li>
+</ul>
+<figure>
+<img data-src="assets/svg/pinhole2.svg" alt="Camera at the origin." /><figcaption aria-hidden="true">Camera at the origin.</figcaption>
+</figure>
+<aside class="notes">
+<p>The distance from the camera origin to the image plane is called the focal length. We can look at a ray from an object to the origin r_o, that then passes through the pinhole to the image plane r_i.</p>
+<p>NB. The pinhole diagram is often shown with the image plane in front of the camera. NB2. Different texts apply different labels.</p>
+</aside>
+</section>
+<section id="pinhole-camera-model-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Pinhole Camera Model</h2>
+<p>Using similar triangles, we get the equations of perspective projection.</p>
+<p><span class="math display">\[
+\frac{\textbf{r}_{i}}{f} = \frac{\textbf{r}_{o}}{z_o} \quad \Rightarrow \quad
+\frac{x_i}{f} = \frac{x_o}{z_o}, ~\frac{y_i}{f} = \frac{y_o}{z_o}
+\]</span></p>
+<aside class="notes">
+<p>The 2d x, y on the image plane are derived by dividing the 3D by z, scaled by the focal length. very simple equations - but can produce some very unintuitive effects.</p>
+</aside>
+</section></section>
+<section>
+<section id="camera-parameters" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Camera Parameters</h1>
+<p>Describe how a world point is mapped to a pixel coordinate.</p>
+<aside class="notes">
+<p>Our goal is to describe how a point in the world maps to a pixel in the image.</p>
+</aside>
+</section>
+<section id="camera-parameters-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Camera Parameters</h2>
+<p>Describe how a world point is mapped to a pixel coordinate.</p>
+<figure>
+<img data-src="assets/svg/parameters1.svg" alt="point mapping" /><figcaption aria-hidden="true">point mapping</figcaption>
+</figure>
+</section>
+<section id="camera-parameters-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Camera Parameters</h2>
+<p>We will describe this mapping in <strong>homogeneous</strong> coordinates.</p>
+<div style="font-size:1.5em">
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+P \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
+\]</span></p>
+</div>
+</section>
+<section id="aside-homogeneous-coordinates" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Aside: Homogeneous Coordinates</h2>
+<p><span class="math display">\[
+\begin{bmatrix} u \\ v \\ w \end{bmatrix} \Rightarrow
+\begin{bmatrix} u/w \\ v/w \\ 1 \end{bmatrix} \Rightarrow
+\begin{bmatrix} u/w \\ v/w \end{bmatrix} \Rightarrow
+\begin{bmatrix} x \\ y \end{bmatrix}
+\]</span></p>
+</section>
+<section id="coordinate-systems" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Coordinate Systems</h2>
+<p>We have to transform via a number of coordinate systems:</p>
+<div>
+<ul>
+<li class="fragment">The world coordinate system</li>
+<li class="fragment">The camera coordinate system</li>
+<li class="fragment">The image coordinate system</li>
+<li class="fragment">The pixel coordinate system</li>
+</ul>
+</div>
+</section>
+<section id="world-to-pixels" class="slide level2">
+<h2>World to Pixels</h2>
+<figure>
+<img data-src="assets/svg/world-to-sensor1.svg" alt="World to Pixels" /><figcaption aria-hidden="true">World to Pixels</figcaption>
+</figure>
+<aside class="notes">
+<p>we start with a point in the world on the left of the image. and move to the right in the diagram giving us the final pixel coordinate.</p>
+</aside>
+</section>
+<section id="world-to-pixels-1" class="slide level2">
+<h2>World to Pixels</h2>
+<figure>
+<img data-src="assets/svg/world-to-sensor2.svg" alt="World to Camera coordinates" /><figcaption aria-hidden="true">World to Camera coordinates</figcaption>
+</figure>
+<aside class="notes">
+<p>Object to camera is in 3D and is invertible. We convert from one coordinate frame to another.</p>
+</aside>
+</section>
+<section id="world-to-pixels-2" class="slide level2">
+<h2>World to Pixels</h2>
+<figure>
+<img data-src="assets/svg/world-to-sensor3.svg" alt="Projection to 2D" /><figcaption aria-hidden="true">Projection to 2D</figcaption>
+</figure>
+<aside class="notes">
+<p>Then we project from 3D to 2D. This is not invertible - we lose some information here.</p>
+</aside>
+</section>
+<section id="world-to-pixels-3" class="slide level2">
+<h2>World to Pixels</h2>
+<figure>
+<img data-src="assets/svg/world-to-sensor4.svg" alt="Convert to Sensor coordinates" /><figcaption aria-hidden="true">Convert to Sensor coordinates</figcaption>
+</figure>
+<aside class="notes">
+<p>The sensor coordinates need to be transformed from the projected coordinates. Usually we have 0,0 in the top left of an image, whereas we have projected to the centre.</p>
+</aside>
+</section>
+<section id="world-to-pixels-4" class="slide level2">
+<h2>World to Pixels</h2>
+<figure>
+<img data-src="assets/svg/world-to-sensor5.svg" alt="Lens Distortions" /><figcaption aria-hidden="true">Lens Distortions</figcaption>
+</figure>
+<aside class="notes">
+<p>In the real world, lenses have distortions and aberrations that distort the image. We can correct for these here.</p>
+</aside>
+</section>
+<section id="camera-parameters-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Camera Parameters</h2>
+<p>How do we work with these parameters?</p>
+<div>
+<ul>
+<li class="fragment"><em>extrinsic</em> parameters: the pose of the camera in the world</li>
+<li class="fragment"><em>intrinsic</em> parameters: the properties of the camera</li>
+</ul>
+</div>
+<figure>
+<img data-src="assets/svg/world-to-sensor-parameters.svg" alt="Camera Parameters" /><figcaption aria-hidden="true">Camera Parameters</figcaption>
+</figure>
+<aside class="notes">
+<p>we form two groups of parameters: intrinsic - the ideal projection to 2D and then translation to pixel coordinates extrinsic - the pose of the camera in the world you can imagine if you pick up your camera and move it - it does not effect the position of the sensor, the pixel shape, the focal length, etc.</p>
+</aside>
+</section></section>
+<section>
+<section id="extrinsic-parameters" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Extrinsic Parameters</h1>
+<p>The pose of the camera.</p>
+</section>
+<section id="extrinsic-parameters-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Extrinsic Parameters</h2>
+<ul>
+<li>Describe the <strong>pose</strong> of the camera in the world.</li>
+<li>That is, the <em>position</em> and <em>heading</em> of the camera.</li>
+<li>Invertible transformation.</li>
+</ul>
+<p>How many parameters do we need?</p>
+<div>
+<ul>
+<li class="fragment">3 parameters for the position</li>
+<li class="fragment">3 parameters for the heading</li>
+<li class="fragment">There are <strong>6</strong> <em>extrinsic</em> parameters.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>the only thing we can do is translate, and rotate the camera.</p>
+</aside>
+</section>
+<section id="extrinsic-parameters-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Extrinsic Parameters</h2>
+<p>Point in world coordinates:</p>
+<p><span class="math display">\[
+\textbf{X}_p = [ X_p, Y_p, Z_p ]^T
+\]</span></p>
+<p>Origin of camera in world coordinates:</p>
+<p><span class="math display">\[
+\textbf{X}_o = [ X_o, Y_o, Z_o ]^T
+\]</span></p>
+</section>
+<section id="transformation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Transformation</h2>
+<p><strong>Translation</strong> between origin of world and camera coordinates is:</p>
+<p><span class="math display">\[
+\textbf{X}_o = [ X_o, Y_o, Z_o ]^T
+\]</span></p>
+<p><strong>Rotation</strong> <span class="math inline">\(R\)</span> from world to camera coordinates system is:</p>
+<p><span class="math display">\[
+{}^{k}\textbf{X}_p = R(\textbf{X}_p - \textbf{X}_o)
+\]</span></p>
+</section>
+<section id="homogeneous-coordinates" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Homogeneous Coordinates</h2>
+<p><span class="math display">\[
+\begin{aligned}
+\begin{bmatrix} {}^{k}\textbf{X}_p \\ 1 \end{bmatrix} &amp;=
+\begin{bmatrix} R &amp;  \textbf{0} \\  \textbf{0}^T &amp;  1 \end{bmatrix}
+\begin{bmatrix} I_3 &amp;  -\textbf{X}_o \\  \textbf{0}^T &amp;  1 \end{bmatrix}
+\begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix} \\ &amp;=
+\begin{bmatrix} R &amp;  -R \textbf{X}_o \\ \textbf{0}^T &amp;  1 \end{bmatrix}
+\begin{bmatrix} \textbf{X}_p \\ 1 \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>or:</p>
+<p><span class="math display">\[
+{}^{k}\textbf{X}_p  = {}^{k}H \textbf{X}_p,
+\quad \text{where} \quad
+{}^{k}H = \begin{bmatrix} R  &amp; -R \textbf{X}_o \\ \textbf{0}^T  &amp; 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>here, the bold zero is the zero vector. R is a 3x3 rotation matrix. I_3 is the 3x3 identity matrix. and we can premultiply the rotation and translation because we are in homogeneous coordinates. So finally, we have H is the extrinsic parameters. NB Homogeneous coordinates are shown in non-italic font.</p>
+</aside>
+</section></section>
+<section>
+<section id="intrinsic-parameters" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Intrinsic Parameters</h1>
+<p>Projecting points from the camera to the sensor.</p>
+<aside class="notes">
+<p>if we have applied our extrinsic parameters, points in the world are now in camera coordinates. How do we project these points to the sensor?</p>
+</aside>
+</section>
+<section id="intrinsic-parameters-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Intrinsic Parameters</h2>
+<ul>
+<li>projection from camera coordinates to sensor coordinates</li>
+<li>central projection is <strong>not</strong> invertible</li>
+<li>image plane to sensor is invertible</li>
+<li>linear deviations are invertible</li>
+</ul>
+<figure>
+<img data-src="assets/svg/world-to-sensor-intrinsics.svg" alt="Camera Intrinsics" /><figcaption aria-hidden="true">Camera Intrinsics</figcaption>
+</figure>
+</section>
+<section id="section-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p>Recall for our pinhole model:</p>
+<p><span class="math display">\[
+\begin{aligned}
+{}^{c}x_p &amp;= c \frac{{}^{k}X_p}{{}^{k}Z_p} \\
+{}^{c}y_p &amp;= c \frac{{}^{k}Y_p}{{}^{k}Z_p}
+\end{aligned}
+\]</span></p>
+<p>where <span class="math inline">\(c\)</span> is the focal length, or <em>camera constant</em>.</p>
+<aside class="notes">
+<p>in a nutshell - we are dividing by the (Z) distance from the camera.</p>
+</aside>
+</section>
+<section id="homogeneous-coordinates-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Homogeneous Coordinates</h2>
+<p><span class="math display">\[
+\begin{bmatrix} U \\ V \\ W \\ T \end{bmatrix} =
+\begin{bmatrix} c &amp; 0 &amp; 0 &amp; 0 \\
+                0 &amp; c &amp; 0 &amp; 0 \\
+                0 &amp; 0 &amp; c &amp; 0 \\
+                0 &amp; 0 &amp; 1 &amp; 0
+\end{bmatrix}
+\begin{bmatrix} {}^{k}X_p \\ {}^{k}Y_p \\ {}^{k}Z_p \\ 1 \end{bmatrix}
+\]</span></p>
+<p>Drop the 3rd row:</p>
+<p><span class="math display">\[
+\begin{bmatrix} {}^{c}x_p \\ {}^{c}y_p \\ 1 \end{bmatrix} =
+\begin{bmatrix} {}^{c}u_p \\ {}^{c}v_p \\ {}^{c}w_p \end{bmatrix} =
+\begin{bmatrix} c &amp; 0 &amp; 0 &amp; 0 \\
+                0 &amp; c &amp; 0 &amp; 0 \\
+                0 &amp; 0 &amp; 1 &amp; 0
+\end{bmatrix}
+\begin{bmatrix} {}^{k}X_p \\ {}^{k}Y_p \\ {}^{k}Z_p \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>we drop the third row to go from 3d homogeneous camera coords to 2d homogeneous image plane coords.</p>
+<p>I recommend you do the matrix multiplication to confirm it is the same as our earlier projection equations. Don’t forget to divide by the homogeneous coordinate.</p>
+</aside>
+</section>
+<section id="ideal-camera" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Ideal Camera</h2>
+<p>The mapping for an ideal camera is:</p>
+<p><span class="math display">\[
+{}^{c}x = {}^{c}P X
+\]</span></p>
+<p>with:</p>
+<p><span class="math display">\[
+{}^{c}P =
+\begin{bmatrix} c &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; c &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; 0 \end{bmatrix}
+\begin{bmatrix} R &amp; -R \textbf{X}_o \\ \textbf{0}^T &amp; 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>This is our equation from earlier. Mapping a point in the world to the image plane. The projection matrix P is formed by multiplying the extrinsic parameters by the intrinsic parameters. We now want to carry on with the intrinsic parameters and we will want to premultiply with another 3x 3 matrix.</p>
+</aside>
+</section>
+<section id="calibration-matrix" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Calibration Matrix</h2>
+<p>We can now define the <em>calibration matrix</em> for an <strong>ideal</strong> camera.</p>
+<p><span class="math display">\[
+{}^{c}K =
+\begin{bmatrix} c &amp; 0 &amp; 0 \\ 0 &amp; c &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\]</span></p>
+<p>The mapping of a point in the world to the image plane is:</p>
+<p><span class="math display">\[
+{}^{c}P = {}^{c}K R [I_3 | - \textbf{X}_o]
+\]</span></p>
+<aside class="notes">
+<p>We dropped the last column of zeros, so we have a 3x3 matrix. in a lot of the literature this is labelled as K. Our last matrix here is a 3x4 matrix - identity concatenated with the camera offset.</p>
+</aside>
+</section>
+<section id="linear-errors" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Linear Errors</h2>
+<p>The next step is mapping from the image plane to the sensor.</p>
+<div>
+<ul>
+<li class="fragment">Location of principal point in sensor coordinates.</li>
+<li class="fragment">Scale difference in x and y, according to chip design.</li>
+<li class="fragment">Shear compensation.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>not all cameras have the same number of pixels in x and y. Shear is not common in digital cameras - more a legacy of film cameras.</p>
+</aside>
+</section>
+<section id="location-of-principal-point" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Location of Principal Point</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/svg/principal-point.svg" alt="Principal Point" /><figcaption aria-hidden="true">Principal Point</figcaption>
+</figure>
+</div><div class="column">
+<p>Origin of sensor space is not at the principal point:</p>
+<p><span class="math display">\[
+{}^{s}H_{c} =
+\begin{bmatrix}
+1 &amp; 0 &amp; x_H \\
+0 &amp; 1 &amp; y_H \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>Compensation is a <em>translation</em>.</p>
+</div>
+</div>
+<aside class="notes">
+<p>The optical axis passes through the image plane at the principal point. We need to translate to the pixel or sensor coordinate origin.</p>
+</aside>
+</section>
+<section id="scale-and-shear" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Scale and Shear</h2>
+<ul>
+<li>Scale difference <span class="math inline">\(m\)</span> in x and y.</li>
+<li>Sheer compensation <span class="math inline">\(s\)</span>.</li>
+</ul>
+<p>We need to add 4 additional parameters to our calibration matrix:</p>
+<p><span class="math display">\[
+{}^{s}H_{c} =
+\begin{bmatrix}
+1 &amp; s &amp; x_H \\
+0 &amp; 1 + m  &amp; y_H \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>why do we need scale difference? not all camera sensors have ‘square’ pixels. sheer is unusual in digital cameras - expect it to be zero in most cases. m, s, xh and yh.</p>
+</aside>
+</section>
+<section id="calibration-matrix-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Calibration Matrix</h2>
+<p>Normally, we combine these compensations with the ideal calibration matrix:</p>
+<p><span class="math display">\[
+\begin{aligned}
+K &amp;=
+\begin{bmatrix}
+1  &amp; s       &amp;   x_H \\
+0  &amp; 1 + m   &amp;   y_H \\
+0  &amp; 0   &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+c &amp; 0 &amp; 0 \\
+0 &amp; c &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{bmatrix} \\
+&amp;=
+\begin{bmatrix}
+c  &amp; s &amp; x_H \\
+0  &amp; c(1 + m) &amp; y_H \\
+0  &amp; 0 &amp; 1
+\end{bmatrix}
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>we pre multiply the ideal calibration matrix by the scale and shear matrix.</p>
+</aside>
+</section>
+<section id="calibration-matrix-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Calibration Matrix</h2>
+<p><span class="math display">\[
+K =
+\begin{bmatrix}
+c &amp; s &amp; x_H \\
+0 &amp; c(1 + m) &amp; y_H \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>There are <strong>5</strong> intrinsic parameters:</p>
+<ul>
+<li>camera constant <span class="math inline">\(c\)</span></li>
+<li>scale difference <span class="math inline">\(m\)</span></li>
+<li>principal point offset <span class="math inline">\(x_H\)</span> and <span class="math inline">\(y_H\)</span></li>
+<li>shear compensation <span class="math inline">\(s\)</span></li>
+</ul>
+<aside class="notes">
+<p>important - different literature may talk about 2 different camera constants, cx, cy or fx fy. also important - we have not talked about non-linear distortions, from lenses etc.</p>
+</aside>
+</section>
+<section id="projection-matrix" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Projection Matrix</h2>
+<p>Finally, we have the <span class="math inline">\(3 \times 4\)</span> homogeneous projection matrix:</p>
+<p><span class="math display">\[
+P = K R [I_3 | - \textbf{X}_o]
+\]</span></p>
+<p>It contains <strong>11 parameters</strong>:</p>
+<ul>
+<li>6 extrinsic parameters</li>
+<li>5 intrinsic parameters</li>
+</ul>
+</section></section>
+<section>
+<section id="direct-linear-transformation" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Direct Linear Transformation</h1>
+<figure>
+<img data-src="assets/svg/parameters1.svg" alt="point mapping" /><figcaption aria-hidden="true">point mapping</figcaption>
+</figure>
+<aside class="notes">
+<p>Direct Linear transform refers to the projection - but also the process of solving the parameters. we know what P is now, but how do we find the values of the parameters? we want to estimate these parameters - given we know some points in the world. So, the big X are given, we can observe the small x in the image, we want to estimate P.</p>
+</aside>
+</section>
+<section id="control-points" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Control Points</h2>
+<div class="columns">
+<div class="column">
+<figure>
+<img data-src="assets/jpg/norwich_cathedral_DLT.jpg" style="width:80.0%" alt="known points in the world" /><figcaption aria-hidden="true">known points in the world</figcaption>
+</figure>
+</div><div class="column">
+<p>We have <em>control points</em> of known coordinates in the world.</p>
+<p>We want to estimate the camera parameters, given these points.</p>
+</div>
+</div>
+<aside class="notes">
+<p>we need to know a number of control points - shown here in our scene.</p>
+</aside>
+</section>
+<section id="parameter-estimation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Parameter Estimation</h2>
+<ul>
+<li><strong>Goal</strong>: camera parameters, <span class="math inline">\(P\)</span>.</li>
+<li><strong>Given</strong>: control points in the world, <span class="math inline">\(X\)</span>.</li>
+<li><strong>Observed</strong>: coordinates <span class="math inline">\((x, y)\)</span> in the image.</li>
+</ul>
+<aside class="notes">
+<p>Assume: correspondence between the control points is known. we need to know which point is mapped to which pixel. Based on this information, we want to estimate the parameters of P - the intrinsic and extrinsic parameters.</p>
+</aside>
+</section>
+<section id="mapping" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Mapping</h2>
+<p>Direct Linear Transformation (DLT) maps a point in the world to a point in the image.</p>
+<p><span class="math display">\[
+\begin{aligned}
+x &amp;= K R [I_3 | - \textbf{X}_o] \textbf{X} \\
+  &amp;= P \textbf{X}
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>We have in P, the intrinsic and extrinsic parameters. R, offset, and K</p>
+</aside>
+</section>
+<section id="camera-parameters-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Camera Parameters</h2>
+<p><span class="math display">\[
+x = K R [I_3 | - \textbf{X}_o] \textbf{X} = P \textbf{X}
+\]</span></p>
+<ul>
+<li>Intrinsic parameters <span class="math inline">\(K\)</span></li>
+<li>Extrinsic parameters <span class="math inline">\(\textbf{X}_o\)</span> and <span class="math inline">\(R\)</span>.</li>
+<li>Projection matrix <span class="math inline">\(P\)</span> contains intrinsic <strong>and</strong> extrinsic parameters.</li>
+</ul>
+<aside class="notes">
+<p>K contains 5 parameters, c, m, xh, yh, s. there are 6 extrinsic parameters, R, t, and the projection matrix P. so recall, P is a 3x4 matrix.</p>
+</aside>
+</section></section>
+<section>
+<section id="direct-linear-transformation-1" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Direct Linear Transformation</h1>
+<p>Compute the <strong>11</strong> <em>intrinsic</em> and <em>extrinsic</em> parameters.</p>
+<aside class="notes">
+<p>what should these values be?? so the task is to compute 11 parameters. NB - the term DLT is used both to refer to the equation above, and to the process of solving for the parameters.</p>
+</aside>
+</section>
+<section id="how-many-points-are-needed" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">How many points are needed?</h2>
+<p>Homogeneous projection:</p>
+<p><span class="math display">\[
+\begin{bmatrix} u \\ v \\ w \end{bmatrix} = P
+\begin{bmatrix} U \\ V \\ W \\ T \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>Here is the projection in homogeneous coordinates. Each point gives how many observation equations?</p>
+</aside>
+</section>
+<section id="section-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p>Normalised homogeneous projection:</p>
+<p><span class="math display">\[
+\begin{bmatrix} u/w \\ v/w \\ 1 \end{bmatrix} = P
+\begin{bmatrix} U/T \\ V/T \\ W/T \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>Ultimately, we want Euclidean coordinates so we need to normalise the homogeneous coordinates.</p>
+</aside>
+</section>
+<section id="section-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p>Euclidean coordinates:</p>
+<p><span class="math display">\[
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = P
+\begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>Now we are back in Euclidean coordinates - we can see that one point in space gives two observation equations.</p>
+</aside>
+</section>
+<section id="section-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p>We can expand the multiplication by <span class="math inline">\(P\)</span> to get the following:</p>
+<p><span class="math display">\[
+\begin{aligned}
+x &amp;= \frac{p_{11}X + p_{12}Y + p_{13}Z + p_{14}}
+    {p_{31}X + p_{32}Y + p_{33}Z + p_{34}} \\[10pt]
+y &amp;= \frac{p_{21}X + p_{22}Y + p_{23}Z + p_{24}}
+    {p_{31}X + p_{32}Y + p_{33}Z + p_{34}}
+\end{aligned}
+\]</span></p>
+<p>Each point gives <strong>two</strong> observation equations, one for each image coordinate.</p>
+<aside class="notes">
+<p>Here are the expanded observation equations.</p>
+</aside>
+</section>
+<section id="how-many-points-are-needed-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">How many points are needed?</h2>
+<p>Each point gives <strong>two</strong> observation equations, one for each image coordinate.</p>
+<p>We need at least <strong>6 points</strong> to estimate <em>11 parameters</em>.</p>
+<aside class="notes">
+<p>we are also assuming that we have an affine camera without non-linear distortions.</p>
+</aside>
+</section>
+<section id="rearrange-the-dlt-equation" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Rearrange the DLT Equation</h2>
+<p><span class="math display">\[
+\textbf{x}_i = P \textbf{X}_i
+\]</span></p>
+<p><span class="math display">\[
+\textbf{x}_i =
+\begin{bmatrix}
+    p_{11} &amp; p_{12} &amp; p_{13} &amp; p_{14} \\
+    p_{21} &amp; p_{22} &amp; p_{23} &amp; p_{24} \\
+    p_{31} &amp; p_{32} &amp; p_{33} &amp; p_{34} \\
+    p_{41} &amp; p_{42} &amp; p_{43} &amp; p_{44}
+\end{bmatrix} \textbf{X}_i
+\]</span></p>
+<aside class="notes">
+<p>to solve for the parameters, we need to rearrange the equation. if we look at all the elements of P… we make a vector of each row…</p>
+</aside>
+</section>
+<section id="section-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p><span class="math display">\[
+\textbf{x}_i = P \textbf{X}_i =
+\begin{bmatrix}
+    p_{11} &amp; p_{12} &amp; p_{13} &amp; p_{14} \\
+    p_{21} &amp; p_{22} &amp; p_{23} &amp; p_{24} \\
+    p_{31} &amp; p_{32} &amp; p_{33} &amp; p_{34}
+\end{bmatrix} \textbf{X}_i
+\]</span></p>
+<p>Define three vectors:</p>
+<p><span class="math display">\[
+A = \begin{bmatrix} p_{11} \\ p_{12} \\ p_{13} \\ p_{14} \end{bmatrix}, \quad
+B = \begin{bmatrix} p_{21} \\ p_{22} \\ p_{23} \\ p_{24} \end{bmatrix}, \quad
+C = \begin{bmatrix} p_{31} \\ p_{32} \\ p_{33} \\ p_{34} \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>so here we have just taken the rows of P and formed separate vectors, A, B, C.</p>
+</aside>
+</section>
+<section id="section-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p><span class="math display">\[
+\textbf{x}_i = P \textbf{X}_i =
+\begin{bmatrix}
+    p_{11} &amp; p_{12} &amp; p_{13} &amp; p_{14} \\
+    p_{21} &amp; p_{22} &amp; p_{23} &amp; p_{24} \\
+    p_{31} &amp; p_{32} &amp; p_{33} &amp; p_{34}
+\end{bmatrix} \textbf{X}_i
+\]</span></p>
+<p>Rewrite the equation as:</p>
+<p><span class="math display">\[
+\textbf{x}_i = P \textbf{X}_i =
+\begin{bmatrix} A^T \\ B^T \\ C^T \end{bmatrix} \textbf{X}_i
+\]</span></p>
+<aside class="notes">
+<p>so, nothing unusual yet - we have just rearranged the equation, and labelled the rows. Now, if we multiply out this matrix, we get AX, BX, and CX.</p>
+</aside>
+</section>
+<section id="section-7" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p><span class="math display">\[
+\textbf{x}_i = P \textbf{X}_i =
+\begin{bmatrix}
+    p_{11} &amp; p_{12} &amp; p_{13} &amp; p_{14} \\
+    p_{21} &amp; p_{22} &amp; p_{23} &amp; p_{24} \\
+    p_{31} &amp; p_{32} &amp; p_{33} &amp; p_{34}
+\end{bmatrix} \textbf{X}_i
+\]</span></p>
+<p>Rewrite the equation as:</p>
+<p><span class="math display">\[
+\begin{bmatrix} u_i \\ v_i \\ w_i \end{bmatrix} \quad = \quad
+\textbf{x}_i \quad = \quad
+P \textbf{X}_i \quad = \quad
+\begin{bmatrix} A^T \\ B^T \\ C^T \end{bmatrix} \textbf{X}_i \quad = \quad
+\begin{bmatrix} A^T X_i \\ B^T X_i \\ C^T X_i \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>So now to get each of u, v, w, (our homogenous coordinates) we just need to compute the product of 3 vectors. and, recall, we want the end result to be in euclidean coordinates - just the x,y pixel coordinates, so we will need to divide by the last element of the vector. Let’s write that out…</p>
+</aside>
+</section>
+<section id="section-8" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p><span class="math display">\[
+\textbf{x}_i =
+\begin{bmatrix} x_i \\ y_i \\ 1 \end{bmatrix}, \quad
+\begin{bmatrix} u_i \\ v_i \\ w_i \end{bmatrix} =
+\begin{bmatrix} A^T X_i \\ B^T X_i \\ C^T X_i \end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+x_i = \frac{u_i}{w_i} = \frac{A^T X_i}{C^T X_i},
+\quad y_i = \frac{v_i}{w_i} = \frac{B^T X_i}{C^T X_i}
+\]</span></p>
+<aside class="notes">
+<p>so now my x coordinate is A/C, and my y coordinate is B/C. we can now use this result to define a system of equations.</p>
+</aside>
+</section>
+<section id="system-of-equations" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">System of equations</h2>
+<p><span class="math display">\[
+x_i = \frac{A^T X_i}{C^T X_i} \quad \Rightarrow \quad
+x_i C^T X_i - A^T X_i = 0
+\]</span></p>
+<p><span class="math display">\[
+y_i = \frac{B^T X_i}{C^T X_i} \quad \Rightarrow \quad
+y_i C^T X_i - B^T X_i = 0
+\]</span></p>
+<p>Leading to a system of linear equations in <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, and <span class="math inline">\(C\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+- X_{i}^{T} A +  x_i X_{i}^{T} C &amp;= 0 \\
+- X_{i}^{T} B +  y_i X_{i}^{T} C &amp;= 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>why write this way? because A, B, C are the unknowns so we take the transpose out of them.</p>
+</aside>
+</section>
+<section id="section-9" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p>let:</p>
+<p><span class="math display">\[
+\textbf{p} = \begin{bmatrix} A \\ B \\ C \end{bmatrix} = vec(P^T) =
+\begin{bmatrix}
+    p_{11} \\ p_{12} \\ p_{13} \\ p_{14} \\
+    p_{21} \\ p_{22} \\ p_{23} \\ p_{24} \\
+    p_{31} \\ p_{32} \\ p_{33} \\ p_{34}
+\end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>before we step to the next slide… p is a long vector of all the 12 parameters in P</p>
+</aside>
+</section>
+<section id="section-10" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p><span class="math display">\[
+\begin{aligned}
+- X_{i}^{T} A &amp;\quad            &amp;+x_i X_{i}^{T} C &amp;= 0 \\
+        \quad &amp;- X_{i}^{T} B    &amp;+y_i X_{i}^{T} C &amp;= 0
+\end{aligned}
+\]</span></p>
+<p>rewrite as:</p>
+<p><span class="math display">\[
+a_{x_i}^T \textbf{p} = 0, \quad a_{y_i}^T \textbf{p} = 0
+\]</span></p>
+<p>with:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\textbf{p}           &amp;= vec(P^T) \\
+a_{x_i}^T &amp;= (-X_i, -Y_i, -Z_i, -1, 0, 0, 0, 0, x_i X_i, x_i Y_i, x_i Z_i, x_i) \\
+a_{y_i}^T &amp;= (0, 0, 0, 0, -X_i, -Y_i, -Z_i, -1, y_i X_i, y_i Y_i, y_i Z_i, y_i)
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>we should just pause on this slide… I need to point out that ax and ay contain all the knowns we are dealing with… I hope you can see how you would implement this in code… just pulling all the values out and some simple products…</p>
+</aside>
+</section>
+<section id="section-11" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true"></h2>
+<p>for each point we have:</p>
+<p><span class="math display">\[
+a_{x_i}^T \textbf{p} = 0, \quad a_{y_i}^T \textbf{p} = 0
+\]</span></p>
+<p>stacking all the points vertically:</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+    a_{x_1}^T \\
+    a_{y_1}^T \\
+    a_{x_2}^T \\
+    a_{y_2}^T \\
+    \dots \\
+    a_{x_n}^T \\
+    a_{y_n}^T \\
+\end{bmatrix} \textbf{p} =
+M \textbf{p} \overset{!}{=} 0
+\]</span></p>
+<p>Where <span class="math inline">\(M\)</span> is a <span class="math inline">\(2n \times 12\)</span> matrix.</p>
+</section>
+<section id="solving-the-linear-system" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Solving the Linear System</h2>
+<p>Solving a system of linear equations of the form <span class="math inline">\(Ax = 0\)</span> is equivalent to finding the null space of <span class="math inline">\(A\)</span>.</p>
+<ul>
+<li>Apply the Singular Value Decomposition (SVD) to solve <span class="math inline">\(M\textbf{p} = 0\)</span>.</li>
+<li>SVD returns a matrix <span class="math inline">\(U\)</span>, <span class="math inline">\(S\)</span>, and <span class="math inline">\(V\)</span> such that <span class="math inline">\(M = U S V^T\)</span>.</li>
+<li>Choose <span class="math inline">\(\textbf{p}\)</span> as the singular <em>vector</em> belonging to the singular <em>value</em> of <span class="math inline">\(0\)</span>.</li>
+<li>Solution is the last column of <span class="math inline">\(V\)</span>.</li>
+</ul>
+<aside class="notes">
+<p>with all our assumptions holding we are done! We have found the parameters of P But - does it always work? The properties of SVD give us a least squares solution, that is the last column of V. noise means the solution will not be zero - only close to zero.</p>
+</aside>
+</section>
+<section id="direct-linear-transformation-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Direct Linear Transformation</h2>
+<p>Does it always work?</p>
+<aside class="notes">
+<p>not always…</p>
+</aside>
+</section>
+<section id="critical-surfaces" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Critical Surfaces</h2>
+<p>No solution if all points <span class="math inline">\(X_i\)</span> are on a <strong>plane</strong>.</p>
+<aside class="notes">
+<p>this is actually quite common - think of the texture in walls and floors</p>
+</aside>
+</section></section>
+<section>
+<section id="decomposing-the-projection-matrix" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Decomposing the Projection Matrix</h1>
+<p>From <span class="math inline">\(P\)</span> to <span class="math inline">\(K\)</span>, <span class="math inline">\(R\)</span>, <span class="math inline">\(\textbf{X}_o\)</span></p>
+<aside class="notes">
+<p>If we have P - we still do not have K or know where the camera is located in space. How can we turn P into K, and R and Xo? The other way is easy - just a multiplication - but how do I find these individual matrices? Usefully - there is a standard way to do this.</p>
+</aside>
+</section>
+<section id="decomposing-the-projection-matrix-1" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decomposing the Projection Matrix</h2>
+<p>We have <span class="math inline">\(P\)</span>, how do we obtain <span class="math inline">\(K, R, \textbf{X}_o\)</span>?</p>
+<p>Structure of <span class="math inline">\(P\)</span>:</p>
+<p><span class="math display">\[
+P = [K R | -K R\textbf{X}_o] = [H | \textbf{h}]
+\]</span></p>
+<p>with:</p>
+<p><span class="math display">\[
+H = K R, \quad \textbf{h} = -KR\textbf{X}_o
+\]</span></p>
+<aside class="notes">
+<p>H is a 3x3 matrix, h is a 3x1 vector - we can define this directly from the structure of P. I know H is K R, and h is the part on the right. Getting Xo is straightforward - if we take the inverse of H, we get the inverse of K R… then we can pre multiply h and directly get Xo.</p>
+</aside>
+</section>
+<section id="decomposing-the-projection-matrix-2" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decomposing the Projection Matrix</h2>
+<p><span class="math display">\[
+H = K R, \quad \textbf{h} = -KR\textbf{X}_o
+\]</span></p>
+<p>We can obtain the projection centre by:</p>
+<p><span class="math display">\[
+\textbf{X}_o = -H^{-1} \textbf{h}
+\]</span></p>
+<aside class="notes">
+<p>This part is very simple - but the next part - getting R out is more complicated.</p>
+</aside>
+</section>
+<section id="decomposing-the-projection-matrix-3" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decomposing the Projection Matrix</h2>
+<p><span class="math display">\[
+H = K R
+\]</span></p>
+<p>What do we know about these matrices?</p>
+<aside class="notes">
+<p>H is K times R - how can we break it down to the calibration matrix and the rotation matrix? Is there something about the structure of these matrices we can exploit?</p>
+</aside>
+</section>
+<section id="decomposing-the-projection-matrix-4" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decomposing the Projection Matrix</h2>
+<p>Exploit the structure of <span class="math inline">\(H=K R\)</span></p>
+<ul>
+<li><span class="math inline">\(K\)</span> is a triangular matrix</li>
+<li><span class="math inline">\(R\)</span> is a rotation matrix</li>
+</ul>
+<p>There is a standard method to decompose a matrix to a rotation and triangular matrix.</p>
+<div>
+<ul>
+<li class="fragment"><strong>QR</strong> decomposition</li>
+</ul>
+</div>
+<aside class="notes">
+<p>there is one small detail left to thwart us - K and R are in the wrong order - so we need to do QR on the inverse of H.</p>
+</aside>
+</section>
+<section id="decomposing-the-projection-matrix-5" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decomposing the Projection Matrix</h2>
+<p>We perform a QR decomposition on <span class="math inline">\(H^{-1}\)</span>, given the order of rotation and triangular matrices.</p>
+<p><span class="math display">\[
+H^{-1} = (K R)^{-1} = R^{-1}K^{-1} = R^{T}K^{-1}
+\]</span></p>
+<aside class="notes">
+<p>so now QR decomposition gives R-transpose and K-inverse.</p>
+</aside>
+</section>
+<section id="decomposing-the-projection-matrix-6" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">Decomposing the Projection Matrix</h2>
+<p>The Matrix <span class="math inline">\(H = K R\)</span> is homogeneous, therefore so is <span class="math inline">\(K\)</span>, so we must normalise.</p>
+<p><span class="math display">\[
+K  \leftarrow \frac{1}{K_{33}} K
+\]</span></p>
+<aside class="notes">
+<p>one further detail - we need to normalise the homogeneous matrix K.</p>
+</aside>
+</section>
+<section id="dlt-recap" class="slide level2" data-auto-animate="true">
+<h2 data-auto-animate="true">DLT recap</h2>
+<ol type="1">
+<li>Build the matrix <span class="math inline">\(M\)</span>.</li>
+<li>Solve using <em>SVD</em>; <span class="math inline">\(M = U \ S \ V^T\)</span>, solution is last column of <span class="math inline">\(V\)</span>.</li>
+<li>If individual matrices are required, we can use <em>QR</em> decomposition.</li>
+</ol>
+<aside class="notes">
+<p>SVD finds the null space - or the nearest approximation to the null space. which solves our system of linear equations.</p>
+</aside>
+</section></section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>Camera Model</li>
+<li>Intrinsic and Extrinsic Parameters</li>
+<li>Direct Linear Transformation</li>
+</ul>
+<p>reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach. Section 1.3</li>
+<li>Hartley, Zisserman; Multiple View Geometry in Computer Vision</li>
+</ul>
+<aside class="notes">
+<p>we started by introducing the camera model - and how it measures not just intensity but also position and direction.</p>
+<p>we looked at intrinsic and extrinsic parameters for the pinhole camera model.</p>
+<p>and, we worked through the direct linear transformation.</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
