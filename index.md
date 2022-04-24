@@ -41,6 +41,12 @@ Lectures are available as online html or printable pdf.
 - Visual Features - Descriptors: [online](lectures/features-descriptors.html)
   or printable [pdf](lectures/features-descriptors.bmr.pdf).
 
+- The Camera Model: [online](lectures/camera-model.html)
+  or printable [pdf](lectures/camera-model.bmr.pdf).
+
+- Camera Calibration: [online](lectures/camera-calibration.html)
+  or printable [pdf](lectures/camera-calibration.bmr.pdf).
+
 ## Labs
 
 Labs are usually a pdf file, or a zip file if additional resources are provided.
