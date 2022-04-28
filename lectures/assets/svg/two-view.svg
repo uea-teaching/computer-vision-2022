@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="720" height="560" viewBox="0, 0, 720, 560">
+  <g id="objects">
+    <path d="M60.5,500.5 L660.5,500.5" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <g>
+      <path d="M300.5,260.5 L360.5,260.5 L360.5,320.5 L300.5,320.5 L300.5,260.5 z" fill="#FFE5E5"/>
+      <path d="M300.5,260.5 L360.5,260.5 L360.5,320.5 L300.5,320.5 L300.5,260.5 z" fill-opacity="0" stroke="#FF8080" stroke-width="3"/>
+    </g>
+    <g>
+      <path d="M460.5,100.5 L560.5,100.5 L560.5,200.5 L460.5,200.5 L460.5,100.5 z" fill="#FFE5E5"/>
+      <path d="M460.5,100.5 L560.5,100.5 L560.5,200.5 L460.5,200.5 L460.5,100.5 z" fill-opacity="0" stroke="#FF8080" stroke-width="3"/>
+    </g>
+  </g>
+  <g id="lines">
+    <path d="M60.5,500.5 L660.5,500.5" fill-opacity="0" stroke="#959595" stroke-width="3"/>
+    <path d="M260.5,260.5 L420.5,500.5" fill-opacity="0" stroke="#FF862B" stroke-width="3" stroke-dasharray="9,6"/>
+    <path d="M380.5,80.5 L660.5,500.5" fill-opacity="0" stroke="#FF862B" stroke-width="3" stroke-dasharray="9,6"/>
+    <path d="M60.5,500.5 L620.5,80.5" fill-opacity="0" stroke="#FF862B" stroke-width="3" stroke-dasharray="9,6"/>
+    <path d="M60.5,500.5 L660.5,140.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="3" stroke-dasharray="9,6"/>
+    <path d="M420.5,500.5 L320.5,200.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="3" stroke-dasharray="9,6"/>
+    <path d="M660.5,500.5 L500.5,20.5" fill-opacity="0" stroke="#2BA4FF" stroke-width="3" stroke-dasharray="9,6"/>
+    <path d="M300.062,325 C297.301,325 295.062,322.761 295.062,320 C295.062,317.239 297.301,315 300.062,315 C302.824,315 305.062,317.239 305.062,320 C305.062,322.761 302.824,325 300.062,325 z" fill="#EE0000"/>
+    <path d="M460.038,205.225 C457.276,205.225 455.038,202.986 455.038,200.225 C455.038,197.464 457.276,195.225 460.038,195.225 C462.799,195.225 465.038,197.464 465.038,200.225 C465.038,202.986 462.799,205.225 460.038,205.225 z" fill="#EE0000"/>
+  </g>
+  <g id="labels">
+    <text transform="matrix(1, 0, 0, 1, 274.522, 315.186)">
+      <tspan x="-7.776" y="8" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">X</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 432.78, 192.686)">
+      <tspan x="-12.78" y="8" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">X</tspan>
+      <tspan x="2.772" y="8" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#7D7D7D">1</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 56.19, 521.686)">
+      <tspan x="-12.444" y="8" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">O'</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 421.306, 521.686)">
+      <tspan x="-14.436" y="8" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">O"</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 665.806, 521.686)">
+      <tspan x="-19.44" y="8" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">O</tspan>
+      <tspan x="-1.224" y="8" font-family="HelveticaNeue-MediumItalic" font-size="18" fill="#7D7D7D">1</tspan>
+      <tspan x="8.784" y="8" font-family="HelveticaNeue-MediumItalic" font-size="24" fill="#7D7D7D">"</tspan>
+    </text>
+    <path d="M59.8,505 C57.039,505 54.8,502.761 54.8,500 C54.8,497.239 57.039,495 59.8,495 C62.561,495 64.8,497.239 64.8,500 C64.8,502.761 62.561,505 59.8,505 z" fill="#959595"/>
+    <path d="M660,505 C657.239,505 655,502.761 655,500 C655,497.239 657.239,495 660,495 C662.761,495 665,497.239 665,500 C665,502.761 662.761,505 660,505 z" fill="#959595"/>
+    <path d="M419.8,505 C417.039,505 414.8,502.761 414.8,500 C414.8,497.239 417.039,495 419.8,495 C422.561,495 424.8,497.239 424.8,500 C424.8,502.761 422.561,505 419.8,505 z" fill="#959595"/>
+  </g>
+</svg>
