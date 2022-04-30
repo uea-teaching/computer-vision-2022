@@ -198,7 +198,7 @@ A 4x4 matrix - and ignoring the homogeneous scaling.
 | Camera       | image | pair | RO  | AO  | 3D  |
 | :----------- | :---: | :--: | :-: | :-: | :-: |
 | Calibrated   |   6   |  12  |  5  |  7  |  3  |
-| Uncalibrated |  11   |  22  |  7  | 15  |  3  |
+| Uncalibrated |  11   |  22  |  7  | 15  |  5  |
 
 - RO : relative orientation
 - AO : absolute orientation
@@ -221,5 +221,7 @@ By simply moving the camera in the scene we can obtain a **relative orientation*
 ![Rome in a day](assets/png/colluseum-2106-photos.png){width=80%}
 
 ::: notes
-As an inspirational interlude - just by finding image correspondences we can find the relative orientation - and for many images we can reconstruct many points in complex models.
+As an inspirational interlude - just by finding image correspondences
+we can find the relative orientation - and for many images
+we can reconstruct many points in complex models.
 :::
