@@ -8,7 +8,8 @@ date: Spring 2022
 # Contents {data-transition="convex"}
 
 - Camera Pair
-- Essential and Fundamental Matrix
+- Fundamental Matrix
+- Essential Matrix
 - Epipolar Geometry
 
 # Camera Pair
@@ -209,7 +210,10 @@ to summarise the available parameters in an image, in an image pair...
 for calibrated every camera has 6 extrinsics... so 12 in total. We can find 5 parameters just from the two images, and the other 7 parameters are missing.
 We would need to know 3 points in 3D to find those 7 parameters and thus the absolute orientation.
 
-Similarly for uncalibrated cameras, we need at least 5 points in 3D to obtain the absolute orientation.
+Similarly for uncalibrated cameras,
+we need at least 5 points in 3D to obtain the absolute orientation.
+
+This works just by knowing the correspondence in 2 images, and we can cover at least something about the orientation between two cameras.
 :::
 
 ## Relative Orientation {data-auto-animate="true}
@@ -224,4 +228,91 @@ By simply moving the camera in the scene we can obtain a **relative orientation*
 As an inspirational interlude - just by finding image correspondences
 we can find the relative orientation - and for many images
 we can reconstruct many points in complex models.
+:::
+
+# Coplanarity Constraint {data-auto-animate="true}
+
+Leading to the Fundamental Matrix.
+
+::: notes
+Let's start with the geometry of the scene and this will lead us to the fundamental matrix.
+
+We start with an uncalibrated camera - no calibration information.
+And we are going to look into what we call the co-planarity constraint.
+:::
+
+## Coplanarity Constraint {data-auto-animate="true}
+
+Which parameters can we compute without any knowledge of the scene?
+
+::: notes
+we will start with two cameras looking at a single point.
+:::
+
+## Coplanarity Constraint {data-auto-animate="true}
+
+![Two cameras observe one point.](assets/svg/coplanarity-1.svg){width=80%}
+
+::: notes
+To repeat, we know nothing of the outside world.
+we have one camera on the left, and one on the right.
+They can both observe the same point, X, in the world.
+:::
+
+## {data-auto-animate="true}
+
+![The perfect intersection of two rays.](assets/svg/coplanarity-1.svg){width=80%}
+
+::: notes
+What do we know? In this perfect orientation, the vector from the first camera exactly intersects the vector from the second camera.
+:::
+
+## {data-auto-animate="true}
+
+![Two rays lie on a plane.](assets/svg/coplanarity-1.svg){width=80%}
+
+::: notes
+if we have these perfect rays then this means those intersecting rays must lie on a plane.
+
+This is something we can exploit!!
+:::
+
+## {data-auto-animate="true}
+
+![The baseline vector.](assets/svg/coplanarity-2.svg){width=80%}
+
+::: notes
+If the two intersecting rays lie on a plane, then the vector between the two cameras must lie on that plane.
+So, we have 3 vectors in 3D that lie in a plane.
+:::
+
+## {data-auto-animate="true}
+
+Coplanarity can be expressed in the following way:
+
+$$
+[O^{'}X, O^{'}O^{''}, O^{''}X] = 0
+$$
+
+![Coplanarity](assets/svg/coplanarity-2.svg){width=80%}
+
+::: notes
+This expression is a scalar triple product.
+It is equal to zero if all the vectors are in a plane.
+:::
+
+## Aside: Scalar Triple Product {data-auto-animate="true}
+
+Dot product of one vector with the cross product of the other two.
+
+$$
+[A, B, C] = (A \times B) \cdot C
+$$
+
+- It is the volume of the _parallelepiped_ formed by the three vectors.
+- $[A, B, C] = 0$ if all the vectors are in a **plane**.
+
+::: notes
+a quick definition of the scalar triple product.
+We can also roll the operands around to get the same result.
 :::
