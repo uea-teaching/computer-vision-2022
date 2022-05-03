@@ -316,3 +316,70 @@ $$
 a quick definition of the scalar triple product.
 We can also roll the operands around to get the same result.
 :::
+
+## Coplanarity {data-auto-animate="true}
+
+$$
+[O^{'}X, O^{'}O^{''}, O^{''}X] = 0
+$$
+
+![Coplanarity](assets/svg/coplanarity-2.svg){width=80%}
+
+::: notes
+So we know that the vectors are coplanar.
+Now we need to express these vectors in a way that represents the properties of our camera.
+:::
+
+## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
+
+The directions of the vectors $O^{'}X$ and $O^{''}X$ can be derived from the image coordinates $x' x''$.
+
+$$
+x' = P'X \quad \quad x'' = P''X
+$$
+
+with the projection matrices:
+
+$$
+P'=K'R'[\textbf{I}_{3}| - X_{O'}] \quad \quad P''=K''R''[\textbf{I}_{3}| - X_{O''}]
+$$
+
+::: notes
+we know that cameras project 3D points in the world onto images.
+with these familiar equations.
+These prime and double prime variables relate to each camera, but the X is the same for both.
+This is important!!
+:::
+
+## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
+
+The normalised direction of the vector $O^{'}X$ is:
+
+$$
+{}^{n}x^{'} = (R')^{-1}(K')^{-1} x'
+$$
+
+::: notes
+we can compute this vector from the inverse of the calibration matrix K.
+we need to go a bit further to go from the camera coordinate system to the world coordinate system by rotating with R inverse too.
+:::
+
+## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
+
+The _normalised_ direction of the vector $O^{'}X$ is:
+
+$$
+{}^{n}x^{'} = (R')^{-1}(K')^{-1} x'
+$$
+
+as the _normalised_ projection:
+
+$$
+{}^{n}x^{'} = [\textbf{I}_{3}| - X_{O'}]X
+$$
+
+This gives the **direction** from the centre of projection to the point in 3D.
+
+::: notes
+And we can then say, now we have removed the rotation, that this is the normalised projection (ideal projection) from the world point.
+:::
