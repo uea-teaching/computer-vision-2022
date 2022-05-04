@@ -381,5 +381,89 @@ $$
 This gives the **direction** from the centre of projection to the point in 3D.
 
 ::: notes
-And we can then say, now we have removed the rotation, that this is the normalised projection (ideal projection) from the world point.
+And we can then say, now we have removed the rotation,
+that this is the normalised projection (ideal projection) from the world point.
+:::
+
+## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
+
+Analogously, we can do the same thing for both cameras:
+
+$$
+{}^{n}x^{'} = (R')^{-1}(K')^{-1} x' \quad \quad {}^{n}x^{''} = (R'')^{-1}(K'')^{-1} x''
+$$
+
+::: notes
+This gives me 2 of my vectors in my triangle.
+:::
+
+## Baseline Vector {data-auto-animate="true}
+
+The baseline vector $O^{'}XO^{''}X$, is obtained from the coordinates of the projection centres:
+
+$$
+\textbf{b} = B = O^{'}X - O^{''}X
+$$
+
+::: notes
+This is simply the difference between the two projection centres, the line from one to the other.
+:::
+
+## Coplanarity Constraint {data-auto-animate="true}
+
+recall:
+
+$$
+[O^{'}X, O^{'}O^{''}, O^{''}X] = 0
+$$
+
+can be expressed as:
+
+$$
+\begin{aligned}
+[{}^{n}x^{'}, \textbf{b}, {}^{n}x^{''} ] &= 0 \\
+{}^{n}x^{'} \cdot (\textbf{b} \times {}^{n}x^{''}) &= 0 \\
+{}^{n}x^{'T} S_{b} {}^{n}x^{''} &= 0
+\end{aligned}
+$$
+
+::: notes
+We previously had our coplanarity constraint, using the scalar triple product.
+We can now rewrite it in terms of the direction vectors.
+
+In the last part we can write the cross product as a skew symmetric matrix multiplication.
+:::
+
+## Skew Symmetric Matrix {data-auto-animate="true}
+
+How does this work?
+
+$$
+\begin{aligned}
+{}^{n}x^{'} \cdot (\textbf{b} \times {}^{n}x^{''}) &= 0 \\
+{}^{n}x^{'T} S_{b} {}^{n}x^{''} &= 0
+\end{aligned}
+$$
+
+Write the cross product as a skew symmetric matrix $S_b$:
+
+$$
+\begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix} \times
+\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} =
+\begin{bmatrix}
+    - b_3 x_2 & + & b_2 x_3 \\
+      b_3 x_1 & - & b_1 x_3 \\
+    - b_2 x_1 & + & b_1 x_2
+\end{bmatrix} =
+\underbrace{
+\begin{bmatrix} 0 & -b_3 & b_2 \\ b_3 & 0 & -b_1 \\ -b_2 & b_1 & 0 \end{bmatrix}
+}_{S_b}
+\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}
+$$
+
+::: notes
+we can show how the skew symmetric matrix works by showing the
+multiplication of the cross product.
+Generally, the skew symmetric matrix is a square matrix whose
+transpose equals its negative.
 :::
