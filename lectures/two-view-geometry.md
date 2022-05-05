@@ -552,7 +552,7 @@ $$
 x'^{T} Fx'' = 0
 $$
 
-for **corresponding** points in two images.
+for **corresponding points** in two images.
 
 - The fundamental matrix contains **all** the _information about the relative orientation_ of **two images** from uncalibrated cameras.
 
@@ -573,4 +573,101 @@ Under the assumption that the points are estimated perfectly. Of course, in the 
 We have built this up by looking at the relation of the second camera to the first.
 Of course, we can also look at the relation of the first camera to the second.
 In this case F would be the transpose of how we have shown it.
+:::
+
+# Essential Matrix {data-auto-animate="true}
+
+Calibrated Cameras
+
+::: notes
+The fundamental matrix deals with uncalibrated cameras.
+Loosely we can say the essential matrix deals with calibrated cameras.
+:::
+
+## Calibrated Cameras {data-auto-animate="true}
+
+Most photogrammetric systems rely on calibrated cameras.
+
+::: incremental
+
+- Calibrated cameras _simplify_ the orientation problem.
+- Often, both cameras have the _same_ calibration matrix.
+
+:::
+
+::: notes
+We have talked about calibration - we take a checkerboard and find the parameters of K.
+This often simplifies the problem, because those parameters are taken away.
+And, we will assume we have no distortions we have not accounted for.
+:::
+
+## Calibrated Cameras {data-auto-animate="true}
+
+For calibrated cameras the coplanarity constraint can be simplified.
+
+- From the calibration matrices we obtain the directions as:
+
+$$
+{}^{k}x^{'} = (K')^{-1}x' \quad {}^{k}x^{''} = (K'')^{-1}x''
+$$
+
+::: notes
+On the left we have the direction vector in the camera coordinates.
+On the right we have the pixel coordinates in the image.
+:::
+
+## Coplanarity {data-auto-animate="true}
+
+From the fundamental matrix:
+
+$$
+\begin{aligned}
+x'^{T} Fx'' &= 0 \\[10pt]
+x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' &= 0
+\end{aligned}
+$$
+
+::: notes
+The coplanarity constraint can be expanded according to the definition of the fundamental matrix.
+We can see that the expression on the left and the right are exactly the direction vectors in the camera coordinates.
+If we use image coordinates from calibrated cameras, it replaces this part of the expression.
+
+:::
+
+## Coplanarity {data-auto-animate="true}
+
+From the fundamental matrix:
+
+$$
+\begin{aligned}
+x'^{T} Fx'' &= 0 \\[10pt]
+x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' &= 0 \\[10pt]
+\underbrace{x'^{T}(K')^{-T}}_{{}^{k}x^{'T}}
+(R')^{-T}S_{b}(R'')^{-1}
+\underbrace{(K'')^{-1}x''}_{{}^{k}x^{''}} &= 0
+\end{aligned}
+$$
+
+::: notes
+so we have the pixel coordinates transpose of the point in the first camera, and the pixel coordinates of the point in the second camera.
+Then, the part in the middle becomes the essential matrix.
+:::
+
+## Coplanarity {data-auto-animate="true}
+
+From the fundamental matrix:
+
+$$
+\begin{aligned}
+x'^{T} Fx'' &= 0 \\[10pt]
+x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' &= 0 \\[10pt]
+\underbrace{x'^{T}(K')^{-T}}_{{}^{k}x^{'T}}
+(R')^{-T}S_{b}(R'')^{-1}
+\underbrace{(K'')^{-1}x''}_{{}^{k}x^{''}} &= 0 \\[10pt]
+{}^{k}x^{'T} \underbrace{R'S_b R^{''T}}_{E} {}^{k}x^{''} &= 0
+\end{aligned}
+$$
+
+::: notes
+the part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes the essential matrix.
 :::
