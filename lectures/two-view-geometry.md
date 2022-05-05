@@ -673,3 +673,134 @@ the part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes 
 :::
 
 ## Essential Matrix {data-auto-animate="true}
+
+From $F$ to the essential matrix $E$:
+
+$$
+\begin{aligned}
+{}^{k}x^{'T} \underbrace{R'S_b R^{''T}}_{E} {}^{k}x^{''} &= 0 \\
+{}^{k}x^{'T} E {}^{k}x^{''} = 0
+\end{aligned}
+$$
+
+$$
+E = R'S_b R^{''T}
+$$
+
+::: notes
+the essential matrix is just a special form of the fundamental matrix.
+one where pixel coordinates are from the calibrated camera.
+:::
+
+## Essential Matrix {data-auto-animate="true}
+
+The essential matrix is a _special form_ of the fundamental matrix.
+
+For **calibrated cameras** it is called the essential matrix:
+
+$$
+E = R'S_b R^{''T}
+$$
+
+For calibrated cameras, the _coplanarity constraint_ is:
+
+$$
+{}^{k}x^{'T} E {}^{k}x^{''} = 0
+$$
+
+::: notes
+we have arrived at our definition of the essential matrix.
+it only involves the baseline parameters and the rotation parameters.
+it is another 3x3 matrix, and we can write the coplanarity constraint for calibrated cameras, with the direction vectors in the camera coordinates.
+:::
+
+## Essential Matrix {data-auto-animate="true}
+
+- The essential matrix has **five** degrees of freedom.
+- The essential matrix is _homogeneous_ and _singular_.
+
+$$
+{}^{k}x^{'T} E {}^{k}x^{''} = 0
+$$
+
+::: notes
+finally, some properties of the essential matrix.
+:::
+
+# Computing Relative Orientation {data-auto-animate="true}
+
+How do we obtain the values of the fundamental matrix from image correspondences?
+
+::: notes
+A quick few words on the 8 point algorithm.
+:::
+
+## 8 Point algorithm {data-auto-animate="true}
+
+We know the direction vectors from the image coordinates, but the parameters of $F$ are unknown.
+
+$$
+[x'_{n}, y'_{n}, 1]
+\begin{bmatrix}
+F_{11} & F_{12} & F_{13} \\
+F_{21} & F_{22} & F_{23} \\
+F_{31} & F_{32} & F_{33}
+\end{bmatrix}
+\begin{bmatrix}x''_{n} \\ y''_{n} \\ 1 \end{bmatrix} = 0
+$$
+
+::: notes
+in a similar way to the DLT we looked at last week, we rearrange our unknowns to a system of linear equations.
+:::
+
+## 8 Point algorithm {data-auto-animate="true}
+
+Solve using the SVD:
+
+$$
+A  \begin{bmatrix} F_{11} \\ \vdots \\ F_{33} \end{bmatrix} = 0
+$$
+
+::: notes
+if we gather our knowns from point observations in A...
+this homogeneous linear system equation can be solved using the SVD.
+we exploit some constraints - and we need 8 corresponding points
+:::
+
+## 8 Point algorithm {data-auto-animate="true}
+
+From **8** _corresponding_ points, we can solve $F$ or $E$.
+
+::: notes
+this is the so called 8 point algorithm.
+If you are doing this practically - you must normalise all your pixel coordinates,
+say to a range 0 to 1. The 8 point algorithm will give good results.
+:::
+
+# Packages {data-auto-animate="true"}
+
+There are implementations of these algorithms in many popular packages.
+
+- [OpenCV](https://opencv.org/releases/) for python and C++.
+- [Camera Calibration Toolkit](http://robots.stanford.edu/cs223b04/JeanYvesCalib/htmls/example.html) for Matlab.
+
+::: notes
+It is not necessary to implement these methods yourself - you can find them in a number of packages.
+:::
+
+# Summary
+
+- Camera Pair
+- Coplanarity Constraint
+- Fundamental Matrix
+- Essential Matrix
+
+Reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach.
+- Hartley, Zisserman; Multiple View Geometry in Computer Vision.
+- H. Christopher Longuet-Higgins (1981). "A computer algorithm for reconstructing a scene from two projections".
+
+::: notes
+If you look in hartley and zisserman - they use normalised coordinates for the 8 point algorithm.
+:::
