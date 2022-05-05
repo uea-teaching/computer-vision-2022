@@ -402,7 +402,7 @@ This gives me 2 of my vectors in my triangle.
 The baseline vector $O^{'}O^{''}$, is obtained from the coordinates of the projection centres:
 
 $$
-\textbf{b} = B = X_{O^{''}} - X_{O^{'}}
+\textbf{b} = X_{O^{''}} - X_{O^{'}}
 $$
 
 ::: notes
