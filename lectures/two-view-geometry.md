@@ -399,10 +399,10 @@ This gives me 2 of my vectors in my triangle.
 
 ## Baseline Vector {data-auto-animate="true}
 
-The baseline vector $O^{'}XO^{''}X$, is obtained from the coordinates of the projection centres:
+The baseline vector $O^{'}O^{''}$, is obtained from the coordinates of the projection centres:
 
 $$
-\textbf{b} = B = O^{'}X - O^{''}X
+\textbf{b} = B = X_{O^{''}} - X_{O^{'}}
 $$
 
 ::: notes
@@ -671,3 +671,5 @@ $$
 ::: notes
 the part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes the essential matrix.
 :::
+
+## Essential Matrix {data-auto-animate="true}
