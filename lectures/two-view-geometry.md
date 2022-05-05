@@ -725,6 +725,7 @@ $$
 
 ::: notes
 finally, some properties of the essential matrix.
+Singular - it has no inverse, and the determinant is zero.
 :::
 
 # Computing Relative Orientation {data-auto-animate="true}
