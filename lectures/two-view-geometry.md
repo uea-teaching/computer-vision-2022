@@ -8,9 +8,9 @@ date: Spring 2022
 # Contents {data-transition="convex"}
 
 - Camera Pair
+- Coplanarity Constraint
 - Fundamental Matrix
 - Essential Matrix
-- Epipolar Geometry
 
 # Camera Pair
 
@@ -455,9 +455,11 @@ $$
       b_3 x_1 & - & b_1 x_3 \\
     - b_2 x_1 & + & b_1 x_2
 \end{bmatrix} =
-\underbrace{
-\begin{bmatrix} 0 & -b_3 & b_2 \\ b_3 & 0 & -b_1 \\ -b_2 & b_1 & 0 \end{bmatrix}
-}_{S_b}
+\underbrace{\begin{bmatrix}
+    0 & -b_3 & b_2 \\
+    b_3 & 0 & -b_1 \\
+    -b_2 & b_1 & 0
+\end{bmatrix}}_{S_b}
 \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}
 $$
 
@@ -467,3 +469,89 @@ multiplication of the cross product.
 Generally, the skew symmetric matrix is a square matrix whose
 transpose equals its negative.
 :::
+
+# Fundamental Matrix {data-auto-animate="true}
+
+We can continue to work with the coplanarity constraint, to build the **fundamental** matrix.
+
+## Fundamental Matrix {data-auto-animate="true}
+
+By combining ${}^{n}x^{'} = (R')^{-1}(K')^{-1} x'$ and ${}^{n}x^{'T} S_{b} {}^{n}x^{''} = 0$
+
+- we obtain:
+
+$$
+x'^{T}(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}x'' = 0
+$$
+
+::: notes
+what we can do is take the normalised projection and replace with the expression containing the pixel coordinates. We can do that for both cameras.
+Take note: we had to use the transpose on the left hand side of the equation.
+And this whole expression should be equal to zero.
+Now, I take the whole expression in the middle - which is a matrix - or product of 5 matrices - and condense to one 3x3 matrix.
+We give this matrix the name F.
+:::
+
+## Fundamental Matrix {data-auto-animate="true}
+
+By combining ${}^{n}x^{'} = (R')^{-1}(K')^{-1} x'$ and ${}^{n}x^{'T} S_{b} {}^{n}x^{''} = 0$
+
+- we obtain:
+
+$$
+x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' = 0
+$$
+
+$$
+\begin{aligned}
+F &= (K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1} \\
+  &= (K')^{-T}(R') S_{b} (R'')^{T}(K'')^{-1}
+\end{aligned}
+$$
+
+::: notes
+so we take all the expression in the middle, and we can simplify it a little because we have rotation matrices. To give us the definition of the matrix F.
+:::
+
+## Fundamental Matrix {data-auto-animate="true}
+
+The matrix $F$ is the **fundamental** matrix.
+
+$$
+F = (K')^{-T}(R') S_{b} (R'')^{T}(K'')^{-1}
+$$
+
+- it allows us to express the _coplanarity constraint_ as:
+
+$$
+x'^{T} Fx'' = 0
+$$
+
+::: notes
+The fundamental matrix has all the parameters that we can estimate describing the two cameras relative orientation.
+:::
+
+## Fundamental Matrix {data-auto-animate="true}
+
+The **fundamental matrix** holds the parameters we can estimate to describe the _relative orientation_ of two cameras looking at the same point.
+
+$$
+x'^{T} Fx'' = 0
+$$
+
+::: notes
+The elegant thing about F is we can express the coplanarity constraint like this.
+This means if I have pixel coordinates in two cameras that refer to the same point in the world, this must give me zero if they actually are the same point.
+:::
+
+## Fundamental Matrix {data-auto-animate="true}
+
+The **fundamental matrix** fulfils the equation:
+
+$$
+x'^{T} Fx'' = 0
+$$
+
+for **corresponding** points in two images.
+
+- The fundamental matrix contains all the information about the relative orientation of two images from uncalibrated cameras.
