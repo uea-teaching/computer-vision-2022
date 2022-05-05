@@ -554,4 +554,23 @@ $$
 
 for **corresponding** points in two images.
 
-- The fundamental matrix contains all the information about the relative orientation of two images from uncalibrated cameras.
+- The fundamental matrix contains **all** the _information about the relative orientation_ of **two images** from uncalibrated cameras.
+
+::: notes
+Whenever we have corresponding points in two images this equation must hold.
+Under the assumption that the points are estimated perfectly. Of course, in the real world, there will be noise, so we will be close to zero.
+:::
+
+## Fundamental Matrix {data-auto-animate="true}
+
+**NOTE:** we have defined the fundamental matrix for the relative orientation from camera one to camera two.
+
+- You will also find in the literature, $F$ can be defined for the relative orientation from camera two to camera one.
+
+- This transposition must be accounted for when comparing expressions.
+
+::: notes
+We have built this up by looking at the relation of the second camera to the first.
+Of course, we can also look at the relation of the first camera to the second.
+In this case F would be the transpose of how we have shown it.
+:::
