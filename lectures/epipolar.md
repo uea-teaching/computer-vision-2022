@@ -47,9 +47,9 @@ Where do I search? The whole image? Or, can I reduce the search space?
 
 # Epipolar Geometry {data-auto-animate="true}
 
-- used to describe _geometric_ relations in image pairs
-- efficient search and prediction of corresponding points
-- search space reduces from 2D to 1D
+- describe _geometric_ relations in image pairs
+- _efficient_ search and prediction of corresponding points
+- search space reduced from 2D to 1D
 
 ::: notes
 epipolar geometry can help us with the search.
@@ -97,7 +97,7 @@ epipoles - the projection of the other camera's projection centre
 epipolar lines - projection of the ray from the other camera's projection centre to the observed point.
 :::
 
-## Epipoles and Epipolar Lines {data-auto-animate="true}
+## {data-auto-animate="true}
 
 We can also write the **epipoles** as:
 
@@ -117,10 +117,58 @@ $$
 this notation describes the intersections
 :::
 
-## Epipolar Geometry {data-auto-animate="true}
+## {data-auto-animate="true}
 
 ![Epipolar Geometry](assets/svg/epipolar.svg){width=80%}
 
 ::: notes
 to review the figure, I'll just point out all these elements again...
+:::
+
+## In the Epipolar Plane {data-auto-animate="true}
+
+Assuming a distortion free lens:
+
+::: incremental
+
+- The projection centres $O'$ and $O''$.
+- The observed point $X$.
+- The epipolar lines, $\mathcal{L}'(X)$ and $\mathcal{L}''(X)$.
+- The epipoles, $e'$ and $e''$.
+- The image points $x'$ and $x''$.
+
+:::
+
+::: notes
+all of these elements are in the epipolar plane.
+:::
+
+## In the Epipolar Plane {data-auto-animate="true}
+
+- The projection centres $O'$ and $O''$.
+- The observed point $X$.
+- The epipolar lines, $\mathcal{L}'(X)$ and $\mathcal{L}''(X)$.
+- The epipoles, $e'$ and $e''$.
+- The image points $x'$ and $x''$.
+
+**All lie in the epipolar plane** $\mathcal{E}$.
+
+::: notes
+This is especially important for the task of predicting correspondences.
+And this is what allows us to restrict the search space to a line in image 2.
+So, the epipolar plane is a constraining element for the search.
+:::
+
+## Predicting Point Correspondence {data-auto-animate="true}
+
+Task: Predict the location of $x''$ given $x'$.
+
+- For the epipolar plane $\mathcal{E} = (O'O''X)$
+- The intersection of $\mathcal{E}$ and the second image plane $\mathcal{E}''$ yields the epipolar line $\mathcal{L}''(X)$
+- The corresponding point $x''$ lies on that epipolar line $\mathcal{L}''(X)$.
+- Search space is reduced from 2D to 1D.
+
+::: notes
+with all these elements all we need to do is search along the epipolar line.
+In practice, it would be a good idea to lok either side by a pixel or two...
 :::
