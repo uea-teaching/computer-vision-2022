@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Epipolar Geometry</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Epipolar Geometry</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="contents" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Contents</h1>
+<ul>
+<li>Motivation</li>
+<li>Epipolar Geometry</li>
+<li>Epipolar Elements</li>
+<li>Point Correspondences</li>
+</ul>
+</section>
+
+<section>
+<section id="motivation" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Motivation</h1>
+<p>Given <span class="math inline">\(x&#39;\)</span> in the first image, <strong>find</strong> the corresponding point <span class="math inline">\(x&#39;&#39;\)</span> in the second image.</p>
+<aside class="notes">
+<p>We can make a motivating statement. For a while now we have been talking about finding features in images. And lately, we have been talking about finding correspondences between image features… now, if we find a promising feature in the first image - how do we go about finding the correspondence in the second image?</p>
+</aside>
+</section>
+<section id="section" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<ul>
+<li>Coplanarity constraint</li>
+<li>Intersection of two corresponding rays</li>
+<li>The rays lie in a 3D plane</li>
+</ul>
+<figure>
+<img data-src="assets/svg/coplanarity-1.svg" style="width:60.0%" alt="Coplanarity" /><figcaption aria-hidden="true">Coplanarity</figcaption>
+</figure>
+<aside class="notes">
+<p>A typical arrangement - one camera with projection centre on the left and the other on the right. When they observe the same point, the two rays will intersect in a plane. This is the coplanarity constraint we used to derive the fundamental matrix and the essential matrix. This will also play a role in the epipolar geometry we will talk about now.</p>
+<p>So when we can see the point in image 1, then we need to search for it in image 2? Where do I search? The whole image? Or, can I reduce the search space?</p>
+</aside>
+</section></section>
+<section>
+<section id="epipolar-geometry" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Epipolar Geometry</h1>
+<ul>
+<li>describe <em>geometric</em> relations in image pairs</li>
+<li><em>efficient</em> search and prediction of corresponding points</li>
+<li>search space reduced from 2D to 1D</li>
+</ul>
+<aside class="notes">
+<p>epipolar geometry can help us with the search. This takes into account the baseline vectors, where points are mapped to, how the epipolar plane intersects the image planes. It turns out that this geometry can reduce the search from the whole image to just one line in image 2. This has a couple of advantages: most obviously, it is faster, but also it reduces the possibility of making incorrect associations… many images have multiple similar features.</p>
+</aside>
+</section>
+<section id="epipolar-geometry-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Geometry</h2>
+<figure>
+<img data-src="assets/svg/epipolar.svg" style="width:80.0%" alt="Epipolar Geometry" /><figcaption aria-hidden="true">Epipolar Geometry</figcaption>
+</figure>
+<aside class="notes">
+<p>Lets look at some elements of this figure. epipolar axis between projection centres epipolar plane formed by the projection centres and the observed point epipoles - the projection of the other camera’s projection centre epipolar lines - intersection of the epipolar plane with the image planes</p>
+<p>Look at the projection of X in camera 1. We don’t know how far away it is, it could be at U. But that point can only exist on the epipolar line in image 2.</p>
+</aside>
+</section>
+<section id="epipolar-geometry-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Geometry</h2>
+<p>Epipolar elements:</p>
+<div>
+<ul>
+<li class="fragment"><strong>epipolar axis</strong> <span class="math inline">\(\mathcal{B} = (O&#39; O&#39;&#39;)\)</span></li>
+<li class="fragment"><strong>epipolar plane</strong> <span class="math inline">\(\mathcal{E} = (O&#39; O&#39;&#39; X)\)</span></li>
+<li class="fragment"><strong>epipoles</strong> <span class="math inline">\(e&#39; = (O&#39;&#39;)&#39;, e&#39;&#39; = (O&#39;)&#39;&#39;\)</span></li>
+<li class="fragment"><strong>epipolar lines</strong> <span class="math inline">\(\mathcal{L}&#39;(X) = (O&#39;&#39; X)&#39;, \mathcal{L}&#39;&#39;(X) = (O&#39; X)&#39;&#39;\)</span></li>
+</ul>
+</div>
+<aside class="notes">
+<p>Again, with labels… epipolar axis between projection centres epipolar plane formed by the projection centres and the observed point, different for each observation. epipoles - the projection of the other camera’s projection centre epipolar lines - projection of the ray from the other camera’s projection centre to the observed point.</p>
+</aside>
+</section>
+<section id="section-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<p>We can also write the <strong>epipoles</strong> as:</p>
+<p><span class="math display">\[
+e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
+\quad e&#39;&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;&#39;
+\]</span></p>
+<p>And the <strong>epipolar lines</strong> as:</p>
+<p><span class="math display">\[
+\mathcal{L}&#39;(X) = \mathcal{E} \cap \mathcal{E}&#39;,
+\quad \mathcal{L}&#39;&#39;(X) = \mathcal{E} \cap \mathcal{E}&#39;&#39;
+\]</span></p>
+<aside class="notes">
+<p>this notation describes the intersections</p>
+</aside>
+</section>
+<section id="section-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<figure>
+<img data-src="assets/svg/epipolar.svg" style="width:80.0%" alt="Epipolar Geometry" /><figcaption aria-hidden="true">Epipolar Geometry</figcaption>
+</figure>
+<aside class="notes">
+<p>to review the figure, I’ll just point out all these elements again…</p>
+</aside>
+</section>
+<section id="in-the-epipolar-plane" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">In the Epipolar Plane</h2>
+<p>Assuming a distortion free lens:</p>
+<div>
+<ul>
+<li class="fragment">The projection centres <span class="math inline">\(O&#39;\)</span> and <span class="math inline">\(O&#39;&#39;\)</span>.</li>
+<li class="fragment">The observed point <span class="math inline">\(X\)</span>.</li>
+<li class="fragment">The epipolar lines, <span class="math inline">\(\mathcal{L}&#39;(X)\)</span> and <span class="math inline">\(\mathcal{L}&#39;&#39;(X)\)</span>.</li>
+<li class="fragment">The epipoles, <span class="math inline">\(e&#39;\)</span> and <span class="math inline">\(e&#39;&#39;\)</span>.</li>
+<li class="fragment">The image points <span class="math inline">\(x&#39;\)</span> and <span class="math inline">\(x&#39;&#39;\)</span>.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>all of these elements are in the epipolar plane.</p>
+</aside>
+</section>
+<section id="in-the-epipolar-plane-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">In the Epipolar Plane</h2>
+<ul>
+<li>The projection centres <span class="math inline">\(O&#39;\)</span> and <span class="math inline">\(O&#39;&#39;\)</span>.</li>
+<li>The observed point <span class="math inline">\(X\)</span>.</li>
+<li>The epipolar lines, <span class="math inline">\(\mathcal{L}&#39;(X)\)</span> and <span class="math inline">\(\mathcal{L}&#39;&#39;(X)\)</span>.</li>
+<li>The epipoles, <span class="math inline">\(e&#39;\)</span> and <span class="math inline">\(e&#39;&#39;\)</span>.</li>
+<li>The image points <span class="math inline">\(x&#39;\)</span> and <span class="math inline">\(x&#39;&#39;\)</span>.</li>
+</ul>
+<p><strong>All lie in the epipolar plane</strong> <span class="math inline">\(\mathcal{E}\)</span>.</p>
+<aside class="notes">
+<p>This is especially important for the task of predicting correspondences. And this is what allows us to restrict the search space to a line in image 2. So, the epipolar plane is a constraining element for the search.</p>
+</aside>
+</section>
+<section id="predicting-point-correspondence" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Predicting Point Correspondence</h2>
+<p>Task: Predict the location of <span class="math inline">\(x&#39;&#39;\)</span> given <span class="math inline">\(x&#39;\)</span>.</p>
+<ul>
+<li>For the epipolar plane <span class="math inline">\(\mathcal{E} = (O&#39;O&#39;&#39;X)\)</span></li>
+<li>The intersection of <span class="math inline">\(\mathcal{E}\)</span> and the second image plane <span class="math inline">\(\mathcal{E}&#39;&#39;\)</span> yields the epipolar line <span class="math inline">\(\mathcal{L}&#39;&#39;(X)\)</span></li>
+<li>The corresponding point <span class="math inline">\(x&#39;&#39;\)</span> lies on that epipolar line <span class="math inline">\(\mathcal{L}&#39;&#39;(X)\)</span>.</li>
+<li>Search space is reduced from 2D to 1D.</li>
+</ul>
+<aside class="notes">
+<p>with all these elements all we need to do is search along the epipolar line. In practice, it would be a good idea to lok either side by a pixel or two…</p>
+</aside>
+</section></section>
+<section>
+<section id="computing-the-elements-of-epipolar-geometry" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Computing the Elements of Epipolar Geometry</h1>
+<aside class="notes">
+<p>We have discussed the properties and the advantages of epipolar geometry. How do we compute these elements?</p>
+</aside>
+</section>
+<section id="computing-the-elements-of-epipolar-geometry-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Computing the Elements of Epipolar Geometry</h2>
+<ul>
+<li>We described the important elements geometrically.</li>
+<li>We will <em>compute</em> them using the <strong>projection</strong> matrices and the <strong>fundamental</strong> matrix.</li>
+</ul>
+<aside class="notes">
+<p>we are going to need the projection matrices from last week and the fundamental matrix from earlier.</p>
+</aside>
+</section>
+<section id="epipolar-axis" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Axis</h2>
+<p>The direction of the epipolar axis can be derived directly from the projection centres.</p>
+<p><span class="math display">\[
+b = X_{O&#39;} - X_{O&#39;&#39;}
+\]</span></p>
+<p>The vector <span class="math inline">\(b\)</span> is <em>homogeneous</em> and the equation expresses that we know only the <em>direction</em>, <strong>not</strong> the <em>length</em>.</p>
+<aside class="notes">
+<p>This is relatively straightforward. We can ge the equation for the epipolar axis from the projection centres.</p>
+</aside>
+</section>
+<section id="epipolar-lines" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>Image points lie on the epipolar lines.</p>
+<p><span class="math display">\[
+x&#39; \in \mathcal{L}&#39; , \quad x&#39;&#39; \in \mathcal{L}&#39;&#39;
+\]</span></p>
+<aside class="notes">
+<p>next, we want to compute the epipolar lines. and now we are in the image plane.</p>
+</aside>
+</section>
+<section id="epipolar-lines-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>For <span class="math inline">\(x&#39;\)</span>:</p>
+<p><span class="math display">\[
+x^{&#39;T} \mathcal{L}&#39; = 0
+\]</span></p>
+<aside class="notes">
+<p>you may remember that to find if a point lies on a line we just need the dot product equal to zero.</p>
+<p>So this is the constraint that must be observed if the point is on the epipolar line.</p>
+<p>From the definition of the line equation: ax + by + c = 0 , l . x = 0 where l = [a b c] is the line and x = [x y 1] is a point on the line.</p>
+</aside>
+</section>
+<section id="epipolar-lines-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>For <span class="math inline">\(x&#39;\)</span>:</p>
+<p><span class="math display">\[
+x^{&#39;T} \mathcal{L}&#39; = 0
+\]</span></p>
+<p>We can exploit the coplanarity constraint for <span class="math inline">\(x&#39;\)</span> and <span class="math inline">\(x&#39;&#39;\)</span>:</p>
+<p><span class="math display">\[
+x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
+\]</span></p>
+<aside class="notes">
+<p>So the epipolar line is a projection into the image plane of the ray from the other camera, so we can use the coplanarity constraint, because we know these rays are converging to the observed point.</p>
+<p>So we can see that the line in the first image plane is the fundamental matrix multiplied by point in the second plane.</p>
+<p>NOW, just by comparing terms, we can see that the line is equivalent to Fx’’.</p>
+</aside>
+</section>
+<section id="epipolar-lines-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>We can exploit the coplanarity constraint for <span class="math inline">\(x&#39;\)</span> and <span class="math inline">\(x&#39;&#39;\)</span>:</p>
+<p><span class="math display">\[
+x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}&#39; = Fx&#39;&#39;
+\]</span></p>
+<aside class="notes">
+<p>This means the epipolar line can be very easily obtained by using the fundamental matrix and the point in the other image. So, knowing the point in image 2, gives me the epipolar line in image 1. And, of course and can do this for the other line.</p>
+</aside>
+</section>
+<section id="epipolar-lines-4" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>The same for <span class="math inline">\(x&#39;&#39;\)</span>:</p>
+<p><span class="math display">\[
+\mathcal{L}^{&#39;&#39;T} x&#39;&#39; = 0
+\]</span></p>
+<p>We can exploit the same constraint <span class="math inline">\(x^{&#39;T}Fx&#39;&#39;= 0\)</span> and obtain:</p>
+<p><span class="math display">\[
+\mathcal{L}^{&#39;&#39;T} = x^{&#39;T}F
+\]</span></p>
+<aside class="notes">
+<p>this time we have to take care to use the transpose operator</p>
+</aside>
+</section>
+<section id="epipolar-lines-5" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>We can exploit the same constraint <span class="math inline">\(x^{&#39;T}Fx&#39;&#39;= 0\)</span> and obtain:</p>
+<p><span class="math display">\[
+\mathcal{L}^{&#39;&#39;T} = x^{&#39;T}F
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}^{&#39;&#39;} = F^{T}x^{&#39;}
+\]</span></p>
+<aside class="notes">
+<p>so when we transpose F we get the line - which is our 1d search space. So this is the key thing that speeds up our search - we just look along the epipolar line.</p>
+</aside>
+</section>
+<section id="epipolar-lines-6" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipolar Lines</h2>
+<p>Image points lie on the epipolar lines, <span class="math inline">\(x&#39; \in \mathcal{L}&#39;\)</span> and <span class="math inline">\(x&#39;&#39; \in \mathcal{L}&#39;&#39;\)</span>.</p>
+<ul>
+<li>we can exploit the coplanarity constraint <span class="math inline">\(x^{&#39;T}Fx&#39;&#39;= 0\)</span>.</li>
+<li>which is valid if:</li>
+</ul>
+<p><span class="math display">\[
+\mathcal{L}&#39; = Fx&#39;&#39; \quad \mathcal{L}&#39;&#39; = F^{T}x&#39;
+\]</span></p>
+<aside class="notes">
+<p>all one one slide - I think the epipolar line is the most useful of the epipolar geometry - certainly for point matching.</p>
+</aside>
+</section>
+<section id="epipoles" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipoles</h2>
+<p>The epipoles are the projection of the camera origin onto the other image.</p>
+<ul>
+<li>Both can be computed using the projection matrices.</li>
+</ul>
+<aside class="notes">
+<p>let’s look at the epipoles…</p>
+</aside>
+</section>
+<section id="epipoles-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipoles</h2>
+<p>The epipoles are the projection of the camera origin onto the other image.</p>
+<ul>
+<li>Both can be computed using the projection matrices.</li>
+</ul>
+<p><span class="math display">\[
+e&#39; = P&#39;X_{O&#39;&#39;} \quad e&#39;&#39; = P&#39;&#39;X_{O&#39;}
+\]</span></p>
+<aside class="notes">
+<p>we can get the epipoles directly from the projection matrices. Just consider the camera origin of the other camera like any other point in the world.</p>
+</aside>
+</section>
+<section id="epipoles-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Epipoles</h2>
+<p>The epipole is the <em>intersection</em> of <strong>all</strong> the epipolar lines in an image.</p>
+<p><span class="math display">\[
+\forall \mathcal{L}&#39; : e^{&#39;T} \mathcal{L}&#39; = 0 \quad
+\forall \mathcal{L}&#39;&#39; : e^{&#39;&#39;T} \mathcal{L}&#39;&#39; = 0
+\]</span></p>
+<aside class="notes">
+<p>We can observe another property of the epipoles. because the epipole is the projection along the epipolar axis - all epipolar lines pass through the epipole. Picture the plane pivoting around the epipolar axis, all lines will pass through the epipole.</p>
+</aside>
+</section></section>
+<section id="summary" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Summary</h1>
+<ul>
+<li>We assumed an uncalibrated camera.</li>
+<li>We discussed Epipolar geometry and epipolar elements.</li>
+<li>Epipolar geometry reduces the correspondence search from 2D to 1D.</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach.</li>
+<li>Hartley, Zisserman; Multiple View Geometry in Computer Vision.</li>
+</ul>
+<p>Data:</p>
+<ul>
+<li><a href="https://vision.middlebury.edu/stereo/data/">Middlebury Stereo Datasets</a></li>
+<li><a href="https://www.eth3d.net/overview">ETH Zurich 3D</a></li>
+</ul>
+<aside class="notes">
+<p>For our introduction to epipolar geometry we assumed uncalibrated cameras. We built on the coplanarity constraint from earlier - and found a stereo geometry that allowed us to reduce the correspondence search from 2D to 1D.</p>
+<p>There is good information in the course text. And HZ has very detailed text on epipolar geometry.</p>
+<p>I have also included a couple of links at the end leading to some stereo datasets. You might find them interesting and useful if you carry on with computer vision after this year.</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
