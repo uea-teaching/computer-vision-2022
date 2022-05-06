@@ -310,6 +310,7 @@ $$
 
 ::: notes
 so when we transpose F we get the line - which is our 1d search space.
+So this is the key thing that speeds up our search - we just look along the epipolar line.
 :::
 
 ## Epipolar Lines {data-auto-animate="true}
@@ -325,4 +326,73 @@ $$
 
 ::: notes
 all one one slide - I think the epipolar line is the most useful of the epipolar geometry - certainly for point matching.
+:::
+
+## Epipoles {data-auto-animate="true}
+
+The epipoles are the projection of the camera origin onto the other image.
+
+- Both can be computed using the projection matrices.
+
+::: notes
+let's look at the epipoles...
+:::
+
+## Epipoles {data-auto-animate="true}
+
+The epipoles are the projection of the camera origin onto the other image.
+
+- Both can be computed using the projection matrices.
+
+$$
+e' = P'X_{O''} \quad e'' = P''X_{O'}
+$$
+
+::: notes
+we can get the epipoles directly from the projection matrices.
+Just consider the camera origin of the other camera like any other point in the world.
+:::
+
+## Epipoles {data-auto-animate="true}
+
+The epipole is the _intersection_ of **all** the epipolar lines in an image.
+
+$$
+\forall \mathcal{L}' : e^{'T} \mathcal{L}' = 0 \quad
+\forall \mathcal{L}'' : e^{''T} \mathcal{L}'' = 0
+$$
+
+::: notes
+We can observe another property of the epipoles.
+because the epipole is the projection along the epipolar axis - all epipolar lines
+pass through the epipole.
+Picture the plane pivoting around the epipolar axis, all lines will pass through the epipole.
+:::
+
+# Summary {data-auto-animate="true}
+
+- We assumed an uncalibrated camera.
+- We discussed Epipolar geometry and epipolar elements.
+- Epipolar geometry reduces the correspondence search from 2D to 1D.
+
+Reading:
+
+- Forsyth, Ponce; Computer Vision: A modern approach.
+- Hartley, Zisserman; Multiple View Geometry in Computer Vision.
+
+Data:
+
+- [Middlebury Stereo Datasets](https://vision.middlebury.edu/stereo/data/)
+- [ETH Zurich 3D](https://www.eth3d.net/overview)
+
+::: notes
+For our introduction to epipolar geometry we assumed uncalibrated cameras.
+We built on the coplanarity constraint from earlier - and found a stereo geometry
+that allowed us to reduce the correspondence search from 2D to 1D.
+
+There is good information in the course text.
+And HZ has very detailed text on epipolar geometry.
+
+I have also included a couple of links at the end leading to some stereo datasets.
+You might find them interesting and useful if you carry on with computer vision after this year.
 :::
