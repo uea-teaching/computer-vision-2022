@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Dr. David Greenwood">
+  <title>Two-View Geometry</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.2.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Two-View Geometry</h1>
+  <p class="subtitle">Computer Vision CMP-6035B</p>
+  <p class="author">Dr. David Greenwood</p>
+  <p class="date">Spring 2022</p>
+</section>
+
+<section id="contents" class="title-slide slide level1" data-transition="convex">
+<h1 data-transition="convex">Contents</h1>
+<ul>
+<li>Camera Pair</li>
+<li>Coplanarity Constraint</li>
+<li>Fundamental Matrix</li>
+<li>Essential Matrix</li>
+</ul>
+</section>
+
+<section>
+<section id="camera-pair" class="title-slide slide level1">
+<h1>Camera Pair</h1>
+<p>Two cameras capturing images of the same scene.</p>
+<aside class="notes">
+<p>so far we have talked about the camera model - and we have confined our discussion to a single camera, and it’s calibration. Now it’s time to consider camera pairs.</p>
+</aside>
+</section>
+<section id="camera-pair-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Camera Pair</h2>
+<figure>
+<img data-src="assets/jpg/intel-d435.jpg" style="width:80.0%" alt="A stereo camera. Intel D435" /><figcaption aria-hidden="true">A stereo camera. Intel D435</figcaption>
+</figure>
+<aside class="notes">
+<p>this is a camera pair - a stereo camera. left cam, ir-projector, right cam, rgb-cam. But this is not the only stereo pair. This camera makes it easy to work with images taken from different locations at the same time. This is an example of what we call the stereo-normal case where both cameras are point in the same direction.</p>
+<p>We can equally have two separate cameras, in two different positions, and take images at the same time.</p>
+<p>Or, we could have one camera take an image then move to a different position and take another image.</p>
+</aside>
+</section>
+<section id="camera-pair-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Camera Pair</h2>
+<ul>
+<li>A stereo camera.</li>
+<li>Two cameras, each with a different position.</li>
+<li>One camera that moves.</li>
+</ul>
+<p>A <strong>camera pair</strong> is two configurations from which images have been taken of the same scene.</p>
+<aside class="notes">
+<p>The definition means we want to estimate something… often the relative orientation of the two cameras when taking the images</p>
+<p>we talk about relative orientation and the two important matrices.</p>
+</aside>
+</section>
+<section id="orientation" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Orientation</h2>
+<p>The <strong>orientation</strong> of the camera pair can be described using <em>independent</em> orientations for each camera.</p>
+<p>How many parameters are needed?</p>
+<aside class="notes">
+<p>These parameters are those involved in x=PX. So first, how does it work for a calibrated camera? can anyone remember how many parameters we need for camera extrinsic? Yes - 6 - for the rotation and translation. So 12 for two cameras…</p>
+<p>Then for uncalibrated cameras we need the 5 extra values for each camera, so an extra 10 for the pair. A total of 22 parameters.</p>
+</aside>
+</section>
+<section id="orientation-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Orientation</h2>
+<p>The <strong>orientation</strong> of the camera pair can be described using <em>independent</em> orientations for each camera.</p>
+<p>How many parameters are needed?</p>
+<ul>
+<li><em>Calibrated</em> cameras require <strong>12</strong> parameters.</li>
+<li><em>Uncalibrated</em> cameras require <strong>22</strong> parameters.</li>
+</ul>
+</section>
+<section id="camera-motion" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Camera Motion</h2>
+<p>Can we <strong>estimate</strong> the camera motion without <em>knowing</em> the scene?</p>
+<aside class="notes">
+<p>so - the question is can we estimate the camera motion without knowing the scene? previously we needed knowledge of the scene, ie DLT with 6 points in the scene. Or a camera target with known position and orientation.</p>
+<p>Now think about only having images from two cameras, without any knowledge of the scene at all. Which parameters can we obtain from these images?</p>
+</aside>
+</section>
+<section id="camera-motion-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Camera Motion</h2>
+<p>Which parameters can be obtained from these images?</p>
+<ul>
+<li>and which cannot?</li>
+</ul>
+<aside class="notes">
+<p>Some parameters we may not be able to estimate at all… One thing you might have realised is - it is very difficult to estimate scale.</p>
+<p>As humans we have learnt that objects belong to a certain size range - but sometimes we can be fooled…</p>
+<p>From only images (no knowledge of the scene) - it is impossible to estimate scale in a single image.</p>
+</aside>
+</section>
+<section id="cameras-measure-direction" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Cameras Measure Direction</h2>
+<p>We can’t obtain <em>global</em> <strong>translation</strong> and <strong>rotation</strong> or <strong>scale</strong>.</p>
+<aside class="notes">
+<p>Without knowledge of the scene we can’t position the camera or find the heading. We don’t know the scale of the scene.</p>
+</aside>
+</section>
+<section id="cameras-measure-direction-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Cameras Measure Direction</h2>
+<figure>
+<img data-src="assets/svg/two-view.svg" style="width:80.0%" alt="Two views" /><figcaption aria-hidden="true">Two views</figcaption>
+</figure>
+<aside class="notes">
+<p>let’s talk about what’s going on here. first camera and second camera are looking at the same scene. but if we had a bigger object and moved the second camera - we’d have identical images.</p>
+<p>This is important to emphasise…</p>
+<p>And it is probably obvious - how could we know where in the world our cameras are? We cant’t estimate the first camera pose - 6 values, and scale… so 7 parameters we can’t estimate!</p>
+</aside>
+</section>
+<section id="cameras-measure-direction-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Cameras Measure Direction</h2>
+<p>We can obtain:</p>
+<ul>
+<li>3 <strong>rotation</strong> parameters of the second camera <em>w.r.t.</em> the first camera.</li>
+<li>2 <strong>direction</strong> parameters of the line <span class="math inline">\(B\)</span>, connecting the two centres.</li>
+<li>But, we <em>can’t</em> estimate the length of <span class="math inline">\(B\)</span>.</li>
+</ul>
+<aside class="notes">
+<p>We don’t know how far the second camera is only the direction. We don’t know the global position - only with respect to the first camera.</p>
+</aside>
+</section>
+<section id="calibrated-cameras" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Calibrated Cameras</h2>
+<ul>
+<li>We need <span class="math inline">\(2 \times 6 = 12\)</span> parameters for two <em>calibrated</em> cameras for their pose.</li>
+<li>Without additional information we can only obtain <span class="math inline">\(12 - 7 = 5\)</span> parameters.</li>
+<li>Not 3 rotation, 3 translation, and 1 scale.</li>
+</ul>
+<aside class="notes">
+<p>With a calibrated camera, we obtain an angle-preserving model of the object. We cannot resolve the pose of the first camera - nor the distance between the two cameras.</p>
+</aside>
+</section>
+<section id="photogrammetric-model" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Photogrammetric Model</h2>
+<p>Given two cameras images, we can reconstruct an object up to a <strong>similarity</strong> transform.</p>
+<aside class="notes">
+<p>From two images we can construct what is called a <strong>photogrammetric model</strong>. This is a 3D model of the scene up to a similarity transform - translate - rotate - uniform scale. We can construct a 3D model, but it will not be aligned or scaled within the 3D world.</p>
+</aside>
+</section>
+<section id="photogrammetric-model-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Photogrammetric Model</h2>
+<p>The orientation of the photogrammetric model is called the <strong>absolute</strong> orientation.</p>
+<ul>
+<li>To <em>obtain</em> the absolute orientation we need at least 3 points in 3D.</li>
+</ul>
+<aside class="notes">
+<p>We must distinguish between relative orientation and absolute orientation. Relative means the second camera with respect to the first… If we want to align the model to the world - an absolute orientation - we need to get 3 points in 3D to obtain the absolute orientation and those missing 7 parameters.</p>
+<p>Conversely, if we know the location of the cameras, we can find the 3D location of point.</p>
+</aside>
+</section>
+<section id="uncalibrated-cameras" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Uncalibrated Cameras</h2>
+<p>For <strong>uncalibrated</strong> cameras, we can only obtain <span class="math inline">\(22-15=7\)</span> parameters given two images.</p>
+<p>We need at <strong>least 5 points</strong> in 3D to obtain the absolute orientation.</p>
+<aside class="notes">
+<p>when talking about uncalibrated - I mean only linear errors - not lens distortions, or other non-linear errors.</p>
+<p>We are missing the projective transformation in 3D - which has 15 parameters. A 4x4 matrix - and ignoring the homogeneous scaling.</p>
+</aside>
+</section>
+<section id="relative-orientation" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Relative Orientation</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Camera</th>
+<th style="text-align: center;">image</th>
+<th style="text-align: center;">pair</th>
+<th style="text-align: center;">RO</th>
+<th style="text-align: center;">AO</th>
+<th style="text-align: center;">3D</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Calibrated</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uncalibrated</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">5</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>RO : relative orientation</li>
+<li>AO : absolute orientation</li>
+<li>3D : minimum number of control points in 3D</li>
+</ul>
+<aside class="notes">
+<p>to summarise the available parameters in an image, in an image pair… for calibrated every camera has 6 extrinsics… so 12 in total. We can find 5 parameters just from the two images, and the other 7 parameters are missing. We would need to know 3 points in 3D to find those 7 parameters and thus the absolute orientation.</p>
+<p>Similarly for uncalibrated cameras, we need at least 5 points in 3D to obtain the absolute orientation.</p>
+<p>This works just by knowing the correspondence in 2 images, and we can cover at least something about the orientation between two cameras.</p>
+</aside>
+</section>
+<section id="relative-orientation-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Relative Orientation</h2>
+<p>By simply moving the camera in the scene we can obtain a <strong>relative orientation</strong>.</p>
+<p>“Agarwal, Sameer, et al. Building rome in a day. 2011”</p>
+<figure>
+<img data-src="assets/png/colluseum-2106-photos.png" style="width:80.0%" alt="Rome in a day" /><figcaption aria-hidden="true">Rome in a day</figcaption>
+</figure>
+<aside class="notes">
+<p>As an inspirational interlude - just by finding image correspondences we can find the relative orientation - and for many images we can reconstruct many points in complex models.</p>
+</aside>
+</section></section>
+<section>
+<section id="coplanarity-constraint" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Coplanarity Constraint</h1>
+<p>Leading to the Fundamental Matrix.</p>
+<aside class="notes">
+<p>Let’s start with the geometry of the scene and this will lead us to the fundamental matrix.</p>
+<p>We start with an uncalibrated camera - no calibration information. And we are going to look into what we call the co-planarity constraint.</p>
+</aside>
+</section>
+<section id="coplanarity-constraint-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity Constraint</h2>
+<p>Which parameters can we compute without any knowledge of the scene?</p>
+<aside class="notes">
+<p>we will start with two cameras looking at a single point.</p>
+</aside>
+</section>
+<section id="coplanarity-constraint-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity Constraint</h2>
+<figure>
+<img data-src="assets/svg/coplanarity-1.svg" style="width:80.0%" alt="Two cameras observe one point." /><figcaption aria-hidden="true">Two cameras observe one point.</figcaption>
+</figure>
+<aside class="notes">
+<p>To repeat, we know nothing of the outside world. we have one camera on the left, and one on the right. They can both observe the same point, X, in the world.</p>
+</aside>
+</section>
+<section id="section" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<figure>
+<img data-src="assets/svg/coplanarity-1.svg" style="width:80.0%" alt="The perfect intersection of two rays." /><figcaption aria-hidden="true">The perfect intersection of two rays.</figcaption>
+</figure>
+<aside class="notes">
+<p>What do we know? In this perfect orientation, the vector from the first camera exactly intersects the vector from the second camera.</p>
+</aside>
+</section>
+<section id="section-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<figure>
+<img data-src="assets/svg/coplanarity-1.svg" style="width:80.0%" alt="Two rays lie on a plane." /><figcaption aria-hidden="true">Two rays lie on a plane.</figcaption>
+</figure>
+<aside class="notes">
+<p>if we have these perfect rays then this means those intersecting rays must lie on a plane.</p>
+<p>This is something we can exploit!!</p>
+</aside>
+</section>
+<section id="section-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<figure>
+<img data-src="assets/svg/coplanarity-2.svg" style="width:80.0%" alt="The baseline vector." /><figcaption aria-hidden="true">The baseline vector.</figcaption>
+</figure>
+<aside class="notes">
+<p>If the two intersecting rays lie on a plane, then the vector between the two cameras must lie on that plane. So, we have 3 vectors in 3D that lie in a plane.</p>
+</aside>
+</section>
+<section id="section-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true"></h2>
+<p>Coplanarity can be expressed in the following way:</p>
+<p><span class="math display">\[
+[O^{&#39;}X, O^{&#39;}O^{&#39;&#39;}, O^{&#39;&#39;}X] = 0
+\]</span></p>
+<figure>
+<img data-src="assets/svg/coplanarity-2.svg" style="width:80.0%" alt="Coplanarity" /><figcaption aria-hidden="true">Coplanarity</figcaption>
+</figure>
+<aside class="notes">
+<p>This expression is a scalar triple product. It is equal to zero if all the vectors are in a plane.</p>
+</aside>
+</section>
+<section id="aside-scalar-triple-product" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Aside: Scalar Triple Product</h2>
+<p>Dot product of one vector with the cross product of the other two.</p>
+<p><span class="math display">\[
+[A, B, C] = (A \times B) \cdot C
+\]</span></p>
+<ul>
+<li>It is the volume of the <em>parallelepiped</em> formed by the three vectors.</li>
+<li><span class="math inline">\([A, B, C] = 0\)</span> if all the vectors are in a <strong>plane</strong>.</li>
+</ul>
+<aside class="notes">
+<p>a quick definition of the scalar triple product. We can also roll the operands around to get the same result.</p>
+</aside>
+</section>
+<section id="coplanarity" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity</h2>
+<p><span class="math display">\[
+[O^{&#39;}X, O^{&#39;}O^{&#39;&#39;}, O^{&#39;&#39;}X] = 0
+\]</span></p>
+<figure>
+<img data-src="assets/svg/coplanarity-2.svg" style="width:80.0%" alt="Coplanarity" /><figcaption aria-hidden="true">Coplanarity</figcaption>
+</figure>
+<aside class="notes">
+<p>So we know that the vectors are coplanar. Now we need to express these vectors in a way that represents the properties of our camera.</p>
+</aside>
+</section>
+<section id="coplanarity-for-uncalibrated-cameras" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity for Uncalibrated Cameras</h2>
+<p>The directions of the vectors <span class="math inline">\(O^{&#39;}X\)</span> and <span class="math inline">\(O^{&#39;&#39;}X\)</span> can be derived from the image coordinates <span class="math inline">\(x&#39; x&#39;&#39;\)</span>.</p>
+<p><span class="math display">\[
+x&#39; = P&#39;X \quad \quad x&#39;&#39; = P&#39;&#39;X
+\]</span></p>
+<p>with the projection matrices:</p>
+<p><span class="math display">\[
+P&#39;=K&#39;R&#39;[\textbf{I}_{3}| - X_{O&#39;}] \quad \quad P&#39;&#39;=K&#39;&#39;R&#39;&#39;[\textbf{I}_{3}| - X_{O&#39;&#39;}]
+\]</span></p>
+<aside class="notes">
+<p>we know that cameras project 3D points in the world onto images. with these familiar equations. These prime and double prime variables relate to each camera, but the X is the same for both. This is important!!</p>
+</aside>
+</section>
+<section id="coplanarity-for-uncalibrated-cameras-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity for Uncalibrated Cameras</h2>
+<p>The normalised direction of the vector <span class="math inline">\(O^{&#39;}X\)</span> is:</p>
+<p><span class="math display">\[
+{}^{n}x^{&#39;} = (R&#39;)^{-1}(K&#39;)^{-1} x&#39;
+\]</span></p>
+<aside class="notes">
+<p>we can compute this vector from the inverse of the calibration matrix K. we need to go a bit further to go from the camera coordinate system to the world coordinate system by rotating with R inverse too.</p>
+</aside>
+</section>
+<section id="coplanarity-for-uncalibrated-cameras-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity for Uncalibrated Cameras</h2>
+<p>The <em>normalised</em> direction of the vector <span class="math inline">\(O^{&#39;}X\)</span> is:</p>
+<p><span class="math display">\[
+{}^{n}x^{&#39;} = (R&#39;)^{-1}(K&#39;)^{-1} x&#39;
+\]</span></p>
+<p>as the <em>normalised</em> projection:</p>
+<p><span class="math display">\[
+{}^{n}x^{&#39;} = [\textbf{I}_{3}| - X_{O&#39;}]X
+\]</span></p>
+<p>This gives the <strong>direction</strong> from the centre of projection to the point in 3D.</p>
+<aside class="notes">
+<p>And we can then say, now we have removed the rotation, that this is the normalised projection (ideal projection) from the world point.</p>
+</aside>
+</section>
+<section id="coplanarity-for-uncalibrated-cameras-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity for Uncalibrated Cameras</h2>
+<p>Analogously, we can do the same thing for both cameras:</p>
+<p><span class="math display">\[
+{}^{n}x^{&#39;} = (R&#39;)^{-1}(K&#39;)^{-1} x&#39; \quad \quad {}^{n}x^{&#39;&#39;} = (R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1} x&#39;&#39;
+\]</span></p>
+<aside class="notes">
+<p>This gives me 2 of my vectors in my triangle.</p>
+</aside>
+</section>
+<section id="baseline-vector" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Baseline Vector</h2>
+<p>The baseline vector <span class="math inline">\(O^{&#39;}O^{&#39;&#39;}\)</span>, is obtained from the coordinates of the projection centres:</p>
+<p><span class="math display">\[
+\textbf{b} = X_{O^{&#39;&#39;}} - X_{O^{&#39;}}
+\]</span></p>
+<aside class="notes">
+<p>This is simply the difference between the two projection centres, the line from one to the other.</p>
+</aside>
+</section>
+<section id="coplanarity-constraint-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity Constraint</h2>
+<p>recall:</p>
+<p><span class="math display">\[
+[O^{&#39;}X, O^{&#39;}O^{&#39;&#39;}, O^{&#39;&#39;}X] = 0
+\]</span></p>
+<p>can be expressed as:</p>
+<p><span class="math display">\[
+\begin{aligned}
+[{}^{n}x^{&#39;}, \textbf{b}, {}^{n}x^{&#39;&#39;} ] &amp;= 0 \\
+{}^{n}x^{&#39;} \cdot (\textbf{b} \times {}^{n}x^{&#39;&#39;}) &amp;= 0 \\
+{}^{n}x^{&#39;T} S_{b} {}^{n}x^{&#39;&#39;} &amp;= 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>We previously had our coplanarity constraint, using the scalar triple product. We can now rewrite it in terms of the direction vectors.</p>
+<p>In the last part we can write the cross product as a skew symmetric matrix multiplication.</p>
+</aside>
+</section>
+<section id="skew-symmetric-matrix" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Skew Symmetric Matrix</h2>
+<p>How does this work?</p>
+<p><span class="math display">\[
+\begin{aligned}
+{}^{n}x^{&#39;} \cdot (\textbf{b} \times {}^{n}x^{&#39;&#39;}) &amp;= 0 \\
+{}^{n}x^{&#39;T} S_{b} {}^{n}x^{&#39;&#39;} &amp;= 0
+\end{aligned}
+\]</span></p>
+<p>Write the cross product as a skew symmetric matrix <span class="math inline">\(S_b\)</span>:</p>
+<p><span class="math display">\[
+\begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix} \times
+\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} =
+\begin{bmatrix}
+    - b_3 x_2 &amp; + &amp; b_2 x_3 \\
+      b_3 x_1 &amp; - &amp; b_1 x_3 \\
+    - b_2 x_1 &amp; + &amp; b_1 x_2
+\end{bmatrix} =
+\underbrace{\begin{bmatrix}
+    0 &amp; -b_3 &amp; b_2 \\
+    b_3 &amp; 0 &amp; -b_1 \\
+    -b_2 &amp; b_1 &amp; 0
+\end{bmatrix}}_{S_b}
+\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}
+\]</span></p>
+<aside class="notes">
+<p>we can show how the skew symmetric matrix works by showing the multiplication of the cross product. Generally, the skew symmetric matrix is a square matrix whose transpose equals its negative.</p>
+</aside>
+</section></section>
+<section>
+<section id="fundamental-matrix" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Fundamental Matrix</h1>
+<p>We can continue to work with the coplanarity constraint, to build the <strong>fundamental</strong> matrix.</p>
+</section>
+<section id="fundamental-matrix-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Fundamental Matrix</h2>
+<p>By combining <span class="math inline">\({}^{n}x^{&#39;} = (R&#39;)^{-1}(K&#39;)^{-1} x&#39;\)</span> and <span class="math inline">\({}^{n}x^{&#39;T} S_{b} {}^{n}x^{&#39;&#39;} = 0\)</span></p>
+<ul>
+<li>we obtain:</li>
+</ul>
+<p><span class="math display">\[
+x&#39;^{T}(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1}x&#39;&#39; = 0
+\]</span></p>
+<aside class="notes">
+<p>what we can do is take the normalised projection and replace with the expression containing the pixel coordinates. We can do that for both cameras. Take note: we had to use the transpose on the left hand side of the equation. And this whole expression should be equal to zero. Now, I take the whole expression in the middle - which is a matrix - or product of 5 matrices - and condense to one 3x3 matrix. We give this matrix the name F.</p>
+</aside>
+</section>
+<section id="fundamental-matrix-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Fundamental Matrix</h2>
+<p>By combining <span class="math inline">\({}^{n}x^{&#39;} = (R&#39;)^{-1}(K&#39;)^{-1} x&#39;\)</span> and <span class="math inline">\({}^{n}x^{&#39;T} S_{b} {}^{n}x^{&#39;&#39;} = 0\)</span></p>
+<ul>
+<li>we obtain:</li>
+</ul>
+<p><span class="math display">\[
+x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1}}_{F}x&#39;&#39; = 0
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+F &amp;= (K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1} \\
+  &amp;= (K&#39;)^{-T}(R&#39;) S_{b} (R&#39;&#39;)^{T}(K&#39;&#39;)^{-1}
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>so we take all the expression in the middle, and we can simplify it a little because we have rotation matrices. To give us the definition of the matrix F.</p>
+</aside>
+</section>
+<section id="fundamental-matrix-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Fundamental Matrix</h2>
+<p>The matrix <span class="math inline">\(F\)</span> is the <strong>fundamental</strong> matrix.</p>
+<p><span class="math display">\[
+F = (K&#39;)^{-T}(R&#39;) S_{b} (R&#39;&#39;)^{T}(K&#39;&#39;)^{-1}
+\]</span></p>
+<ul>
+<li>it allows us to express the <em>coplanarity constraint</em> as:</li>
+</ul>
+<p><span class="math display">\[
+x&#39;^{T} Fx&#39;&#39; = 0
+\]</span></p>
+<aside class="notes">
+<p>The fundamental matrix has all the parameters that we can estimate describing the two cameras relative orientation.</p>
+</aside>
+</section>
+<section id="fundamental-matrix-4" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Fundamental Matrix</h2>
+<p>The <strong>fundamental matrix</strong> holds the parameters we can estimate to describe the <em>relative orientation</em> of two cameras looking at the same point.</p>
+<p><span class="math display">\[
+x&#39;^{T} Fx&#39;&#39; = 0
+\]</span></p>
+<aside class="notes">
+<p>The elegant thing about F is we can express the coplanarity constraint like this. This means if I have pixel coordinates in two cameras that refer to the same point in the world, this must give me zero if they actually are the same point.</p>
+</aside>
+</section>
+<section id="fundamental-matrix-5" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Fundamental Matrix</h2>
+<p>The <strong>fundamental matrix</strong> fulfils the equation:</p>
+<p><span class="math display">\[
+x&#39;^{T} Fx&#39;&#39; = 0
+\]</span></p>
+<p>for <strong>corresponding points</strong> in two images.</p>
+<ul>
+<li>The fundamental matrix contains <strong>all</strong> the <em>information about the relative orientation</em> of <strong>two images</strong> from uncalibrated cameras.</li>
+</ul>
+<aside class="notes">
+<p>Whenever we have corresponding points in two images this equation must hold. Under the assumption that the points are estimated perfectly. Of course, in the real world, there will be noise, so we will be close to zero.</p>
+</aside>
+</section>
+<section id="fundamental-matrix-6" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Fundamental Matrix</h2>
+<p><strong>NOTE:</strong> we have defined the fundamental matrix for the relative orientation from camera one to camera two.</p>
+<ul>
+<li><p>You will also find in the literature, <span class="math inline">\(F\)</span> can be defined for the relative orientation from camera two to camera one.</p></li>
+<li><p>This transposition must be accounted for when comparing expressions.</p></li>
+</ul>
+<aside class="notes">
+<p>We have built this up by looking at the relation of the second camera to the first. Of course, we can also look at the relation of the first camera to the second. In this case F would be the transpose of how we have shown it.</p>
+</aside>
+</section></section>
+<section>
+<section id="essential-matrix" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Essential Matrix</h1>
+<p>Calibrated Cameras</p>
+<aside class="notes">
+<p>The fundamental matrix deals with uncalibrated cameras. Loosely we can say the essential matrix deals with calibrated cameras.</p>
+</aside>
+</section>
+<section id="calibrated-cameras-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Calibrated Cameras</h2>
+<p>Most photogrammetric systems rely on calibrated cameras.</p>
+<div>
+<ul>
+<li class="fragment">Calibrated cameras <em>simplify</em> the orientation problem.</li>
+<li class="fragment">Often, both cameras have the <em>same</em> calibration matrix.</li>
+</ul>
+</div>
+<aside class="notes">
+<p>We have talked about calibration - we take a checkerboard and find the parameters of K. This often simplifies the problem, because those parameters are taken away. And, we will assume we have no distortions we have not accounted for.</p>
+</aside>
+</section>
+<section id="calibrated-cameras-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Calibrated Cameras</h2>
+<p>For calibrated cameras the coplanarity constraint can be simplified.</p>
+<ul>
+<li>From the calibration matrices we obtain the directions as:</li>
+</ul>
+<p><span class="math display">\[
+{}^{k}x^{&#39;} = (K&#39;)^{-1}x&#39; \quad {}^{k}x^{&#39;&#39;} = (K&#39;&#39;)^{-1}x&#39;&#39;
+\]</span></p>
+<aside class="notes">
+<p>On the left we have the direction vector in the camera coordinates. On the right we have the pixel coordinates in the image.</p>
+</aside>
+</section>
+<section id="coplanarity-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity</h2>
+<p>From the fundamental matrix:</p>
+<p><span class="math display">\[
+\begin{aligned}
+x&#39;^{T} Fx&#39;&#39; &amp;= 0 \\[10pt]
+x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1}}_{F}x&#39;&#39; &amp;= 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>The coplanarity constraint can be expanded according to the definition of the fundamental matrix. We can see that the expression on the left and the right are exactly the direction vectors in the camera coordinates. If we use image coordinates from calibrated cameras, it replaces this part of the expression.</p>
+</aside>
+</section>
+<section id="coplanarity-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity</h2>
+<p>From the fundamental matrix:</p>
+<p><span class="math display">\[
+\begin{aligned}
+x&#39;^{T} Fx&#39;&#39; &amp;= 0 \\[10pt]
+x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1}}_{F}x&#39;&#39; &amp;= 0 \\[10pt]
+\underbrace{x&#39;^{T}(K&#39;)^{-T}}_{{}^{k}x^{&#39;T}}
+(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}
+\underbrace{(K&#39;&#39;)^{-1}x&#39;&#39;}_{{}^{k}x^{&#39;&#39;}} &amp;= 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>so we have the pixel coordinates transpose of the point in the first camera, and the pixel coordinates of the point in the second camera. Then, the part in the middle becomes the essential matrix.</p>
+</aside>
+</section>
+<section id="coplanarity-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Coplanarity</h2>
+<p>From the fundamental matrix:</p>
+<p><span class="math display">\[
+\begin{aligned}
+x&#39;^{T} Fx&#39;&#39; &amp;= 0 \\[10pt]
+x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1}}_{F}x&#39;&#39; &amp;= 0 \\[10pt]
+\underbrace{x&#39;^{T}(K&#39;)^{-T}}_{{}^{k}x^{&#39;T}}
+(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}
+\underbrace{(K&#39;&#39;)^{-1}x&#39;&#39;}_{{}^{k}x^{&#39;&#39;}} &amp;= 0 \\[10pt]
+{}^{k}x^{&#39;T} \underbrace{R&#39;S_b R^{&#39;&#39;T}}_{E} {}^{k}x^{&#39;&#39;} &amp;= 0
+\end{aligned}
+\]</span></p>
+<aside class="notes">
+<p>the part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes the essential matrix.</p>
+</aside>
+</section>
+<section id="essential-matrix-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Essential Matrix</h2>
+<p>From <span class="math inline">\(F\)</span> to the essential matrix <span class="math inline">\(E\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+{}^{k}x^{&#39;T} \underbrace{R&#39;S_b R^{&#39;&#39;T}}_{E} {}^{k}x^{&#39;&#39;} &amp;= 0 \\
+{}^{k}x^{&#39;T} E {}^{k}x^{&#39;&#39;} = 0
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+E = R&#39;S_b R^{&#39;&#39;T}
+\]</span></p>
+<aside class="notes">
+<p>the essential matrix is just a special form of the fundamental matrix. one where pixel coordinates are from the calibrated camera.</p>
+</aside>
+</section>
+<section id="essential-matrix-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Essential Matrix</h2>
+<p>The essential matrix is a <em>special form</em> of the fundamental matrix.</p>
+<p>For <strong>calibrated cameras</strong> it is called the essential matrix:</p>
+<p><span class="math display">\[
+E = R&#39;S_b R^{&#39;&#39;T}
+\]</span></p>
+<p>For calibrated cameras, the <em>coplanarity constraint</em> is:</p>
+<p><span class="math display">\[
+{}^{k}x^{&#39;T} E {}^{k}x^{&#39;&#39;} = 0
+\]</span></p>
+<aside class="notes">
+<p>we have arrived at our definition of the essential matrix. it only involves the baseline parameters and the rotation parameters. it is another 3x3 matrix, and we can write the coplanarity constraint for calibrated cameras, with the direction vectors in the camera coordinates.</p>
+</aside>
+</section>
+<section id="essential-matrix-3" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">Essential Matrix</h2>
+<ul>
+<li>The essential matrix has <strong>five</strong> degrees of freedom.</li>
+<li>The essential matrix is <em>homogeneous</em> and <em>singular</em>.</li>
+</ul>
+<p><span class="math display">\[
+{}^{k}x^{&#39;T} E {}^{k}x^{&#39;&#39;} = 0
+\]</span></p>
+<aside class="notes">
+<p>finally, some properties of the essential matrix. Singular - it has no inverse, and the determinant is zero.</p>
+</aside>
+</section></section>
+<section>
+<section id="computing-relative-orientation" class="title-slide slide level1" data-auto-animate="&quot;true">
+<h1 data-auto-animate="&quot;true">Computing Relative Orientation</h1>
+<p>How do we obtain the values of the fundamental matrix from image correspondences?</p>
+<aside class="notes">
+<p>A quick few words on the 8 point algorithm.</p>
+</aside>
+</section>
+<section id="point-algorithm" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">8 Point algorithm</h2>
+<p>We know the direction vectors from the image coordinates, but the parameters of <span class="math inline">\(F\)</span> are unknown.</p>
+<p><span class="math display">\[
+[x&#39;_{n}, y&#39;_{n}, 1]
+\begin{bmatrix}
+F_{11} &amp; F_{12} &amp; F_{13} \\
+F_{21} &amp; F_{22} &amp; F_{23} \\
+F_{31} &amp; F_{32} &amp; F_{33}
+\end{bmatrix}
+\begin{bmatrix}x&#39;&#39;_{n} \\ y&#39;&#39;_{n} \\ 1 \end{bmatrix} = 0
+\]</span></p>
+<aside class="notes">
+<p>in a similar way to the DLT we looked at last week, we rearrange our unknowns to a system of linear equations.</p>
+</aside>
+</section>
+<section id="point-algorithm-1" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">8 Point algorithm</h2>
+<p>Solve using the SVD:</p>
+<p><span class="math display">\[
+A  \begin{bmatrix} F_{11} \\ \vdots \\ F_{33} \end{bmatrix} = 0
+\]</span></p>
+<aside class="notes">
+<p>if we gather our knowns from point observations in A… this homogeneous linear system equation can be solved using the SVD. we exploit some constraints - and we need 8 corresponding points</p>
+</aside>
+</section>
+<section id="point-algorithm-2" class="slide level2" data-auto-animate="&quot;true">
+<h2 data-auto-animate="&quot;true">8 Point algorithm</h2>
+<p>From <strong>8</strong> <em>corresponding</em> points, we can solve <span class="math inline">\(F\)</span> or <span class="math inline">\(E\)</span>.</p>
+<aside class="notes">
+<p>this is the so called 8 point algorithm. If you are doing this practically - you must normalise all your pixel coordinates, say to a range 0 to 1. The 8 point algorithm will give good results.</p>
+</aside>
+</section></section>
+<section id="packages" class="title-slide slide level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Packages</h1>
+<p>There are implementations of these algorithms in many popular packages.</p>
+<ul>
+<li><a href="https://opencv.org/releases/">OpenCV</a> for python and C++.</li>
+<li><a href="http://robots.stanford.edu/cs223b04/JeanYvesCalib/htmls/example.html">Camera Calibration Toolkit</a> for Matlab.</li>
+</ul>
+<aside class="notes">
+<p>It is not necessary to implement these methods yourself - you can find them in a number of packages.</p>
+</aside>
+</section>
+
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<ul>
+<li>Camera Pair</li>
+<li>Coplanarity Constraint</li>
+<li>Fundamental Matrix</li>
+<li>Essential Matrix</li>
+</ul>
+<p>Reading:</p>
+<ul>
+<li>Forsyth, Ponce; Computer Vision: A modern approach.</li>
+<li>Hartley, Zisserman; Multiple View Geometry in Computer Vision.</li>
+<li>H. Christopher Longuet-Higgins (1981). “A computer algorithm for reconstructing a scene from two projections”.</li>
+</ul>
+<aside class="notes">
+<p>If you look in hartley and zisserman - they use normalised coordinates for the 8 point algorithm.</p>
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4/plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/zoom/zoom.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/math/math.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4/plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Global override for autoplaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null: Iframes with data-src AND data-preload will be loaded when within
+        //   the viewDistance, iframes with only data-src will be loaded when visible
+        // - true: All iframes with data-src will be loaded when within the viewDistance
+        // - false: All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+        height: 900,
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+        // The display mode that will be used to show slides
+        display: 'block',
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealMath,
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
