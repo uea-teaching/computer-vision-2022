@@ -47,6 +47,12 @@ Lectures are available as online html or printable pdf.
 - Camera Calibration: [online](lectures/camera-calibration.html)
   or printable [pdf](lectures/camera-calibration.bmr.pdf).
 
+- Two View Geometry: [online](lectures/two-view-geometry.html)
+  or printable [pdf](lectures/two-view-geometry.bmr.pdf).
+
+- Epipolar Geometry: [online](lectures/epipolar.html)
+  or printable [pdf](lectures/epipolar.bmr.pdf).
+
 ## Labs
 
 Labs are usually a pdf file, or a zip file if additional resources are provided.
