@@ -252,6 +252,9 @@ So the epipolar line is a projection into the image plane of the ray from the ot
 so we can use the coplanarity constraint,
 because we know these rays are converging to the observed point.
 
+So we can see that the line in the first image plane is
+the fundamental matrix multiplied by point in the second plane.
+
 NOW, just by comparing terms, we can see that the line is equivalent to Fx''.
 :::
 
@@ -268,5 +271,58 @@ $$
 $$
 
 ::: notes
+This means the epipolar line can be very easily obtained by using the
+fundamental matrix and the point in the other image.
+So, knowing the point in
+image 2, gives me the epipolar line in image 1.
+And, of course and can do this for the other line.
+:::
 
+## Epipolar Lines {data-auto-animate="true}
+
+The same for $x''$:
+
+$$
+\mathcal{L}^{''T} x'' = 0
+$$
+
+We can exploit the same constraint $x^{'T}Fx''= 0$ and obtain:
+
+$$
+\mathcal{L}^{''T} = x^{'T}F
+$$
+
+::: notes
+this time we have to take care to use the transpose operator
+:::
+
+## Epipolar Lines {data-auto-animate="true}
+
+We can exploit the same constraint $x^{'T}Fx''= 0$ and obtain:
+
+$$
+\mathcal{L}^{''T} = x^{'T}F
+$$
+
+$$
+\mathcal{L}^{''} = F^{T}x^{'}
+$$
+
+::: notes
+so when we transpose F we get the line - which is our 1d search space.
+:::
+
+## Epipolar Lines {data-auto-animate="true}
+
+Image points lie on the epipolar lines, $x' \in \mathcal{L}'$ and $x'' \in \mathcal{L}''$.
+
+- we can exploit the coplanarity constraint $x^{'T}Fx''= 0$.
+- which is valid if:
+
+$$
+\mathcal{L}' = Fx'' \quad \mathcal{L}'' = F^{T}x'
+$$
+
+::: notes
+all one one slide - I think the epipolar line is the most useful of the epipolar geometry - certainly for point matching.
 :::
