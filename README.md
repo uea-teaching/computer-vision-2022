@@ -29,6 +29,8 @@ There is also a Makefile in the root of this repo if you already have Docker ins
 - Visual Features : Descriptors
 - The Camera Model
 - Camera Calibration
+- Two View Geometry
+- Epipolar Geometry
 
 ## Labs
 
