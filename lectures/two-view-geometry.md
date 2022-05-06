@@ -421,7 +421,7 @@ can be expressed as:
 
 $$
 \begin{aligned}
-[{}^{n}x^{'}, \textbf{b}, {}^{n}x^{''} ] &= 0 \\
+\begin{bmatrix}{}^{n}x^{'}, \textbf{b}, {}^{n}x^{''} \end{bmatrix} &= 0 \\
 {}^{n}x^{'} \cdot (\textbf{b} \times {}^{n}x^{''}) &= 0 \\
 {}^{n}x^{'T} S_{b} {}^{n}x^{''} &= 0
 \end{aligned}
