@@ -172,3 +172,101 @@ Task: Predict the location of $x''$ given $x'$.
 with all these elements all we need to do is search along the epipolar line.
 In practice, it would be a good idea to lok either side by a pixel or two...
 :::
+
+# Computing the Elements of Epipolar Geometry {data-auto-animate="true}
+
+::: notes
+We have discussed the properties and the advantages of epipolar geometry.
+How do we compute these elements?
+:::
+
+## Computing the Elements of Epipolar Geometry {data-auto-animate="true}
+
+- We described the important elements geometrically.
+- We will _compute_ them using the **projection** matrices and the **fundamental** matrix.
+
+::: notes
+we are going to need the projection matrices from last week and the fundamental matrix from earlier.
+:::
+
+## Epipolar Axis {data-auto-animate="true}
+
+The direction of the epipolar axis can be derived directly from the projection centres.
+
+$$
+b = X_{O'} - X_{O''}
+$$
+
+The vector $b$ is _homogeneous_ and the equation expresses that we know only the _direction_, **not** the _length_.
+
+::: notes
+This is relatively straightforward. We can ge the equation for the epipolar axis from the projection centres.
+:::
+
+## Epipolar Lines {data-auto-animate="true}
+
+Image points lie on the epipolar lines.
+
+$$
+x' \in \mathcal{L}' , \quad x'' \in \mathcal{L}''
+$$
+
+::: notes
+next, we want to compute the epipolar lines.
+and now we are in the image plane.
+:::
+
+## Epipolar Lines {data-auto-animate="true}
+
+For $x'$:
+
+$$
+x^{'T} \mathcal{L}' = 0
+$$
+
+::: notes
+you may remember that to find if a point lies on a line we just need the dot product equal to zero.
+
+So this is the constraint that must be observed if the point is on the epipolar line.
+
+From the definition of the line equation:
+ax + by + c = 0 , l . x = 0 where l = [a b c] is the line and x = [x y 1] is a point on the line.
+:::
+
+## Epipolar Lines {data-auto-animate="true}
+
+For $x'$:
+
+$$
+x^{'T} \mathcal{L}' = 0
+$$
+
+We can exploit the coplanarity constraint for $x'$ and $x''$:
+
+$$
+x^{'T}  \underbrace{Fx''}_{\mathcal{L}'} = 0
+$$
+
+::: notes
+So the epipolar line is a projection into the image plane of the ray from the other camera,
+so we can use the coplanarity constraint,
+because we know these rays are converging to the observed point.
+
+NOW, just by comparing terms, we can see that the line is equivalent to Fx''.
+:::
+
+## Epipolar Lines {data-auto-animate="true}
+
+We can exploit the coplanarity constraint for $x'$ and $x''$:
+
+$$
+x^{'T}  \underbrace{Fx''}_{\mathcal{L}'} = 0
+$$
+
+$$
+\mathcal{L}' = Fx''
+$$
+
+::: notes
+
+:::
