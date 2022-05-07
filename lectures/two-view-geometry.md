@@ -218,8 +218,12 @@ The orientation of the photogrammetric model is called the **absolute** orientat
 
 ::: notes
 We must distinguish between relative orientation and absolute orientation.
+
 Relative means the second camera with respect to the first...
-If we want to align the model to the world - an absolute orientation - we need to get 3 points in 3D to obtain the absolute orientation and those missing 7 parameters.
+
+If we want to align the model to the world: an absolute orientation,
+we need to get 3 points in 3D to obtain the absolute orientation
+and those missing 7 parameters.
 
 Conversely, if we know the location of the cameras, we can find the 3D location of point.
 :::
@@ -231,10 +235,12 @@ For **uncalibrated** cameras, we can only obtain $22-15=7$ parameters given two 
 We need at **least 5 points** in 3D to obtain the absolute orientation.
 
 ::: notes
-when talking about uncalibrated - I mean only linear errors - not lens distortions, or other non-linear errors.
+
+When talking about uncalibrated - I mean only linear errors - not lens distortions, or other non-linear errors.
 
 We are missing the projective transformation in 3D - which has 15 parameters.
 A 4x4 matrix - and ignoring the homogeneous scaling.
+
 :::
 
 ## Relative Orientation {data-auto-animate="true}
@@ -250,8 +256,12 @@ A 4x4 matrix - and ignoring the homogeneous scaling.
 
 ::: notes
 to summarise the available parameters in an image, in an image pair...
-for calibrated every camera has 6 extrinsics... so 12 in total. We can find 5 parameters just from the two images, and the other 7 parameters are missing.
-We would need to know 3 points in 3D to find those 7 parameters and thus the absolute orientation.
+for calibrated every camera has 6 extrinsics... so 12 in total.
+
+We can find 5 parameters just from the two images, and the other 7 parameters are missing.
+
+We would need to know 3 points in 3D to find those 7 parameters
+and thus the absolute orientation.
 
 Similarly for uncalibrated cameras,
 we need at least 5 points in 3D to obtain the absolute orientation.
@@ -278,10 +288,13 @@ we can reconstruct many points in complex models.
 Leading to the Fundamental Matrix.
 
 ::: notes
-Let's start with the geometry of the scene and this will lead us to the fundamental matrix.
+
+Let's start with the geometry of the scene and this will lead us
+to the so-called fundamental matrix.
 
 We start with an uncalibrated camera - no calibration information.
 And we are going to look into what we call the co-planarity constraint.
+
 :::
 
 ## Coplanarity Constraint {data-auto-animate="true}
@@ -307,7 +320,9 @@ They can both observe the same point, X, in the world.
 ![The perfect intersection of two rays.](assets/svg/coplanarity-1.svg){width=80%}
 
 ::: notes
-What do we know? In this perfect orientation, the vector from the first camera exactly intersects the vector from the second camera.
+What do we know?
+In this perfect orientation, the vector from the first camera
+exactly intersects the vector from the second camera.
 :::
 
 ## {data-auto-animate="true}
@@ -370,12 +385,14 @@ $$
 
 ::: notes
 So we know that the vectors are coplanar.
+
 Now we need to express these vectors in a way that represents the properties of our camera.
 :::
 
 ## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
 
-The directions of the vectors $O^{'}X$ and $O^{''}X$ can be derived from the image coordinates $x' x''$.
+The directions of the vectors $O^{'}X$ and $O^{''}X$
+can be derived from the image coordinates $x', x''$:
 
 $$
 x' = P'X \quad \quad x'' = P''X
@@ -388,10 +405,12 @@ P'=K'R'[\textbf{I}_{3}| - X_{O'}] \quad \quad P''=K''R''[\textbf{I}_{3}| - X_{O'
 $$
 
 ::: notes
-we know that cameras project 3D points in the world onto images.
+We know that cameras project 3D points in the world onto images.
 with these familiar equations.
-These prime and double prime variables relate to each camera, but the X is the same for both.
-This is important!!
+
+These prime and double prime variables relate to each camera,
+but the X is the same for both.
+This is important to know that the observed point is the same.
 :::
 
 ## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
@@ -403,8 +422,10 @@ $$
 $$
 
 ::: notes
-we can compute this vector from the inverse of the calibration matrix K.
-we need to go a bit further to go from the camera coordinate system to the world coordinate system by rotating with R inverse too.
+We can compute this vector from the inverse of the calibration matrix K.
+
+We need to go a bit further to go from the camera coordinate system to the
+world coordinate system by rotating with R inverse too.
 :::
 
 ## Coplanarity for Uncalibrated Cameras {data-auto-animate="true}
@@ -509,6 +530,7 @@ $$
 ::: notes
 we can show how the skew symmetric matrix works by showing the
 multiplication of the cross product.
+
 Generally, the skew symmetric matrix is a square matrix whose
 transpose equals its negative.
 :::
@@ -528,10 +550,15 @@ x'^{T}(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}x'' = 0
 $$
 
 ::: notes
-what we can do is take the normalised projection and replace with the expression containing the pixel coordinates. We can do that for both cameras.
+What we can do is take the normalised projection and replace with the expression containing the pixel coordinates.
+
+We can do that for both cameras.
 Take note: we had to use the transpose on the left hand side of the equation.
+
 And this whole expression should be equal to zero.
-Now, I take the whole expression in the middle - which is a matrix - or product of 5 matrices - and condense to one 3x3 matrix.
+Now, I take the whole expression in the middle,
+which is a matrix, or product of 5 matrices, and condense to one 3x3 matrix.
+
 We give this matrix the name F.
 :::
 
@@ -624,6 +651,7 @@ Calibrated Cameras
 
 ::: notes
 The fundamental matrix deals with uncalibrated cameras.
+
 Loosely we can say the essential matrix deals with calibrated cameras.
 :::
 
@@ -640,7 +668,9 @@ Most photogrammetric systems rely on calibrated cameras.
 
 ::: notes
 We have talked about calibration - we take a checkerboard and find the parameters of K.
+
 This often simplifies the problem, because those parameters are taken away.
+
 And, we will assume we have no distortions we have not accounted for.
 :::
 
@@ -656,6 +686,7 @@ $$
 
 ::: notes
 On the left we have the direction vector in the camera coordinates.
+
 On the right we have the pixel coordinates in the image.
 :::
 
@@ -671,9 +702,14 @@ x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' &= 0
 $$
 
 ::: notes
-The coplanarity constraint can be expanded according to the definition of the fundamental matrix.
-We can see that the expression on the left and the right are exactly the direction vectors in the camera coordinates.
-If we use image coordinates from calibrated cameras, it replaces this part of the expression.
+The coplanarity constraint can be
+expanded according to the definition of the fundamental matrix.
+
+We can see that the expression on the left and the right
+are exactly the direction vectors in the camera coordinates.
+
+If we use image coordinates from calibrated cameras,
+it replaces this part of the expression.
 
 :::
 
@@ -692,7 +728,9 @@ x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' &= 0 \\[10
 $$
 
 ::: notes
-so we have the pixel coordinates transpose of the point in the first camera, and the pixel coordinates of the point in the second camera.
+We have the pixel coordinates transpose of the point in the first camera,
+and the pixel coordinates of the point in the second camera.
+
 Then, the part in the middle becomes the essential matrix.
 :::
 
@@ -712,7 +750,8 @@ x'^{T}\underbrace{(K')^{-T}(R')^{-T}S_{b}(R'')^{-1}(K'')^{-1}}_{F}x'' &= 0 \\[10
 $$
 
 ::: notes
-the part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes the essential matrix.
+The part in the middle - the skew symmetric matrix R1 and R2 transpose,
+becomes the essential matrix.
 :::
 
 ## Essential Matrix {data-auto-animate="true}
@@ -731,8 +770,9 @@ E = R'S_b R^{''T}
 $$
 
 ::: notes
-the essential matrix is just a special form of the fundamental matrix.
-one where pixel coordinates are from the calibrated camera.
+The essential matrix is just a special form of the fundamental matrix.
+
+One where pixel coordinates are from the calibrated camera.
 :::
 
 ## Essential Matrix {data-auto-animate="true}
@@ -752,9 +792,12 @@ $$
 $$
 
 ::: notes
-we have arrived at our definition of the essential matrix.
-it only involves the baseline parameters and the rotation parameters.
-it is another 3x3 matrix, and we can write the coplanarity constraint for calibrated cameras, with the direction vectors in the camera coordinates.
+We have arrived at our definition of the essential matrix.
+
+It only involves the baseline parameters and the rotation parameters.
+
+It is another 3x3 matrix, and we can write the coplanarity constraint
+for calibrated cameras, with the direction vectors in the camera coordinates.
 :::
 
 ## Essential Matrix {data-auto-animate="true}
@@ -767,7 +810,7 @@ $$
 $$
 
 ::: notes
-finally, some properties of the essential matrix.
+Finally, some properties of the essential matrix.
 Singular - it has no inverse, and the determinant is zero.
 :::
 
@@ -781,7 +824,8 @@ A quick few words on the 8 point algorithm.
 
 ## 8 Point algorithm {data-auto-animate="true}
 
-We know the direction vectors from the image coordinates, but the parameters of $F$ are unknown.
+We know the direction vectors from the image coordinates,
+but the parameters of $F$ are unknown.
 
 $$
 [x'_{n}, y'_{n}, 1]
@@ -794,7 +838,8 @@ F_{31} & F_{32} & F_{33}
 $$
 
 ::: notes
-in a similar way to the DLT we looked at last week, we rearrange our unknowns to a system of linear equations.
+In a similar way to the DLT we looked at last week,
+we rearrange our unknowns to a system of linear equations.
 :::
 
 ## 8 Point algorithm {data-auto-animate="true}
@@ -806,9 +851,10 @@ A  \begin{bmatrix} F_{11} \\ \vdots \\ F_{33} \end{bmatrix} = 0
 $$
 
 ::: notes
-if we gather our knowns from point observations in A...
+If we gather our knowns from point observations in A...
 this homogeneous linear system equation can be solved using the SVD.
-we exploit some constraints - and we need 8 corresponding points
+
+We exploit some constraints - and we need 8 corresponding points
 :::
 
 ## 8 Point algorithm {data-auto-animate="true}
@@ -816,9 +862,13 @@ we exploit some constraints - and we need 8 corresponding points
 From **8** _corresponding_ points, we can solve $F$ or $E$.
 
 ::: notes
-this is the so called 8 point algorithm.
-If you are doing this practically - you must normalise all your pixel coordinates,
-say to a range 0 to 1. The 8 point algorithm will give good results.
+This is the so called 8 point algorithm.
+
+If you are doing this practically,
+you must normalise all your pixel coordinates,
+say to a range 0 to 1.
+
+If you do this, the 8 point algorithm will give good results.
 :::
 
 # Packages {data-auto-animate="true"}
