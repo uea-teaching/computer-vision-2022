@@ -41,6 +41,11 @@
 <li>Fundamental Matrix</li>
 <li>Essential Matrix</li>
 </ul>
+<aside class="notes">
+<p>two views require a pair of cameras, we will look at some of the possible configurations.</p>
+<p>We will introduce the coplanarity constraint, which is the foundation of multiple camera geometry.</p>
+<p>Then, we will talk about two very important matrices: the fundamental matrix and the essential matrix.</p>
+</aside>
 </section>
 
 <section>
@@ -48,7 +53,8 @@
 <h1>Camera Pair</h1>
 <p>Two cameras capturing images of the same scene.</p>
 <aside class="notes">
-<p>so far we have talked about the camera model - and we have confined our discussion to a single camera, and it’s calibration. Now it’s time to consider camera pairs.</p>
+<p>So far, we have talked about the pinhole camera model, and we have confined our discussion to a single camera, and it’s calibration.</p>
+<p>Now it’s time to consider camera pairs.</p>
 </aside>
 </section>
 <section id="camera-pair-1" class="slide level2" data-auto-animate="&quot;true">
@@ -57,7 +63,9 @@
 <img data-src="assets/jpg/intel-d435.jpg" style="width:80.0%" alt="A stereo camera. Intel D435" /><figcaption aria-hidden="true">A stereo camera. Intel D435</figcaption>
 </figure>
 <aside class="notes">
-<p>this is a camera pair - a stereo camera. left cam, ir-projector, right cam, rgb-cam. But this is not the only stereo pair. This camera makes it easy to work with images taken from different locations at the same time. This is an example of what we call the stereo-normal case where both cameras are point in the same direction.</p>
+<p>This is a camera pair - a stereo camera. left cam, ir-projector, right cam, rgb-cam.</p>
+<p>This camera makes it easy to work with images taken from different locations at the same time.</p>
+<p>But this is not the only stereo pair. This is an example of what we call the stereo-normal case where both cameras are point in the same direction.</p>
 <p>We can equally have two separate cameras, in two different positions, and take images at the same time.</p>
 <p>Or, we could have one camera take an image then move to a different position and take another image.</p>
 </aside>
@@ -71,8 +79,9 @@
 </ul>
 <p>A <strong>camera pair</strong> is two configurations from which images have been taken of the same scene.</p>
 <aside class="notes">
-<p>The definition means we want to estimate something… often the relative orientation of the two cameras when taking the images</p>
-<p>we talk about relative orientation and the two important matrices.</p>
+<p>However we arrange cameras physically, we want to think about two configurations, but the one scene.</p>
+<p>This definition means we want to estimate something… often the relative orientation of the two cameras when taking the images</p>
+<p>This lecture is about that relative orientation and two important matrices.</p>
 </aside>
 </section>
 <section id="orientation" class="slide level2" data-auto-animate="&quot;true">
@@ -80,8 +89,11 @@
 <p>The <strong>orientation</strong> of the camera pair can be described using <em>independent</em> orientations for each camera.</p>
 <p>How many parameters are needed?</p>
 <aside class="notes">
-<p>These parameters are those involved in x=PX. So first, how does it work for a calibrated camera? can anyone remember how many parameters we need for camera extrinsic? Yes - 6 - for the rotation and translation. So 12 for two cameras…</p>
-<p>Then for uncalibrated cameras we need the 5 extra values for each camera, so an extra 10 for the pair. A total of 22 parameters.</p>
+<p>These parameters are those involved in x=PX.</p>
+<p>So first, how does it work for a calibrated camera?</p>
+<p>Can anyone remember how many parameters we need for camera extrinsic?</p>
+<p>Yes - 6 - for the rotation and translation. So 12 for two cameras…</p>
+<p>For uncalibrated cameras we need the 5 extra intrinsic values for each camera, so an extra 10 for the pair. A total of 22 parameters.</p>
 </aside>
 </section>
 <section id="orientation-1" class="slide level2" data-auto-animate="&quot;true">
@@ -92,13 +104,19 @@
 <li><em>Calibrated</em> cameras require <strong>12</strong> parameters.</li>
 <li><em>Uncalibrated</em> cameras require <strong>22</strong> parameters.</li>
 </ul>
+<aside class="notes">
+<p>so a total of 12 parameters for a calibrated camera, and 22 parameters for an uncalibrated camera.</p>
+</aside>
 </section>
 <section id="camera-motion" class="slide level2" data-auto-animate="&quot;true">
 <h2 data-auto-animate="&quot;true">Camera Motion</h2>
 <p>Can we <strong>estimate</strong> the camera motion without <em>knowing</em> the scene?</p>
 <aside class="notes">
-<p>so - the question is can we estimate the camera motion without knowing the scene? previously we needed knowledge of the scene, ie DLT with 6 points in the scene. Or a camera target with known position and orientation.</p>
-<p>Now think about only having images from two cameras, without any knowledge of the scene at all. Which parameters can we obtain from these images?</p>
+<p>The question is, can we estimate the camera motion without knowing the scene?</p>
+<p>Previously we needed knowledge of the scene, i.e. The DLT with 6 points in the scene.</p>
+<p>Or a camera target with known position and orientation.</p>
+<p>Now think about only having images from two cameras, without any knowledge of the scene at all.</p>
+<p>Which parameters can we obtain from these images?</p>
 </aside>
 </section>
 <section id="camera-motion-1" class="slide level2" data-auto-animate="&quot;true">
@@ -108,9 +126,10 @@
 <li>and which cannot?</li>
 </ul>
 <aside class="notes">
-<p>Some parameters we may not be able to estimate at all… One thing you might have realised is - it is very difficult to estimate scale.</p>
+<p>Some parameters we may not be able to estimate at all…</p>
+<p>One thing you might have realised is - it is very difficult to estimate scale.</p>
 <p>As humans we have learnt that objects belong to a certain size range - but sometimes we can be fooled…</p>
-<p>From only images (no knowledge of the scene) - it is impossible to estimate scale in a single image.</p>
+<p>From only images, with no knowledge of the scene, it is impossible to estimate scale.</p>
 </aside>
 </section>
 <section id="cameras-measure-direction" class="slide level2" data-auto-animate="&quot;true">
@@ -128,7 +147,8 @@
 <aside class="notes">
 <p>let’s talk about what’s going on here. first camera and second camera are looking at the same scene. but if we had a bigger object and moved the second camera - we’d have identical images.</p>
 <p>This is important to emphasise…</p>
-<p>And it is probably obvious - how could we know where in the world our cameras are? We cant’t estimate the first camera pose - 6 values, and scale… so 7 parameters we can’t estimate!</p>
+<p>And it is probably obvious - how could we know where in the world our cameras are?</p>
+<p>We cant’t estimate the first camera pose - 6 values, and scale… so 7 parameters we can’t estimate!</p>
 </aside>
 </section>
 <section id="cameras-measure-direction-2" class="slide level2" data-auto-animate="&quot;true">
@@ -140,7 +160,8 @@
 <li>But, we <em>can’t</em> estimate the length of <span class="math inline">\(B\)</span>.</li>
 </ul>
 <aside class="notes">
-<p>We don’t know how far the second camera is only the direction. We don’t know the global position - only with respect to the first camera.</p>
+<p>We don’t know how far the second camera is, only the direction.</p>
+<p>We don’t know the global position - only with respect to the first camera.</p>
 </aside>
 </section>
 <section id="calibrated-cameras" class="slide level2" data-auto-animate="&quot;true">
@@ -151,14 +172,17 @@
 <li>Not 3 rotation, 3 translation, and 1 scale.</li>
 </ul>
 <aside class="notes">
-<p>With a calibrated camera, we obtain an angle-preserving model of the object. We cannot resolve the pose of the first camera - nor the distance between the two cameras.</p>
+<p>With a calibrated camera, we obtain an angle-preserving model of the object.</p>
+<p>We cannot resolve the pose of the first camera - nor the distance between the two cameras.</p>
 </aside>
 </section>
 <section id="photogrammetric-model" class="slide level2" data-auto-animate="&quot;true">
 <h2 data-auto-animate="&quot;true">Photogrammetric Model</h2>
-<p>Given two cameras images, we can reconstruct an object up to a <strong>similarity</strong> transform.</p>
+<p>Given two cameras images, we <em>can</em> reconstruct an object up to a <strong>similarity</strong> transform.</p>
 <aside class="notes">
-<p>From two images we can construct what is called a <strong>photogrammetric model</strong>. This is a 3D model of the scene up to a similarity transform - translate - rotate - uniform scale. We can construct a 3D model, but it will not be aligned or scaled within the 3D world.</p>
+<p>From two images we can construct what is called a <strong>photogrammetric model</strong>.</p>
+<p>This is a 3D model of the scene up to a similarity: transform - translate - rotate - uniform scale.</p>
+<p>We can construct a 3D model, but it will not be aligned or scaled within the 3D world.</p>
 </aside>
 </section>
 <section id="photogrammetric-model-1" class="slide level2" data-auto-animate="&quot;true">
@@ -168,7 +192,9 @@
 <li>To <em>obtain</em> the absolute orientation we need at least 3 points in 3D.</li>
 </ul>
 <aside class="notes">
-<p>We must distinguish between relative orientation and absolute orientation. Relative means the second camera with respect to the first… If we want to align the model to the world - an absolute orientation - we need to get 3 points in 3D to obtain the absolute orientation and those missing 7 parameters.</p>
+<p>We must distinguish between relative orientation and absolute orientation.</p>
+<p>Relative means the second camera with respect to the first…</p>
+<p>If we want to align the model to the world: an absolute orientation, we need to get 3 points in 3D to obtain the absolute orientation and those missing 7 parameters.</p>
 <p>Conversely, if we know the location of the cameras, we can find the 3D location of point.</p>
 </aside>
 </section>
@@ -177,7 +203,7 @@
 <p>For <strong>uncalibrated</strong> cameras, we can only obtain <span class="math inline">\(22-15=7\)</span> parameters given two images.</p>
 <p>We need at <strong>least 5 points</strong> in 3D to obtain the absolute orientation.</p>
 <aside class="notes">
-<p>when talking about uncalibrated - I mean only linear errors - not lens distortions, or other non-linear errors.</p>
+<p>When talking about uncalibrated - I mean only linear errors - not lens distortions, or other non-linear errors.</p>
 <p>We are missing the projective transformation in 3D - which has 15 parameters. A 4x4 matrix - and ignoring the homogeneous scaling.</p>
 </aside>
 </section>
@@ -219,7 +245,9 @@
 <li>3D : minimum number of control points in 3D</li>
 </ul>
 <aside class="notes">
-<p>to summarise the available parameters in an image, in an image pair… for calibrated every camera has 6 extrinsics… so 12 in total. We can find 5 parameters just from the two images, and the other 7 parameters are missing. We would need to know 3 points in 3D to find those 7 parameters and thus the absolute orientation.</p>
+<p>to summarise the available parameters in an image, in an image pair… for calibrated every camera has 6 extrinsics… so 12 in total.</p>
+<p>We can find 5 parameters just from the two images, and the other 7 parameters are missing.</p>
+<p>We would need to know 3 points in 3D to find those 7 parameters and thus the absolute orientation.</p>
 <p>Similarly for uncalibrated cameras, we need at least 5 points in 3D to obtain the absolute orientation.</p>
 <p>This works just by knowing the correspondence in 2 images, and we can cover at least something about the orientation between two cameras.</p>
 </aside>
@@ -240,7 +268,7 @@
 <h1 data-auto-animate="&quot;true">Coplanarity Constraint</h1>
 <p>Leading to the Fundamental Matrix.</p>
 <aside class="notes">
-<p>Let’s start with the geometry of the scene and this will lead us to the fundamental matrix.</p>
+<p>Let’s start with the geometry of the scene and this will lead us to the so-called fundamental matrix.</p>
 <p>We start with an uncalibrated camera - no calibration information. And we are going to look into what we call the co-planarity constraint.</p>
 </aside>
 </section>
@@ -324,12 +352,13 @@
 <img data-src="assets/svg/coplanarity-2.svg" style="width:80.0%" alt="Coplanarity" /><figcaption aria-hidden="true">Coplanarity</figcaption>
 </figure>
 <aside class="notes">
-<p>So we know that the vectors are coplanar. Now we need to express these vectors in a way that represents the properties of our camera.</p>
+<p>So we know that the vectors are coplanar.</p>
+<p>Now we need to express these vectors in a way that represents the properties of our camera.</p>
 </aside>
 </section>
 <section id="coplanarity-for-uncalibrated-cameras" class="slide level2" data-auto-animate="&quot;true">
 <h2 data-auto-animate="&quot;true">Coplanarity for Uncalibrated Cameras</h2>
-<p>The directions of the vectors <span class="math inline">\(O^{&#39;}X\)</span> and <span class="math inline">\(O^{&#39;&#39;}X\)</span> can be derived from the image coordinates <span class="math inline">\(x&#39; x&#39;&#39;\)</span>.</p>
+<p>The directions of the vectors <span class="math inline">\(O^{&#39;}X\)</span> and <span class="math inline">\(O^{&#39;&#39;}X\)</span> can be derived from the image coordinates <span class="math inline">\(x&#39;, x&#39;&#39;\)</span>:</p>
 <p><span class="math display">\[
 x&#39; = P&#39;X \quad \quad x&#39;&#39; = P&#39;&#39;X
 \]</span></p>
@@ -338,7 +367,8 @@ x&#39; = P&#39;X \quad \quad x&#39;&#39; = P&#39;&#39;X
 P&#39;=K&#39;R&#39;[\textbf{I}_{3}| - X_{O&#39;}] \quad \quad P&#39;&#39;=K&#39;&#39;R&#39;&#39;[\textbf{I}_{3}| - X_{O&#39;&#39;}]
 \]</span></p>
 <aside class="notes">
-<p>we know that cameras project 3D points in the world onto images. with these familiar equations. These prime and double prime variables relate to each camera, but the X is the same for both. This is important!!</p>
+<p>We know that cameras project 3D points in the world onto images. with these familiar equations.</p>
+<p>These prime and double prime variables relate to each camera, but the X is the same for both. This is important to know that the observed point is the same.</p>
 </aside>
 </section>
 <section id="coplanarity-for-uncalibrated-cameras-1" class="slide level2" data-auto-animate="&quot;true">
@@ -348,7 +378,8 @@ P&#39;=K&#39;R&#39;[\textbf{I}_{3}| - X_{O&#39;}] \quad \quad P&#39;&#39;=K&#39;
 {}^{n}x^{&#39;} = (R&#39;)^{-1}(K&#39;)^{-1} x&#39;
 \]</span></p>
 <aside class="notes">
-<p>we can compute this vector from the inverse of the calibration matrix K. we need to go a bit further to go from the camera coordinate system to the world coordinate system by rotating with R inverse too.</p>
+<p>We can compute this vector from the inverse of the calibration matrix K.</p>
+<p>We need to go a bit further to go from the camera coordinate system to the world coordinate system by rotating with R inverse too.</p>
 </aside>
 </section>
 <section id="coplanarity-for-uncalibrated-cameras-2" class="slide level2" data-auto-animate="&quot;true">
@@ -431,7 +462,8 @@ P&#39;=K&#39;R&#39;[\textbf{I}_{3}| - X_{O&#39;}] \quad \quad P&#39;&#39;=K&#39;
 \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}
 \]</span></p>
 <aside class="notes">
-<p>we can show how the skew symmetric matrix works by showing the multiplication of the cross product. Generally, the skew symmetric matrix is a square matrix whose transpose equals its negative.</p>
+<p>we can show how the skew symmetric matrix works by showing the multiplication of the cross product.</p>
+<p>Generally, the skew symmetric matrix is a square matrix whose transpose equals its negative.</p>
 </aside>
 </section></section>
 <section>
@@ -449,7 +481,10 @@ P&#39;=K&#39;R&#39;[\textbf{I}_{3}| - X_{O&#39;}] \quad \quad P&#39;&#39;=K&#39;
 x&#39;^{T}(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#39;)^{-1}x&#39;&#39; = 0
 \]</span></p>
 <aside class="notes">
-<p>what we can do is take the normalised projection and replace with the expression containing the pixel coordinates. We can do that for both cameras. Take note: we had to use the transpose on the left hand side of the equation. And this whole expression should be equal to zero. Now, I take the whole expression in the middle - which is a matrix - or product of 5 matrices - and condense to one 3x3 matrix. We give this matrix the name F.</p>
+<p>What we can do is take the normalised projection and replace with the expression containing the pixel coordinates.</p>
+<p>We can do that for both cameras. Take note: we had to use the transpose on the left hand side of the equation.</p>
+<p>And this whole expression should be equal to zero. Now, I take the whole expression in the middle, which is a matrix, or product of 5 matrices, and condense to one 3x3 matrix.</p>
+<p>We give this matrix the name F.</p>
 </aside>
 </section>
 <section id="fundamental-matrix-2" class="slide level2" data-auto-animate="&quot;true">
@@ -527,7 +562,8 @@ x&#39;^{T} Fx&#39;&#39; = 0
 <h1 data-auto-animate="&quot;true">Essential Matrix</h1>
 <p>Calibrated Cameras</p>
 <aside class="notes">
-<p>The fundamental matrix deals with uncalibrated cameras. Loosely we can say the essential matrix deals with calibrated cameras.</p>
+<p>The fundamental matrix deals with uncalibrated cameras.</p>
+<p>Loosely we can say the essential matrix deals with calibrated cameras.</p>
 </aside>
 </section>
 <section id="calibrated-cameras-1" class="slide level2" data-auto-animate="&quot;true">
@@ -540,7 +576,9 @@ x&#39;^{T} Fx&#39;&#39; = 0
 </ul>
 </div>
 <aside class="notes">
-<p>We have talked about calibration - we take a checkerboard and find the parameters of K. This often simplifies the problem, because those parameters are taken away. And, we will assume we have no distortions we have not accounted for.</p>
+<p>We have talked about calibration - we take a checkerboard and find the parameters of K.</p>
+<p>This often simplifies the problem, because those parameters are taken away.</p>
+<p>And, we will assume we have no distortions we have not accounted for.</p>
 </aside>
 </section>
 <section id="calibrated-cameras-2" class="slide level2" data-auto-animate="&quot;true">
@@ -553,7 +591,8 @@ x&#39;^{T} Fx&#39;&#39; = 0
 {}^{k}x^{&#39;} = (K&#39;)^{-1}x&#39; \quad {}^{k}x^{&#39;&#39;} = (K&#39;&#39;)^{-1}x&#39;&#39;
 \]</span></p>
 <aside class="notes">
-<p>On the left we have the direction vector in the camera coordinates. On the right we have the pixel coordinates in the image.</p>
+<p>On the left we have the direction vector in the camera coordinates.</p>
+<p>On the right we have the pixel coordinates in the image.</p>
 </aside>
 </section>
 <section id="coplanarity-1" class="slide level2" data-auto-animate="&quot;true">
@@ -566,7 +605,9 @@ x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#
 \end{aligned}
 \]</span></p>
 <aside class="notes">
-<p>The coplanarity constraint can be expanded according to the definition of the fundamental matrix. We can see that the expression on the left and the right are exactly the direction vectors in the camera coordinates. If we use image coordinates from calibrated cameras, it replaces this part of the expression.</p>
+<p>The coplanarity constraint can be expanded according to the definition of the fundamental matrix.</p>
+<p>We can see that the expression on the left and the right are exactly the direction vectors in the camera coordinates.</p>
+<p>If we use image coordinates from calibrated cameras, it replaces this part of the expression.</p>
 </aside>
 </section>
 <section id="coplanarity-2" class="slide level2" data-auto-animate="&quot;true">
@@ -582,7 +623,8 @@ x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#
 \end{aligned}
 \]</span></p>
 <aside class="notes">
-<p>so we have the pixel coordinates transpose of the point in the first camera, and the pixel coordinates of the point in the second camera. Then, the part in the middle becomes the essential matrix.</p>
+<p>We have the pixel coordinates transpose of the point in the first camera, and the pixel coordinates of the point in the second camera.</p>
+<p>Then, the part in the middle becomes the essential matrix.</p>
 </aside>
 </section>
 <section id="coplanarity-3" class="slide level2" data-auto-animate="&quot;true">
@@ -599,7 +641,7 @@ x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#
 \end{aligned}
 \]</span></p>
 <aside class="notes">
-<p>the part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes the essential matrix.</p>
+<p>The part in the middle - the skew symmetric matrix R1 and R2 transpose, becomes the essential matrix.</p>
 </aside>
 </section>
 <section id="essential-matrix-1" class="slide level2" data-auto-animate="&quot;true">
@@ -615,7 +657,8 @@ x&#39;^{T}\underbrace{(K&#39;)^{-T}(R&#39;)^{-T}S_{b}(R&#39;&#39;)^{-1}(K&#39;&#
 E = R&#39;S_b R^{&#39;&#39;T}
 \]</span></p>
 <aside class="notes">
-<p>the essential matrix is just a special form of the fundamental matrix. one where pixel coordinates are from the calibrated camera.</p>
+<p>The essential matrix is just a special form of the fundamental matrix.</p>
+<p>One where pixel coordinates are from the calibrated camera.</p>
 </aside>
 </section>
 <section id="essential-matrix-2" class="slide level2" data-auto-animate="&quot;true">
@@ -630,7 +673,9 @@ E = R&#39;S_b R^{&#39;&#39;T}
 {}^{k}x^{&#39;T} E {}^{k}x^{&#39;&#39;} = 0
 \]</span></p>
 <aside class="notes">
-<p>we have arrived at our definition of the essential matrix. it only involves the baseline parameters and the rotation parameters. it is another 3x3 matrix, and we can write the coplanarity constraint for calibrated cameras, with the direction vectors in the camera coordinates.</p>
+<p>We have arrived at our definition of the essential matrix.</p>
+<p>It only involves the baseline parameters and the rotation parameters.</p>
+<p>It is another 3x3 matrix, and we can write the coplanarity constraint for calibrated cameras, with the direction vectors in the camera coordinates.</p>
 </aside>
 </section>
 <section id="essential-matrix-3" class="slide level2" data-auto-animate="&quot;true">
@@ -643,7 +688,7 @@ E = R&#39;S_b R^{&#39;&#39;T}
 {}^{k}x^{&#39;T} E {}^{k}x^{&#39;&#39;} = 0
 \]</span></p>
 <aside class="notes">
-<p>finally, some properties of the essential matrix. Singular - it has no inverse, and the determinant is zero.</p>
+<p>Finally, some properties of the essential matrix. Singular - it has no inverse, and the determinant is zero.</p>
 </aside>
 </section></section>
 <section>
@@ -667,7 +712,7 @@ F_{31} &amp; F_{32} &amp; F_{33}
 \begin{bmatrix}x&#39;&#39;_{n} \\ y&#39;&#39;_{n} \\ 1 \end{bmatrix} = 0
 \]</span></p>
 <aside class="notes">
-<p>in a similar way to the DLT we looked at last week, we rearrange our unknowns to a system of linear equations.</p>
+<p>In a similar way to the DLT we looked at last week, we rearrange our unknowns to a system of linear equations.</p>
 </aside>
 </section>
 <section id="point-algorithm-1" class="slide level2" data-auto-animate="&quot;true">
@@ -677,14 +722,17 @@ F_{31} &amp; F_{32} &amp; F_{33}
 A  \begin{bmatrix} F_{11} \\ \vdots \\ F_{33} \end{bmatrix} = 0
 \]</span></p>
 <aside class="notes">
-<p>if we gather our knowns from point observations in A… this homogeneous linear system equation can be solved using the SVD. we exploit some constraints - and we need 8 corresponding points</p>
+<p>If we gather our knowns from point observations in A… this homogeneous linear system equation can be solved using the SVD.</p>
+<p>We exploit some constraints - and we need 8 corresponding points</p>
 </aside>
 </section>
 <section id="point-algorithm-2" class="slide level2" data-auto-animate="&quot;true">
 <h2 data-auto-animate="&quot;true">8 Point algorithm</h2>
 <p>From <strong>8</strong> <em>corresponding</em> points, we can solve <span class="math inline">\(F\)</span> or <span class="math inline">\(E\)</span>.</p>
 <aside class="notes">
-<p>this is the so called 8 point algorithm. If you are doing this practically - you must normalise all your pixel coordinates, say to a range 0 to 1. The 8 point algorithm will give good results.</p>
+<p>This is the so called 8 point algorithm.</p>
+<p>If you are doing this practically, you must normalise all your pixel coordinates, say to a range 0 to 1.</p>
+<p>If you do this, the 8 point algorithm will give good results.</p>
 </aside>
 </section></section>
 <section id="packages" class="title-slide slide level1" data-auto-animate="true">
