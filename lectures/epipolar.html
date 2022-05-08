@@ -41,6 +41,10 @@
 <li>Epipolar Elements</li>
 <li>Point Correspondences</li>
 </ul>
+<aside class="notes">
+<p>This lecture is only about epipolar geometry - so I will breakdown what it is and why it is important.</p>
+<p>This is really an introduction to the topic - as always, if you want more detail there is a wealth of research published.</p>
+</aside>
 </section>
 
 <section>
@@ -48,7 +52,9 @@
 <h1 data-auto-animate="&quot;true">Motivation</h1>
 <p>Given <span class="math inline">\(x&#39;\)</span> in the first image, <strong>find</strong> the corresponding point <span class="math inline">\(x&#39;&#39;\)</span> in the second image.</p>
 <aside class="notes">
-<p>We can make a motivating statement. For a while now we have been talking about finding features in images. And lately, we have been talking about finding correspondences between image features… now, if we find a promising feature in the first image - how do we go about finding the correspondence in the second image?</p>
+<p>We can make this motivating statement.</p>
+<p>For a while now we have been talking about finding features in images. And lately, we have been talking about finding correspondences between image features…</p>
+<p>Now, if we find a promising feature in the first image - how do we go about finding the correspondence in the second image?</p>
 </aside>
 </section>
 <section id="section" class="slide level2" data-auto-animate="&quot;true">
@@ -62,7 +68,10 @@
 <img data-src="assets/svg/coplanarity-1.svg" style="width:60.0%" alt="Coplanarity" /><figcaption aria-hidden="true">Coplanarity</figcaption>
 </figure>
 <aside class="notes">
-<p>A typical arrangement - one camera with projection centre on the left and the other on the right. When they observe the same point, the two rays will intersect in a plane. This is the coplanarity constraint we used to derive the fundamental matrix and the essential matrix. This will also play a role in the epipolar geometry we will talk about now.</p>
+<p>A typical arrangement - one camera with projection centre on the left and the other on the right.</p>
+<p>When they observe the same point, the two rays will intersect in a plane.</p>
+<p>This is the coplanarity constraint we used to derive the fundamental matrix and the essential matrix.</p>
+<p>This will also play a role in the epipolar geometry we will talk about now.</p>
 <p>So when we can see the point in image 1, then we need to search for it in image 2? Where do I search? The whole image? Or, can I reduce the search space?</p>
 </aside>
 </section></section>
@@ -75,7 +84,11 @@
 <li>search space reduced from 2D to 1D</li>
 </ul>
 <aside class="notes">
-<p>epipolar geometry can help us with the search. This takes into account the baseline vectors, where points are mapped to, how the epipolar plane intersects the image planes. It turns out that this geometry can reduce the search from the whole image to just one line in image 2. This has a couple of advantages: most obviously, it is faster, but also it reduces the possibility of making incorrect associations… many images have multiple similar features.</p>
+<p>Epipolar geometry can help us with the search.</p>
+<p>This takes into account the baseline vectors, where points are mapped to, and how the epipolar plane intersects the image planes.</p>
+<p>It turns out that this geometry can reduce the search from the whole image to just one line in the second image.</p>
+<p>This has a couple of advantages: most obviously, it is faster, but also it reduces the possibility of making incorrect associations…</p>
+<p>For example, many images have multiple similar feature descriptors, especially architecture.</p>
 </aside>
 </section>
 <section id="epipolar-geometry-1" class="slide level2" data-auto-animate="&quot;true">
@@ -84,8 +97,16 @@
 <img data-src="assets/svg/epipolar.svg" style="width:80.0%" alt="Epipolar Geometry" /><figcaption aria-hidden="true">Epipolar Geometry</figcaption>
 </figure>
 <aside class="notes">
-<p>Lets look at some elements of this figure. epipolar axis between projection centres epipolar plane formed by the projection centres and the observed point epipoles - the projection of the other camera’s projection centre epipolar lines - intersection of the epipolar plane with the image planes</p>
-<p>Look at the projection of X in camera 1. We don’t know how far away it is, it could be at U. But that point can only exist on the epipolar line in image 2.</p>
+<p>Lets look at some elements of this figure.</p>
+<ul>
+<li>epipolar axis between projection centres</li>
+<li>epipolar plane formed by the projection centres and the observed point</li>
+<li>epipoles - the projection of the other camera’s projection centre</li>
+<li>epipolar lines - intersection of the epipolar plane with the image planes</li>
+</ul>
+<p>Look at the projection of X in camera 1.</p>
+<p>We don’t know how far away it is, it could be at U.</p>
+<p>But that point can only exist on the epipolar line in image 2.</p>
 </aside>
 </section>
 <section id="epipolar-geometry-2" class="slide level2" data-auto-animate="&quot;true">
@@ -100,7 +121,13 @@
 </ul>
 </div>
 <aside class="notes">
-<p>Again, with labels… epipolar axis between projection centres epipolar plane formed by the projection centres and the observed point, different for each observation. epipoles - the projection of the other camera’s projection centre epipolar lines - projection of the ray from the other camera’s projection centre to the observed point.</p>
+<p>Lets set these epipolar elements out:</p>
+<ul>
+<li>epipolar axis between projection centres</li>
+<li>epipolar plane formed by the projection centres and the observed point, different for each observation.</li>
+<li>epipoles - the projection of the other camera’s projection centre</li>
+<li>epipolar lines - projection of the ray from the other camera’s projection centre to the observed point.</li>
+</ul>
 </aside>
 </section>
 <section id="section-1" class="slide level2" data-auto-animate="&quot;true">
@@ -116,7 +143,7 @@ e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
 \quad \mathcal{L}&#39;&#39;(X) = \mathcal{E} \cap \mathcal{E}&#39;&#39;
 \]</span></p>
 <aside class="notes">
-<p>this notation describes the intersections</p>
+<p>Set notation describes the intersections of the planes</p>
 </aside>
 </section>
 <section id="section-2" class="slide level2" data-auto-animate="&quot;true">
@@ -125,7 +152,8 @@ e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
 <img data-src="assets/svg/epipolar.svg" style="width:80.0%" alt="Epipolar Geometry" /><figcaption aria-hidden="true">Epipolar Geometry</figcaption>
 </figure>
 <aside class="notes">
-<p>to review the figure, I’ll just point out all these elements again…</p>
+<p>To review the figure, I’ll just point out all these elements again…</p>
+<p>Of course, the axis and epipolar lines are continuous, I’ve just drawn them within the bounds of the points.</p>
 </aside>
 </section>
 <section id="in-the-epipolar-plane" class="slide level2" data-auto-animate="&quot;true">
@@ -141,7 +169,8 @@ e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
 </ul>
 </div>
 <aside class="notes">
-<p>all of these elements are in the epipolar plane.</p>
+<p>We have talked a lot about coplanarity and how it has helped us so far.</p>
+<p><strong>All</strong> of these elements are in the epipolar plane.</p>
 </aside>
 </section>
 <section id="in-the-epipolar-plane-1" class="slide level2" data-auto-animate="&quot;true">
@@ -155,20 +184,22 @@ e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
 </ul>
 <p><strong>All lie in the epipolar plane</strong> <span class="math inline">\(\mathcal{E}\)</span>.</p>
 <aside class="notes">
-<p>This is especially important for the task of predicting correspondences. And this is what allows us to restrict the search space to a line in image 2. So, the epipolar plane is a constraining element for the search.</p>
+<p>This is especially important for the task of predicting correspondences.</p>
+<p>And this is what allows us to restrict the search space to a <strong>line</strong> in image 2.</p>
+<p>So, the epipolar plane is a <em>constraining element</em> for the search.</p>
 </aside>
 </section>
 <section id="predicting-point-correspondence" class="slide level2" data-auto-animate="&quot;true">
 <h2 data-auto-animate="&quot;true">Predicting Point Correspondence</h2>
-<p>Task: Predict the location of <span class="math inline">\(x&#39;&#39;\)</span> given <span class="math inline">\(x&#39;\)</span>.</p>
+<p><strong>Task:</strong> Predict the location of <span class="math inline">\(x&#39;&#39;\)</span> given <span class="math inline">\(x&#39;\)</span>.</p>
 <ul>
 <li>For the epipolar plane <span class="math inline">\(\mathcal{E} = (O&#39;O&#39;&#39;X)\)</span></li>
 <li>The intersection of <span class="math inline">\(\mathcal{E}\)</span> and the second image plane <span class="math inline">\(\mathcal{E}&#39;&#39;\)</span> yields the epipolar line <span class="math inline">\(\mathcal{L}&#39;&#39;(X)\)</span></li>
 <li>The corresponding point <span class="math inline">\(x&#39;&#39;\)</span> lies on that epipolar line <span class="math inline">\(\mathcal{L}&#39;&#39;(X)\)</span>.</li>
-<li>Search space is reduced from 2D to 1D.</li>
+<li>Search space is <em>reduced</em> from 2D to 1D.</li>
 </ul>
 <aside class="notes">
-<p>with all these elements all we need to do is search along the epipolar line. In practice, it would be a good idea to lok either side by a pixel or two…</p>
+<p>With all these elements all we need to do is search along the epipolar line. In practice, it would be a good idea to look either side by a pixel or two…</p>
 </aside>
 </section></section>
 <section>
@@ -185,7 +216,7 @@ e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
 <li>We will <em>compute</em> them using the <strong>projection</strong> matrices and the <strong>fundamental</strong> matrix.</li>
 </ul>
 <aside class="notes">
-<p>we are going to need the projection matrices from last week and the fundamental matrix from earlier.</p>
+<p>We are going to need the projection matrices from last week and the fundamental matrix from earlier.</p>
 </aside>
 </section>
 <section id="epipolar-axis" class="slide level2" data-auto-animate="&quot;true">
@@ -194,9 +225,11 @@ e&#39; = (O&#39; O&#39;&#39;) \cap \mathcal{E}&#39;,
 <p><span class="math display">\[
 b = X_{O&#39;} - X_{O&#39;&#39;}
 \]</span></p>
-<p>The vector <span class="math inline">\(b\)</span> is <em>homogeneous</em> and the equation expresses that we know only the <em>direction</em>, <strong>not</strong> the <em>length</em>.</p>
+<p>The vector <span class="math inline">\(b\)</span> is <em>homogeneous</em>, we know only the <em>direction</em>, <strong>not</strong> the <em>length</em>.</p>
 <aside class="notes">
-<p>This is relatively straightforward. We can ge the equation for the epipolar axis from the projection centres.</p>
+<p>This is relatively straightforward.</p>
+<p>We can ge the equation for the epipolar axis from the projection centres.</p>
+<p>The vector <span class="math inline">\(b\)</span> is <em>homogeneous</em> and the equation expresses that we know only the <em>direction</em>, <strong>not</strong> the <em>length</em>.</p>
 </aside>
 </section>
 <section id="epipolar-lines" class="slide level2" data-auto-animate="&quot;true">
@@ -232,8 +265,9 @@ x^{&#39;T} \mathcal{L}&#39; = 0
 x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
 \]</span></p>
 <aside class="notes">
-<p>So the epipolar line is a projection into the image plane of the ray from the other camera, so we can use the coplanarity constraint, because we know these rays are converging to the observed point.</p>
-<p>So we can see that the line in the first image plane is the fundamental matrix multiplied by point in the second plane.</p>
+<p>The epipolar line is a projection into the image plane of the ray from the other camera.</p>
+<p>We can use the coplanarity constraint, because we know these rays are converging to the observed point.</p>
+<p>We can see that the line in the first image plane is the fundamental matrix multiplied by point in the second plane.</p>
 <p>NOW, just by comparing terms, we can see that the line is equivalent to Fx’’.</p>
 </aside>
 </section>
@@ -247,7 +281,9 @@ x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
 \mathcal{L}&#39; = Fx&#39;&#39;
 \]</span></p>
 <aside class="notes">
-<p>This means the epipolar line can be very easily obtained by using the fundamental matrix and the point in the other image. So, knowing the point in image 2, gives me the epipolar line in image 1. And, of course and can do this for the other line.</p>
+<p>This means the epipolar line can be very easily obtained by using the fundamental matrix and the point in the other image.</p>
+<p>So, knowing the point in image 2, gives me the epipolar line in image 1.</p>
+<p>And, of course and can do this for the other line.</p>
 </aside>
 </section>
 <section id="epipolar-lines-4" class="slide level2" data-auto-animate="&quot;true">
@@ -274,7 +310,8 @@ x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
 \mathcal{L}^{&#39;&#39;} = F^{T}x^{&#39;}
 \]</span></p>
 <aside class="notes">
-<p>so when we transpose F we get the line - which is our 1d search space. So this is the key thing that speeds up our search - we just look along the epipolar line.</p>
+<p>When we transpose F we get the line - which is our 1d search space.</p>
+<p>This is the key thing that speeds up our search - we just look along the epipolar line.</p>
 </aside>
 </section>
 <section id="epipolar-lines-6" class="slide level2" data-auto-animate="&quot;true">
@@ -288,7 +325,7 @@ x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
 \mathcal{L}&#39; = Fx&#39;&#39; \quad \mathcal{L}&#39;&#39; = F^{T}x&#39;
 \]</span></p>
 <aside class="notes">
-<p>all one one slide - I think the epipolar line is the most useful of the epipolar geometry - certainly for point matching.</p>
+<p>All one one slide. I think the epipolar line is the most useful of the epipolar geometry, certainly for point matching.</p>
 </aside>
 </section>
 <section id="epipoles" class="slide level2" data-auto-animate="&quot;true">
@@ -311,7 +348,7 @@ x^{&#39;T}  \underbrace{Fx&#39;&#39;}_{\mathcal{L}&#39;} = 0
 e&#39; = P&#39;X_{O&#39;&#39;} \quad e&#39;&#39; = P&#39;&#39;X_{O&#39;}
 \]</span></p>
 <aside class="notes">
-<p>we can get the epipoles directly from the projection matrices. Just consider the camera origin of the other camera like any other point in the world.</p>
+<p>We can get the epipoles directly from the projection matrices. Just consider the camera origin of the other camera like any other point in the world.</p>
 </aside>
 </section>
 <section id="epipoles-2" class="slide level2" data-auto-animate="&quot;true">
@@ -322,7 +359,9 @@ e&#39; = P&#39;X_{O&#39;&#39;} \quad e&#39;&#39; = P&#39;&#39;X_{O&#39;}
 \forall \mathcal{L}&#39;&#39; : e^{&#39;&#39;T} \mathcal{L}&#39;&#39; = 0
 \]</span></p>
 <aside class="notes">
-<p>We can observe another property of the epipoles. because the epipole is the projection along the epipolar axis - all epipolar lines pass through the epipole. Picture the plane pivoting around the epipolar axis, all lines will pass through the epipole.</p>
+<p>We can observe another property of the epipoles.</p>
+<p>Because the epipole is the projection along the epipolar axis - all epipolar lines pass through the epipole.</p>
+<p>Picture the plane pivoting around the epipolar axis, all lines will pass through the epipole.</p>
 </aside>
 </section></section>
 <section id="summary" class="title-slide slide level1" data-auto-animate="&quot;true">
