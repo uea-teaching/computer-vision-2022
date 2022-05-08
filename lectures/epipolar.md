@@ -12,16 +12,24 @@ date: Spring 2022
 - Epipolar Elements
 - Point Correspondences
 
+::: notes
+This lecture is only about epipolar geometry - so I will breakdown what it is and why it is important.
+
+This is really an introduction to the topic - as always, if you want more detail there is a wealth of research published.
+:::
+
 # Motivation {data-auto-animate="true}
 
 Given $x'$ in the first image, **find** the corresponding point $x''$ in the second image.
 
 ::: notes
-We can make a motivating statement.
+We can make this motivating statement.
+
 For a while now we have been talking about finding features in images.
 And lately, we have been talking about finding correspondences between
 image features...
-now, if we find a promising feature in the first image -
+
+Now, if we find a promising feature in the first image -
 how do we go about finding the correspondence in the second image?
 :::
 
@@ -36,9 +44,12 @@ how do we go about finding the correspondence in the second image?
 ::: notes
 A typical arrangement - one camera with projection centre on the
 left and the other on the right.
+
 When they observe the same point, the two rays will intersect in a plane.
+
 This is the coplanarity constraint we used to derive the
 fundamental matrix and the essential matrix.
+
 This will also play a role in the epipolar geometry we will talk about now.
 
 So when we can see the point in image 1, then we need to search for it in image 2?
@@ -52,14 +63,18 @@ Where do I search? The whole image? Or, can I reduce the search space?
 - search space reduced from 2D to 1D
 
 ::: notes
-epipolar geometry can help us with the search.
+Epipolar geometry can help us with the search.
+
 This takes into account the baseline vectors, where points are mapped to,
-how the epipolar plane intersects the image planes.
+and how the epipolar plane intersects the image planes.
+
 It turns out that this geometry can reduce the search from the whole image
-to just one line in image 2.
+to just one line in the second image.
+
 This has a couple of advantages: most obviously, it is faster, but also it reduces
 the possibility of making incorrect associations...
-many images have multiple similar features.
+
+For example, many images have multiple similar feature descriptors, especially architecture.
 :::
 
 ## Epipolar Geometry {data-auto-animate="true}
@@ -67,13 +82,19 @@ many images have multiple similar features.
 ![Epipolar Geometry](assets/svg/epipolar.svg){width=80%}
 
 ::: notes
-Lets look at some elements of this figure.
-epipolar axis between projection centres
-epipolar plane formed by the projection centres and the observed point
-epipoles - the projection of the other camera's projection centre
-epipolar lines - intersection of the epipolar plane with the image planes
 
-Look at the projection of X in camera 1. We don't know how far away it is, it could be at U. But that point can only exist on the epipolar line in image 2.
+Lets look at some elements of this figure.
+
+- epipolar axis between projection centres
+- epipolar plane formed by the projection centres and the observed point
+- epipoles - the projection of the other camera's projection centre
+- epipolar lines - intersection of the epipolar plane with the image planes
+
+Look at the projection of X in camera 1.
+
+We don't know how far away it is, it could be at U.
+
+But that point can only exist on the epipolar line in image 2.
 :::
 
 ## Epipolar Geometry {data-auto-animate="true}
@@ -90,11 +111,13 @@ Epipolar elements:
 :::
 
 ::: notes
-Again, with labels...
-epipolar axis between projection centres
-epipolar plane formed by the projection centres and the observed point, different for each observation.
-epipoles - the projection of the other camera's projection centre
-epipolar lines - projection of the ray from the other camera's projection centre to the observed point.
+Lets set these epipolar elements out:
+
+- epipolar axis between projection centres
+- epipolar plane formed by the projection centres and the observed point, different for each observation.
+- epipoles - the projection of the other camera's projection centre
+- epipolar lines - projection of the ray from the other camera's projection centre to the observed point.
+
 :::
 
 ## {data-auto-animate="true}
@@ -114,7 +137,7 @@ $$
 $$
 
 ::: notes
-this notation describes the intersections
+Set notation describes the intersections of the planes
 :::
 
 ## {data-auto-animate="true}
@@ -122,7 +145,10 @@ this notation describes the intersections
 ![Epipolar Geometry](assets/svg/epipolar.svg){width=80%}
 
 ::: notes
-to review the figure, I'll just point out all these elements again...
+To review the figure, I'll just point out all these elements again...
+
+Of course, the axis and epipolar lines are continuous,
+I've just drawn them within the bounds of the points.
 :::
 
 ## In the Epipolar Plane {data-auto-animate="true}
@@ -140,7 +166,10 @@ Assuming a distortion free lens:
 :::
 
 ::: notes
-all of these elements are in the epipolar plane.
+We have talked a lot about coplanarity and how it has helped us so far.
+
+**All** of these elements are in the epipolar plane.
+
 :::
 
 ## In the Epipolar Plane {data-auto-animate="true}
@@ -155,22 +184,25 @@ all of these elements are in the epipolar plane.
 
 ::: notes
 This is especially important for the task of predicting correspondences.
-And this is what allows us to restrict the search space to a line in image 2.
-So, the epipolar plane is a constraining element for the search.
+
+And this is what allows us to restrict the search space to a **line** in image 2.
+
+So, the epipolar plane is a _constraining element_ for the search.
+
 :::
 
 ## Predicting Point Correspondence {data-auto-animate="true}
 
-Task: Predict the location of $x''$ given $x'$.
+**Task:** Predict the location of $x''$ given $x'$.
 
 - For the epipolar plane $\mathcal{E} = (O'O''X)$
 - The intersection of $\mathcal{E}$ and the second image plane $\mathcal{E}''$ yields the epipolar line $\mathcal{L}''(X)$
 - The corresponding point $x''$ lies on that epipolar line $\mathcal{L}''(X)$.
-- Search space is reduced from 2D to 1D.
+- Search space is _reduced_ from 2D to 1D.
 
 ::: notes
-with all these elements all we need to do is search along the epipolar line.
-In practice, it would be a good idea to lok either side by a pixel or two...
+With all these elements all we need to do is search along the epipolar line.
+In practice, it would be a good idea to look either side by a pixel or two...
 :::
 
 # Computing the Elements of Epipolar Geometry {data-auto-animate="true}
@@ -186,7 +218,8 @@ How do we compute these elements?
 - We will _compute_ them using the **projection** matrices and the **fundamental** matrix.
 
 ::: notes
-we are going to need the projection matrices from last week and the fundamental matrix from earlier.
+We are going to need the projection matrices from last week
+and the fundamental matrix from earlier.
 :::
 
 ## Epipolar Axis {data-auto-animate="true}
@@ -197,10 +230,14 @@ $$
 b = X_{O'} - X_{O''}
 $$
 
-The vector $b$ is _homogeneous_ and the equation expresses that we know only the _direction_, **not** the _length_.
+The vector $b$ is _homogeneous_, we know only the _direction_, **not** the _length_.
 
 ::: notes
-This is relatively straightforward. We can ge the equation for the epipolar axis from the projection centres.
+This is relatively straightforward.
+
+We can ge the equation for the epipolar axis from the projection centres.
+
+The vector $b$ is _homogeneous_ and the equation expresses that we know only the _direction_, **not** the _length_.
 :::
 
 ## Epipolar Lines {data-auto-animate="true}
@@ -225,9 +262,11 @@ x^{'T} \mathcal{L}' = 0
 $$
 
 ::: notes
-you may remember that to find if a point lies on a line we just need the dot product equal to zero.
+you may remember that to find if a point lies on a line we just need
+the dot product equal to zero.
 
-So this is the constraint that must be observed if the point is on the epipolar line.
+So this is the constraint that must be observed
+if the point is on the epipolar line.
 
 From the definition of the line equation:
 ax + by + c = 0 , l . x = 0 where l = [a b c] is the line and x = [x y 1] is a point on the line.
@@ -248,11 +287,12 @@ x^{'T}  \underbrace{Fx''}_{\mathcal{L}'} = 0
 $$
 
 ::: notes
-So the epipolar line is a projection into the image plane of the ray from the other camera,
-so we can use the coplanarity constraint,
+The epipolar line is a projection into the image plane of the ray from the other camera.
+
+We can use the coplanarity constraint,
 because we know these rays are converging to the observed point.
 
-So we can see that the line in the first image plane is
+We can see that the line in the first image plane is
 the fundamental matrix multiplied by point in the second plane.
 
 NOW, just by comparing terms, we can see that the line is equivalent to Fx''.
@@ -273,8 +313,10 @@ $$
 ::: notes
 This means the epipolar line can be very easily obtained by using the
 fundamental matrix and the point in the other image.
+
 So, knowing the point in
 image 2, gives me the epipolar line in image 1.
+
 And, of course and can do this for the other line.
 :::
 
@@ -309,8 +351,9 @@ $$
 $$
 
 ::: notes
-so when we transpose F we get the line - which is our 1d search space.
-So this is the key thing that speeds up our search - we just look along the epipolar line.
+When we transpose F we get the line - which is our 1d search space.
+
+This is the key thing that speeds up our search - we just look along the epipolar line.
 :::
 
 ## Epipolar Lines {data-auto-animate="true}
@@ -325,7 +368,8 @@ $$
 $$
 
 ::: notes
-all one one slide - I think the epipolar line is the most useful of the epipolar geometry - certainly for point matching.
+All one one slide.
+I think the epipolar line is the most useful of the epipolar geometry, certainly for point matching.
 :::
 
 ## Epipoles {data-auto-animate="true}
@@ -349,7 +393,7 @@ e' = P'X_{O''} \quad e'' = P''X_{O'}
 $$
 
 ::: notes
-we can get the epipoles directly from the projection matrices.
+We can get the epipoles directly from the projection matrices.
 Just consider the camera origin of the other camera like any other point in the world.
 :::
 
@@ -364,9 +408,12 @@ $$
 
 ::: notes
 We can observe another property of the epipoles.
-because the epipole is the projection along the epipolar axis - all epipolar lines
+
+Because the epipole is the projection along the epipolar axis - all epipolar lines
 pass through the epipole.
+
 Picture the plane pivoting around the epipolar axis, all lines will pass through the epipole.
+
 :::
 
 # Summary {data-auto-animate="true}
